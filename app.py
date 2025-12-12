@@ -9,7 +9,7 @@ TOKEN = "8400777806:AAH6EQ_2rBL4YiDBlSZTsMjPOktfINKhiKQ"
 BOT_USERNAME = "PersonalGrowth24_Bot"
 ADMIN_USERNAME = "Mr_MorningStar524"
 
-# --- 💰 ADSTERRA SETUP ---
+# --- 💰 ADSTERRA SMARTLINK (Direct Link) ---
 AD_LINK = "https://www.effectivegatecpm.com/apn41vrpck?key=c74cfda0abf96c5cef3c0fcf95607af6"
 
 # --- 💾 MEMORY DATABASE ---
@@ -18,7 +18,7 @@ user_referrals = {}
 PORT = int(os.environ.get("PORT", 10000))
 app = Flask(__name__)
 
-# --- 💎 UI TEMPLATE (Fixed Game Images + Adsterra) ---
+# --- 💎 ULTRA-PREMIUM UI TEMPLATE ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -42,19 +42,24 @@ HTML_TEMPLATE = """
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ADS */
         .ad-banner { width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; overflow: hidden; border-radius: 10px; background: #000; border: 1px dashed #333; min-height: 50px; }
+        .native-ad-container { margin-top: 30px; padding: 15px; border: 1px solid var(--gold); border-radius: 12px; background: rgba(251, 191, 36, 0.05); }
 
+        /* LISTS */
         .group-title { text-align: left; font-size: 10px; font-weight: 800; color: var(--gold); letter-spacing: 1px; margin: 25px 0 8px 5px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .link-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 14px 15px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
         .link-row:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
-        
+
+        /* GAME GRID IMPROVED */
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .game-card { background: #000; border-radius: 15px; overflow: hidden; height: 110px; position: relative; cursor: pointer; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .game-card { background: #000; border-radius: 15px; overflow: hidden; height: 120px; position: relative; cursor: pointer; border: 1px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .game-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.3s; }
         .game-card:hover img { opacity: 1; transform: scale(1.1); }
-        .game-badge { position: absolute; top: 5px; right: 5px; background: var(--green); color: black; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; }
-        .game-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, black, transparent); color: white; font-size: 11px; padding: 8px 5px; text-align: center; font-weight: bold; }
+        .game-badge { position: absolute; top: 5px; right: 5px; background: var(--green); color: black; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .game-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, #000 10%, transparent); color: white; font-size: 12px; padding: 8px 5px; text-align: center; font-weight: bold; text-shadow: 0 1px 3px black; }
 
+        /* ORACLE */
         .glass-input { width: 100%; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid #444; border-radius: 12px; color: white; text-align: center; font-size: 16px; margin-bottom: 15px; outline: none; }
         .btn-main { background: linear-gradient(135deg, var(--blue), #7c3aed); border: none; padding: 15px; width: 100%; border-radius: 12px; color: white; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         
@@ -95,41 +100,34 @@ HTML_TEMPLATE = """
         </div>
 
         <div class="group-title">🎓 ENGLISH & SKILLS</div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/The_EnglishRoom5')">
-            <span>🇬🇧 English Room</span> <span>➔</span>
-        </div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/English_Speaking_Grammar_Shots')">
-            <span>🗣️ Speaking Shots</span> <span>➔</span>
-        </div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/The_EnglishRoom5')"><span>🇬🇧 English Room</span> <span>➔</span></div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/English_Speaking_Grammar_Shots')"><span>🗣️ Speaking Shots</span> <span>➔</span></div>
 
         <div class="group-title">🇮🇳 UPSC & GOVT PREP</div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/UPSC_Notes_Official')">
-            <span>📚 UPSC Notes PDF</span> <span>➔</span>
-        </div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/UPSC_Quiz_Vault')">
-            <span>🎯 Quiz Vault</span> <span>➔</span>
-        </div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/IAS_PrepQuiz_Zone')">
-            <span>🧠 IAS Prep Zone</span> <span>➔</span>
-        </div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/UPSC_Notes_Official')"><span>📚 UPSC Notes PDF</span> <span>➔</span></div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/UPSC_Quiz_Vault')"><span>🎯 Quiz Vault</span> <span>➔</span></div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/IAS_PrepQuiz_Zone')"><span>🧠 IAS Prep Zone</span> <span>➔</span></div>
 
         <div class="group-title">📈 FINANCE & GOVT</div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/MinistryOfTourism')">
-            <span>🏖️ Ministry of Tourism</span> <span>➔</span>
-        </div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/GovernmentSchemesIndia')">
-            <span>🏛️ Govt Schemes India</span> <span>➔</span>
-        </div>
-        <div class="link-row" onclick="openChannelWithAd('https://t.me/PersonalFinanceWithShiv')">
-            <span>💰 Personal Finance</span> <span>➔</span>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/MinistryOfTourism')"><span>🏖️ Ministry of Tourism</span> <span>➔</span></div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/GovernmentSchemesIndia')"><span>🏛️ Govt Schemes India</span> <span>➔</span></div>
+        <div class="link-row" onclick="openChannelWithAd('https://t.me/PersonalFinanceWithShiv')"><span>💰 Personal Finance</span> <span>➔</span></div>
+
+        <div class="native-ad-container">
+            <div style="font-size: 10px; color: #888; margin-bottom: 10px; text-transform:uppercase;">🔥 Sponsored Content</div>
+            <script async="async" data-cfasync="false" src="https://pl28245447.effectivegatecpm.com/8ca532b1ecc871c8269845a5294e401b/invoke.js"></script>
+            <div id="container-8ca532b1ecc871c8269845a5294e401b"></div>
         </div>
     </div>
 
     <div id="games" class="section">
-        <div style="margin-bottom: 15px; font-size: 12px; color: #aaa;">Playing supports our servers. Ads may appear.</div>
+        <div style="margin-bottom: 15px; font-size: 12px; color: #aaa;">
+            Playing supports our servers. Ads may appear.
+        </div>
+        
         <div class="game-grid">
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/subway-surfers')">
-                <div class="game-badge">HOT</div>
+                <div class="game-badge">#1 HOT</div>
                 <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Subway_Surfers_App_Icon.png">
                 <div class="game-title">Subway Surfers</div>
             </div>
@@ -138,22 +136,45 @@ HTML_TEMPLATE = """
                 <img src="https://upload.wikimedia.org/wikipedia/en/6/69/Temple_Run_2_icon.jpg">
                 <div class="game-title">Temple Run 2</div>
             </div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/stickman-hook')">
+                <div class="game-badge">FUN</div>
+                <img src="https://play-lh.googleusercontent.com/yXqH3v7n4-2XJ9gRk5y5x6k3K6z8j7H8n9m0p1q2r3s4t5u6v7w8x9y0z1">
+                <div class="game-title">Stickman Hook</div>
+            </div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/drive-mad')">
+                <div class="game-badge">CARS</div>
+                <img src="https://play-lh.googleusercontent.com/6l3k6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8">
+                <div class="game-title">Drive Mad</div>
+            </div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/monkey-mart')">
+                <div class="game-badge">IDLE</div>
+                <img src="https://play-lh.googleusercontent.com/9a8b7c6d5e4f3g2h1i0j9k8l7m6n5o4p3q2r1s0t9u8v7w6x5y4z3">
+                <div class="game-title">Monkey Mart</div>
+            </div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/moto-x3m')">
+                <div class="game-badge">BIKE</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Moto_X3M_Logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3097/3097180.png'">
+                <div class="game-title">Moto X3M</div>
+            </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/sweet-world')">
+                <div class="game-badge">SWEET</div>
                 <img src="https://upload.wikimedia.org/wikipedia/en/2/22/Candy_Crush_Saga_Icon.png">
                 <div class="game-title">Candy Saga</div>
+            </div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/ludo-hero')">
+                <div class="game-badge">CLASSIC</div>
+                <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Ludo_King_logo.png">
+                <div class="game-title">Ludo Hero</div>
             </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/2048')">
                 <div class="game-badge">IQ</div>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/2048_Logo.png/600px-2048_Logo.png">
                 <div class="game-title">2048 Puzzle</div>
             </div>
-             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/moto-x3m')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Moto_X3M_Logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3097/3097180.png'">
-                <div class="game-title">Moto X3M</div>
-            </div>
-            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/ludo-hero')">
-                <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Ludo_King_logo.png">
-                <div class="game-title">Ludo Hero</div>
+            <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/football-legends')">
+                <div class="game-badge">SPORT</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Soccerball.svg/1200px-Soccerball.svg.png">
+                <div class="game-title">Football Legends</div>
             </div>
         </div>
     </div>
@@ -190,6 +211,8 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
+    <script type="text/javascript" src="https://pl28245444.effectivegatecpm.com/50/d7/2c/50d72c91dd048c42dae784892264442e.js"></script>
+
     <script>
         const tg = Telegram.WebApp;
         tg.ready(); tg.expand();
@@ -205,8 +228,6 @@ HTML_TEMPLATE = """
             document.getElementById(id).classList.add('active');
             event.target.classList.add('active');
         }
-
-        function openAd(url) { tg.openLink(url); }
 
         function openChannelWithAd(channelUrl) {
             tg.showConfirm("📢 Opening Sponsor Ad first...", (ok) => {
@@ -291,7 +312,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     args = context.args
     
-    # Referral Logic
     if args and args[0].startswith("ref_"):
         ref_id = args[0].split("_")[1]
         new_id = str(user.id)
@@ -302,19 +322,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 try: await context.bot.send_message(ref_id, f"🎉 New Referral: {user.first_name}")
                 except: pass
 
-    # Render URL
     base_url = os.environ.get('RENDER_EXTERNAL_HOSTNAME') 
     web_app_url = f"https://{base_url}/" if base_url else "https://google.com"
 
-    # --- RESTORED WELCOME MESSAGE (Old Style) ---
     keyboard = [
         [InlineKeyboardButton("🎁 SPECIAL OFFER (Sponsored)", url=AD_LINK)],
         [InlineKeyboardButton("🚀 OPEN PERSONAL GROWTH HUB", web_app=WebAppInfo(url=web_app_url))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # ✅ Fixed Image: Direct JPG link of an Office/Study environment (Similar to your screenshot)
-    # Ye link safe hai aur error nahi dega.
+    # ✅ PURANA PROFESSIONAL MESSAGE & IMAGE (Restored)
+    # Ye wahi link hai jo aapne pichle screenshot me bheja tha (Unsplash Office)
     img_url = "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop"
 
     await update.message.reply_photo(
@@ -340,7 +358,6 @@ def main():
     threading.Thread(target=run_flask).start()
     
     print(f"Bot {BOT_USERNAME} is Live!")
-    # ✅ CONFLICT FIX: Drop pending updates & Clean Start
     application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 if __name__ == "__main__":
