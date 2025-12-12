@@ -1,455 +1,309 @@
 import os
 import threading
-import random
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template_string, request, jsonify
 from telegram import Update, WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # --- 🟢 CREDENTIALS ---
-TOKEN = "8400777806:AAH6EQ_2rBL4YiDBlSZTsMjPOktfINKhiKQ"
+TOKEN = "8400777806:AAH6EQ_2rBL4YiDBlSZTsMjPOktfINKhiKQ"  # Aapka Token
 BOT_USERNAME = "PersonalGrowth24_Bot"
 ADMIN_USERNAME = "Mr_MorningStar524"
 
-# Render Port Setup
-PORT = int(os.environ.get("PORT", 10000))
+# --- 💾 MEMORY DATABASE (For Referrals) ---
+# Note: Render free tier restart hone par ye data udd jata hai.
+# Permanent database ke liye SQL chahiye hoga, par abhi ke liye ye kaam karega.
+user_referrals = {}  # { 'referrer_id': [list_of_referred_users] }
 
+PORT = int(os.environ.get("PORT", 10000))
 app = Flask(__name__)
 
-# --- 💎 PREMIUM UI TEMPLATE (Glassmorphism & Gold/Neon) ---
+# --- 💎 ULTRA-PREMIUM UI TEMPLATE ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Career Oracle</title>
+    <title>Personal Growth Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #09090b;
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --primary: #3b82f6; /* Blue */
-            --accent: #8b5cf6; /* Purple */
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
             --gold: #fbbf24;
-            --text-main: #ffffff;
-            --text-sub: #a1a1aa;
+            --blue: #3b82f6;
+            --green: #22c55e;
+            --border: rgba(255,255,255,0.1);
         }
-
-        body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%);
-            color: var(--text-main);
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            padding-bottom: 80px;
-        }
-
-        /* --- TYPOGRAPHY --- */
-        h1 {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 28px;
-            margin: 10px 0 5px 0;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; padding-bottom: 80px; text-align: center; }
         
-        .subtitle {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-bottom: 25px;
-            letter-spacing: 0.5px;
-        }
+        /* HEADER */
+        .header { margin-bottom: 20px; }
+        .header h1 { font-size: 22px; margin: 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { font-size: 11px; color: #94a3b8; margin-top: 5px; }
 
-        /* --- CARDS (Glass Effect) --- */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            margin-bottom: 20px;
-            transition: transform 0.2s;
-        }
+        /* TABS */
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; background: #000; padding: 5px; border-radius: 50px; }
+        .tab-btn { background: transparent; border: none; color: #64748b; padding: 8px 20px; border-radius: 40px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: var(--card); color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
-        /* --- INPUTS & BUTTONS --- */
-        input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #333;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            text-align: center;
-            font-size: 16px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            outline: none;
-        }
-        input:focus { border-color: var(--primary); }
+        /* SECTIONS */
+        .section { display: none; animation: fadeIn 0.4s; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-main {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none;
-            padding: 16px;
-            width: 100%;
-            border-radius: 12px;
-            color: white;
-            font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-            transition: 0.3s;
-        }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* --- CHANNELS LIST (Clean Look) --- */
-        .channel-section { margin-top: 30px; }
-        .section-title {
-            text-align: left;
-            font-size: 11px;
-            color: var(--gold);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            padding-left: 5px;
-            letter-spacing: 1px;
-        }
-
-        .channel-grid {
-            display: grid;
-            grid-template-columns: 1fr; 
-            gap: 10px;
-        }
-
-        .channel-btn {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.05);
-            padding: 14px 18px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #eee;
-            font-size: 13px;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.2s;
-        }
-        .channel-btn:active { background: rgba(255,255,255,0.1); }
-        .arrow-icon { opacity: 0.5; font-size: 12px; }
-
-        /* --- SPONSOR BUTTON --- */
-        .sponsor-btn {
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            background: rgba(251, 191, 36, 0.05);
-            margin-top: 20px; /* Thoda gap diya hai */
-        }
-
-        /* --- MODAL (Budget) --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background: #18181b;
-            padding: 30px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 320px;
-            border: 1px solid #333;
-            text-align: center;
-        }
+        /* CARDS */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         
-        /* Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-            margin: 20px 0;
-            padding: 0;
-            border: none;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: var(--gold);
-            cursor: pointer;
-            margin-top: -8px;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            background: #444;
-            border-radius: 5px;
-        }
+        /* CATEGORY GROUPING */
+        .group-title { text-align: left; font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1px; margin: 25px 0 10px 5px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .link-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; text-decoration: none; color: #e2e8f0; font-size: 13px; transition: 0.2s; border: 1px solid transparent; }
+        .link-row:hover { border-color: var(--blue); background: rgba(59, 130, 246, 0.1); }
 
-        /* --- RESULT / LOADING --- */
-        #loading, #resultSection, #finalCard { display: none; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* LOCKED CONTENT */
+        .locked-box { position: relative; padding: 30px 20px; text-align: center; border: 1px dashed #444; border-radius: 15px; background: rgba(0,0,0,0.2); }
+        .progress-container { width: 100%; height: 8px; background: #334155; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--green); width: 0%; transition: 1s; }
+        .referral-link { background: #000; color: var(--gold); padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 10px 0; border: 1px solid var(--border); }
 
-        /* LOCKED STATE */
-        .locked-overlay {
-            background: rgba(0,0,0,0.6);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: -10px;
-            border: 1px dashed #444;
-        }
-        .progress-track { width: 100%; height: 6px; background: #333; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: #22c55e; transition: 0.5s; }
+        /* GAME ZONE */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .game-card { background: #000; border-radius: 12px; overflow: hidden; height: 100px; position: relative; cursor: pointer; border: 1px solid #333; }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.3s; }
+        .game-card:hover img { opacity: 1; transform: scale(1.1); }
+        .game-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); color: white; font-size: 10px; padding: 5px; text-align: center; }
 
+        /* ADSTERRA */
+        .ad-banner { width: 100%; height: 60px; background: #000; border: 1px dashed #555; display: flex; align-items: center; justify-content: center; margin: 20px 0; border-radius: 10px; overflow: hidden; }
+        
+        .btn { background: var(--blue); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div style="margin-bottom: 30px;">
-        <h1>AI ORACLE 2.0</h1>
-        <div class="subtitle">Advanced Neural Future Prediction</div>
+    <div class="header">
+        <h1>PERSONAL GROWTH HUB</h1>
+        <p>Curated Resources for Success</p>
     </div>
 
-    <div class="glass-card" id="step1">
-        <div style="font-size: 40px; margin-bottom: 10px;">🧬</div>
-        <p style="margin-bottom: 20px; font-size: 14px;">Enter your identity to scan timeline.</p>
-        <input type="text" id="userName" placeholder="Your Full Name">
-        <button class="btn-main" onclick="startScan()">Analyze My Destiny</button>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('home')">🏠 Home</button>
+        <button class="tab-btn" onclick="switchTab('games')">🎮 Games</button>
+        <button class="tab-btn" onclick="switchTab('oracle')">🔮 Oracle</button>
     </div>
 
-    <div id="loading" style="margin-top: 40px;">
-        <div class="spinner"></div>
-        <div style="font-size: 12px; color: var(--primary); letter-spacing: 1px;" id="loadText">CONNECTING TO SATELLITE...</div>
+    <div id="home" class="section active">
+        
+        <div class="ad-banner">
+            <a href="https://www.google.com" target="_blank" style="text-decoration:none; color:#666; font-size:10px; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                📢 ADVERTISEMENT (Click Here)
+            </a>
+        </div>
+
+        <div class="group-title">🎓 ENGLISH MASTERY</div>
+        <a href="https://t.me/The_EnglishRoom5" class="link-row"><span>🇬🇧 English Room</span> <span>➔</span></a>
+        <a href="https://t.me/English_Speaking_Grammar_Shots" class="link-row"><span>🗣️ Speaking Shots</span> <span>➔</span></a>
+
+        <div class="group-title">🇮🇳 UPSC & CURRENT AFFAIRS</div>
+        <a href="https://t.me/UPSC_Notes_Official" class="link-row"><span>📚 UPSC Notes PDF</span> <span>➔</span></a>
+        <a href="https://t.me/UPSC_Quiz_Vault" class="link-row"><span>🎯 Quiz Vault</span> <span>➔</span></a>
+        <a href="https://t.me/IAS_PrepQuiz_Zone" class="link-row"><span>🧠 IAS Prep Zone</span> <span>➔</span></a>
+
+        <div class="group-title">📈 GOVERNANCE & FINANCE</div>
+        <a href="https://t.me/MinistryOfTourism" class="link-row"><span>🏖️ Ministry of Tourism</span> <span>➔</span></a>
+        <a href="https://t.me/GovernmentSchemesIndia" class="link-row"><span>🏛️ Govt Schemes India</span> <span>➔</span></a>
+        <a href="https://t.me/PersonalFinanceWithShiv" class="link-row"><span>💰 Personal Finance</span> <span>➔</span></a>
     </div>
 
-    <div id="resultSection">
-        <div class="glass-card">
-            <h2 style="color: #fff; margin: 0;">ANALYSIS COMPLETE</h2>
-            <p style="color: #888; font-size: 12px;">Your 2026 Future is ready.</p>
-            
-            <div class="locked-overlay">
-                <div style="font-size: 24px; margin-bottom: 5px;">🔒 LOCKED</div>
-                <div style="font-size: 13px; color: #ccc; margin-bottom: 15px;">
-                    Share with <b style="color: #fff;">3 Friends</b> to unlock the Secret File.
+    <div id="games" class="section">
+        <div class="card">
+            <h3>🕹️ Game Zone</h3>
+            <p style="font-size: 12px; color: #888;">Play instantly. No download required.</p>
+            <div class="game-grid">
+                <div class="game-card" onclick="playGame('https://poki.com/en/g/subway-surfers')">
+                    <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/b5bdd328122d250325d97e3f2252a12d.png" alt="Run">
+                    <div class="game-title">Subway Surfers</div>
                 </div>
-
-                <div class="progress-track"><div class="progress-fill" id="progBar"></div></div>
-                <div style="font-size: 11px; color: #888; margin-bottom: 15px;" id="progText">0/3 Shared</div>
-
-                <button class="btn-main" style="background: #22c55e;" onclick="shareViral()">🚀 Share via Telegram</button>
+                <div class="game-card" onclick="playGame('https://poki.com/en/g/2048')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/2048_Logo.png/600px-2048_Logo.png" alt="2048">
+                    <div class="game-title">2048 Puzzle</div>
+                </div>
+                <div class="game-card" onclick="playGame('https://poki.com/en/g/temple-run-2')">
+                    <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/96778465-45d6-4447-9759-d89063bc9785.jpg" alt="Temple">
+                    <div class="game-title">Temple Run 2</div>
+                </div>
+                <div class="game-card" onclick="playGame('https://poki.com/en/g/moto-x3m')">
+                    <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/00b64f33b1e5dc4220b30d3258548902.png" alt="Bike">
+                    <div class="game-title">Moto X3M</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="finalCard">
-        <div class="glass-card" style="border-color: var(--gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);">
-            <div style="background: var(--gold); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px;">CONFIRMED</div>
+    <div id="oracle" class="section">
+        <div class="card">
+            <h2>AI CAREER ORACLE</h2>
             
-            <h1 id="finalDestiny" style="font-size: 32px; background: linear-gradient(to right, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">IAS OFFICER</h1>
-            
-            <p style="color: #fff; font-size: 16px; margin-top: 5px;" id="finalName">Name</p>
-            <p style="color: #888; font-style: italic; font-size: 12px;">"The nation will salute you."</p>
+            <div id="lockedView" class="locked-box">
+                <div style="font-size: 30px;">🔒</div>
+                <h3>LOCKED CONTENT</h3>
+                <p style="font-size: 12px; color: #aaa;">To unlock the Prediction Report, invite 3 friends to start this bot.</p>
+                
+                <div class="referral-link" id="myRefLink">Loading Link...</div>
+                <button class="btn" onclick="copyLink()">📋 Copy Link</button>
+                <button class="btn" style="background:#22c55e; margin-top:5px;" onclick="shareToTelegram()">🚀 Share Directly</button>
 
-            <a href="https://t.me/{{ bot_username }}" class="btn-main" style="background: #333; margin-top: 15px; display: block; text-decoration: none;">🎯 Start Career Quiz</a>
-        </div>
-    </div>
-
-    <div class="channel-section">
-        <div class="section-title">Verified Resources (Join All)</div>
-        <div class="channel-grid">
-            
-            <a href="https://t.me/The_EnglishRoom5" class="channel-btn">
-                <span>🇬🇧 English Grammar Hub</span> <span class="arrow-icon">➔</span>
-            </a>
-            <a href="https://t.me/English_Speaking_Grammar_Shots" class="channel-btn">
-                <span>🗣️ Speaking Shots</span> <span class="arrow-icon">➔</span>
-            </a>
-
-            <a href="https://t.me/UPSC_Notes_Official" class="channel-btn">
-                <span>📚 UPSC Notes PDF</span> <span class="arrow-icon">➔</span>
-            </a>
-            <a href="https://t.me/UPSC_Quiz_Vault" class="channel-btn">
-                <span>🎯 Quiz Vault</span> <span class="arrow-icon">➔</span>
-            </a>
-            <a href="https://t.me/IAS_PrepQuiz_Zone" class="channel-btn">
-                <span>🧠 IAS Prep Zone</span> <span class="arrow-icon">➔</span>
-            </a>
-            <a href="https://t.me/MinistryOfTourism" class="channel-btn">
-                <span>🇮🇳 Ministry of Tourism</span> <span class="arrow-icon">➔</span>
-            </a>
-            <a href="https://t.me/GovernmentSchemesIndia" class="channel-btn">
-                <span>🏛️ Govt Schemes India</span> <span class="arrow-icon">➔</span>
-            </a>
-
-            <a href="https://t.me/PersonalFinanceWithShiv" class="channel-btn">
-                <span>💰 Finance Tips</span> <span class="arrow-icon">➔</span>
-            </a>
-
-            <div onclick="openBudgetModal()" class="channel-btn sponsor-btn" style="cursor: pointer;">
-                <span>📢 Sponsor / Advertise</span> <span class="arrow-icon">₹</span>
+                <p style="margin-top: 20px; font-size: 11px;">YOUR PROGRESS</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="pBar"></div>
+                </div>
+                <div id="pText" style="font-size: 12px; font-weight: bold;">0/3 Friends Joined</div>
+                <button onclick="checkServer()" style="background:transparent; border:1px solid #555; color:#888; padding:5px; margin-top:10px; font-size:10px; border-radius:5px;">🔄 Refresh Status</button>
             </div>
-        </div>
-    </div>
 
-    <div class="modal-overlay" id="sponsorModal">
-        <div class="modal-content">
-            <h3 style="margin-top: 0;">Select Your Budget</h3>
-            <p style="color: #888; font-size: 12px;">Move slider to select amount</p>
-            
-            <div style="font-size: 24px; font-weight: bold; color: var(--gold); margin: 10px 0;">
-                ₹<span id="budgetValue">5000</span>
-            </div>
-            
-            <input type="range" min="500" max="50000" step="500" value="5000" id="budgetRange" oninput="updateBudgetDisplay()">
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="closeModal()" style="flex: 1; padding: 10px; background: #333; border: none; color: white; border-radius: 8px;">Cancel</button>
-                <button onclick="submitSponsor()" style="flex: 1; padding: 10px; background: var(--gold); border: none; color: black; font-weight: bold; border-radius: 8px;">Contact</button>
+            <div id="unlockedView" style="display:none;">
+                <h1 style="color: var(--gold); font-size: 30px;">UNLOCKED!</h1>
+                <p>Your Destiny: <b>Future Billionaire</b></p>
+                <img src="https://media1.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif" width="100%" style="border-radius:10px;">
+                <p style="font-size:12px; color:#888;">"Great things take time."</p>
             </div>
         </div>
     </div>
 
     <script>
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-        // Theme Colors match Telegram
-        Telegram.WebApp.setHeaderColor('#09090b');
-        Telegram.WebApp.setBackgroundColor('#09090b');
+        const tg = Telegram.WebApp;
+        tg.ready();
+        tg.expand();
 
-        let count = parseInt(localStorage.getItem('viral_v3')) || 0;
-        updateProgress();
+        const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "TEST_USER";
+        const botUsername = "{{ bot_username }}";
+        const refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
 
-        // --- SCAN LOGIC ---
-        function startScan() {
-            const name = document.getElementById('userName').value;
-            if(!name) { Telegram.WebApp.showAlert("Please enter your name!"); return; }
-            
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
+        document.getElementById('myRefLink').innerText = refLink;
 
-            // Fake steps
-            setTimeout(() => { document.getElementById('loadText').innerText = "SCANNING BIOMETRICS..."; }, 1000);
-            setTimeout(() => { document.getElementById('loadText').innerText = "PREDICTING 2026..."; }, 2500);
-
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('resultSection').style.display = 'block';
-            }, 4000);
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        // --- SHARE LOGIC ---
-        function shareViral() {
-            const botUser = "{{ bot_username }}";
-            const msg = "🚨 AI PREDICTION REVEALED! 🚨\\n\\nI just checked my 2026 Career Prediction! 😱\\nIt's 99% Accurate.\\n\\nCheck yours free here: https://t.me/" + botUser + "?start=prediction";
-            
-            Telegram.WebApp.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(msg));
-
-            setTimeout(() => {
-                count++;
-                if(count > 3) count = 3;
-                localStorage.setItem('viral_v3', count);
-                updateProgress();
-            }, 5000);
+        function copyLink() {
+            navigator.clipboard.writeText(refLink);
+            tg.showAlert("Link Copied! Send this to your friends.");
         }
 
-        function updateProgress() {
-            const pct = (count / 3) * 100;
-            document.getElementById('progBar').style.width = pct + "%";
-            document.getElementById('progText').innerText = count + "/3 Shared";
-
-            if(count >= 3) {
-                document.getElementById('resultSection').style.display = 'none';
-                document.getElementById('finalCard').style.display = 'block';
-                showFinalResult();
-            }
+        function shareToTelegram() {
+            const msg = "🔥 Check this AI Career Scanner! It predicts your future job.\\n\\n👇 Click here to start:\\n" + refLink;
+            tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(msg));
         }
 
-        function showFinalResult() {
-            const name = document.getElementById('userName').value || "Future Star";
-            document.getElementById('finalName').innerText = name;
-            
-            const roles = ["IAS OFFICER", "IPS OFFICER", "BILLIONAIRE", "TECH CEO", "MINISTER", "SCIENTIST"];
-            document.getElementById('finalDestiny').innerText = roles[Math.floor(Math.random() * roles.length)];
-            
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        function playGame(url) {
+            tg.openLink(url);
         }
 
-        // --- SPONSOR MODAL LOGIC ---
-        function openBudgetModal() {
-            document.getElementById('sponsorModal').style.display = 'flex';
+        // --- REAL SERVER CHECK ---
+        function checkServer() {
+            fetch(`/api/check_referrals?user_id=${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const count = data.count;
+                    const required = 3;
+                    const pct = Math.min((count / required) * 100, 100);
+                    
+                    document.getElementById('pBar').style.width = pct + "%";
+                    document.getElementById('pText').innerText = `${count}/${required} Friends Joined`;
+
+                    if(count >= required) {
+                        document.getElementById('lockedView').style.display = 'none';
+                        document.getElementById('unlockedView').style.display = 'block';
+                        confetti();
+                    }
+                })
+                .catch(err => console.error("Error fetching stats", err));
         }
-        function closeModal() {
-            document.getElementById('sponsorModal').style.display = 'none';
-        }
-        function updateBudgetDisplay() {
-            const val = document.getElementById('budgetRange').value;
-            document.getElementById('budgetValue').innerText = val;
-        }
-        function submitSponsor() {
-            const budget = document.getElementById('budgetRange').value;
-            const admin = "{{ admin_username }}";
-            const text = `Hello Admin, I am interested in Sponsorship/Advertising.\n\n💰 My Budget: ₹${budget}\n\nPlease share details.`;
-            
-            Telegram.WebApp.openTelegramLink(`https://t.me/${admin}?text=${encodeURIComponent(text)}`);
-            closeModal();
-        }
+
+        // Auto check on load
+        checkServer();
+        setInterval(checkServer, 5000); // Check every 5 seconds
     </script>
 </body>
 </html>
 """
 
-# --- ROUTES ---
+# --- FLASK ROUTES ---
 @app.route('/')
 def home():
-    return render_template_string(HTML_TEMPLATE, 
-                                  admin_username=ADMIN_USERNAME,
-                                  bot_username=BOT_USERNAME)
+    return render_template_string(HTML_TEMPLATE, bot_username=BOT_USERNAME)
+
+@app.route('/api/check_referrals')
+def check_api():
+    user_id = request.args.get('user_id')
+    # Agar user list mein nahi hai to 0 return karega
+    count = len(user_referrals.get(str(user_id), []))
+    # TESTING: Agar user "TEST_USER" hai to humesha 1 dikhayega
+    if user_id == "TEST_USER": count = 1
+    return jsonify({"count": count})
 
 # --- BOT HANDLERS ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user.first_name
+    user = update.effective_user
+    args = context.args
     
-    # Render URL Fetch
+    # --- REFERRAL LOGIC ---
+    if args and args[0].startswith("ref_"):
+        referrer_id = args[0].split("_")[1]
+        new_user_id = str(user.id)
+        
+        # Check: User khud ko refer nahi kar sakta
+        if referrer_id != new_user_id:
+            if referrer_id not in user_referrals:
+                user_referrals[referrer_id] = []
+            
+            # Check: Duplicate referral na ho
+            if new_user_id not in user_referrals[referrer_id]:
+                user_referrals[referrer_id].append(new_user_id)
+                
+                # Referrer ko notification bhejo (Optional)
+                try:
+                    await context.bot.send_message(chat_id=referrer_id, text=f"🎉 **New Referral!**\n{user.first_name} just joined using your link!", parse_mode='Markdown')
+                except:
+                    pass # Agar bot block hai to ignore karo
+
+    # --- WELCOME MESSAGE ---
+    # Fetch Render URL
     base_url = os.environ.get('RENDER_EXTERNAL_HOSTNAME') 
     web_app_url = f"https://{base_url}/" if base_url else "https://google.com"
 
     keyboard = [
-        [InlineKeyboardButton("🔮 PREDICT MY FUTURE (2026)", web_app=WebAppInfo(url=web_app_url))]
+        [InlineKeyboardButton("🚀 OPEN PERSONAL GROWTH HUB", web_app=WebAppInfo(url=web_app_url))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # PREMIUM IMAGE (Updated)
+    # NEW PROFESSIONAL IMAGE & TEXT
+    img_url = "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1000&auto=format&fit=crop" # Business/Planning Image
+    
+    caption = (
+        f"👋 **Welcome, {user.first_name}!**\n\n"
+        f"💼 **Personal Growth 24/7 Ecosystem**\n"
+        f"Unlock your potential with our curated resources:\n\n"
+        f"📚 **Civil Services & Education**\n"
+        f"💰 **Financial Freedom**\n"
+        f"🔮 **AI Career Oracle**\n"
+        f"🎮 **Stress Buster Games**\n\n"
+        f"👇 **Tap below to Enter the Hub:**"
+    )
+
     await update.message.reply_photo(
-        photo="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop", 
-        caption=f"👋 **Welcome, {user}!**\n\n🧬 **AI Neural Scanner 2.0 is Online.**\n\nWe have upgraded our algorithm to predict your **2026 Destiny** with 99% accuracy.\n\n👇 **Tap below to start the scan:**",
+        photo=img_url, 
+        caption=caption,
         reply_markup=reply_markup,
         parse_mode='Markdown'
     )
 
-# --- RUNNER ---
 def run_flask():
     app.run(host="0.0.0.0", port=PORT)
 
@@ -457,7 +311,7 @@ def main():
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     threading.Thread(target=run_flask).start()
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 if __name__ == "__main__":
     main()
