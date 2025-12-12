@@ -9,9 +9,9 @@ TOKEN = "8400777806:AAH6EQ_2rBL4YiDBlSZTsMjPOktfINKhiKQ"
 BOT_USERNAME = "PersonalGrowth24_Bot"
 ADMIN_USERNAME = "Mr_MorningStar524"
 
-# --- 💰 ADSTERRA SETUP ---
-# Yahan apna Direct Link dalein (Example: https://thighsstationery.com/...)
-AD_LINK = "https://www.google.com" # <--- Replace with your Adsterra Direct Link
+# --- 💰 ADSTERRA SETUP (UPDATED) ---
+# Smartlink (Direct Link) yahan lagaya hai
+AD_LINK = "https://www.effectivegatecpm.com/apn41vrpck?key=c74cfda0abf96c5cef3c0fcf95607af6"
 
 # --- 💾 MEMORY DATABASE ---
 user_referrals = {}
@@ -44,6 +44,20 @@ HTML_TEMPLATE = """
         .section { display: none; animation: fadeIn 0.4s; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* AD BANNER CONTAINER */
+        .ad-banner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+            border: 1px dashed #333;
+            min-height: 50px;
+        }
 
         /* LISTS & GROUPS */
         .group-title { text-align: left; font-size: 10px; font-weight: 800; color: var(--gold); letter-spacing: 1px; margin: 25px 0 8px 5px; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 5px; }
@@ -89,9 +103,17 @@ HTML_TEMPLATE = """
 
     <div id="home" class="section active">
         
-        <div onclick="openAd('{{ ad_link }}')" style="background: #111; border: 1px dashed #444; padding: 15px; border-radius: 10px; margin-bottom: 20px; cursor: pointer;">
-            <span style="font-size: 20px;">📢</span><br>
-            <span style="font-size: 10px; color: #888;">SPONSORED ADVERTISEMENT</span>
+        <div class="ad-banner">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '0ec2eb9dc0e01b5f1b456f0f1e577f22',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/0ec2eb9dc0e01b5f1b456f0f1e577f22/invoke.js"></script>
         </div>
 
         <div class="group-title">🎓 ENGLISH & SKILLS</div>
@@ -220,7 +242,7 @@ HTML_TEMPLATE = """
             event.target.classList.add('active');
         }
 
-        // --- AD LOGIC (Opens Ad, then Content) ---
+        // --- AD LOGIC ---
         function openAd(url) {
             tg.openLink(url);
         }
@@ -229,7 +251,7 @@ HTML_TEMPLATE = """
             tg.showConfirm("📢 Opening Sponsor Ad first...", (ok) => {
                 if(ok) {
                     tg.openLink(adLink); // Open Ad
-                    setTimeout(() => { tg.openLink(channelUrl); }, 1000); // Try open channel
+                    setTimeout(() => { tg.openLink(channelUrl); }, 1000); 
                 } else {
                     tg.openLink(channelUrl); // Fallback
                 }
@@ -243,9 +265,6 @@ HTML_TEMPLATE = """
                 buttons: [{type: "ok", text: "Play Now"}]
             }, () => {
                 tg.openLink(adLink); // Open Ad
-                // In Telegram Web App, opening two links is tricky. 
-                // We open Ad, user comes back, then we hope they click again or we delay.
-                // Best UX:
                 setTimeout(() => { tg.openLink(gameUrl); }, 500); 
             });
         }
@@ -294,9 +313,7 @@ HTML_TEMPLATE = """
                 });
         }
         
-        // Auto check every 5s
         setInterval(checkServer, 5000);
-
     </script>
 </body>
 </html>
@@ -338,7 +355,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # --- WELCOME MESSAGE WITH AD BUTTON ---
     keyboard = [
-        [InlineKeyboardButton("🎁 SPECIAL OFFER (Sponsored)", url=AD_LINK)], # <--- AD BUTTON ADDED
+        [InlineKeyboardButton("🎁 SPECIAL OFFER (Sponsored)", url=AD_LINK)],
         [InlineKeyboardButton("🚀 OPEN GROWTH HUB", web_app=WebAppInfo(url=web_app_url))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
