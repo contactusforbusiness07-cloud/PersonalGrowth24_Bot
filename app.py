@@ -10,7 +10,6 @@ BOT_USERNAME = "PersonalGrowth24_Bot"
 ADMIN_USERNAME = "Mr_MorningStar524"
 
 # --- 💰 ADSTERRA SETUP ---
-# Aapka Smartlink (Direct Link)
 AD_LINK = "https://www.effectivegatecpm.com/apn41vrpck?key=c74cfda0abf96c5cef3c0fcf95607af6"
 
 # --- 💾 MEMORY DATABASE ---
@@ -19,7 +18,7 @@ user_referrals = {}
 PORT = int(os.environ.get("PORT", 10000))
 app = Flask(__name__)
 
-# --- 💎 ULTRA-PREMIUM UI TEMPLATE ---
+# --- 💎 UI TEMPLATE (Fixed Game Images + Adsterra) ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -131,16 +130,16 @@ HTML_TEMPLATE = """
         <div class="game-grid">
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/subway-surfers')">
                 <div class="game-badge">HOT</div>
-                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/b5bdd328122d250325d97e3f2252a12d.png">
+                <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Subway_Surfers_App_Icon.png">
                 <div class="game-title">Subway Surfers</div>
             </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/temple-run-2')">
                 <div class="game-badge">VIRAL</div>
-                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/96778465-45d6-4447-9759-d89063bc9785.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/en/6/69/Temple_Run_2_icon.jpg">
                 <div class="game-title">Temple Run 2</div>
             </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/sweet-world')">
-                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/b99a6d2c49a37d2f9754f2c0382d5696.png">
+                <img src="https://upload.wikimedia.org/wikipedia/en/2/22/Candy_Crush_Saga_Icon.png">
                 <div class="game-title">Candy Saga</div>
             </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/2048')">
@@ -149,11 +148,11 @@ HTML_TEMPLATE = """
                 <div class="game-title">2048 Puzzle</div>
             </div>
              <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/moto-x3m')">
-                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/00b64f33b1e5dc4220b30d3258548902.png">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Moto_X3M_Logo.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3097/3097180.png'">
                 <div class="game-title">Moto X3M</div>
             </div>
             <div class="game-card" onclick="playGameWithAd('https://poki.com/en/g/ludo-hero')">
-                <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=600,height=600,fit=cover,f=auto/5e73236021669463c6d649bf021262d1.png">
+                <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Ludo_King_logo.png">
                 <div class="game-title">Ludo Hero</div>
             </div>
         </div>
@@ -307,19 +306,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     base_url = os.environ.get('RENDER_EXTERNAL_HOSTNAME') 
     web_app_url = f"https://{base_url}/" if base_url else "https://google.com"
 
-    # Buttons
+    # --- RESTORED WELCOME MESSAGE (Old Style) ---
     keyboard = [
         [InlineKeyboardButton("🎁 SPECIAL OFFER (Sponsored)", url=AD_LINK)],
-        [InlineKeyboardButton("🚀 OPEN GROWTH HUB", web_app=WebAppInfo(url=web_app_url))]
+        [InlineKeyboardButton("🚀 OPEN PERSONAL GROWTH HUB", web_app=WebAppInfo(url=web_app_url))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # ✅ ERROR FIXED: Using safe Imgur Link (.jpg)
-    img_url = "https://i.imgur.com/2K7M8X8.jpeg"
+    # ✅ Fixed Image: Direct JPG link of an Office/Study environment (Similar to your screenshot)
+    # Ye link safe hai aur error nahi dega.
+    img_url = "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000&auto=format&fit=crop"
 
     await update.message.reply_photo(
         photo=img_url, 
-        caption=f"👋 **Hello {user.first_name}!**\n\n🤖 **AI Neural Scanner 2.0**\n\n🎯 **Features:**\n• Viral Games (No Install)\n• UPSC & Study Material\n• 2026 Future Prediction\n\n👇 **Click below to Enter:**",
+        caption=f"👋 **Welcome, {user.first_name}!**\n\n"
+                f"💼 **Personal Growth 24/7 Ecosystem**\n"
+                f"Unlock your potential with our curated resources:\n\n"
+                f"📚 **Civil Services & Education**\n"
+                f"💰 **Financial Freedom**\n"
+                f"🔮 **AI Career Oracle**\n"
+                f"🎮 **Stress Buster Games**\n\n"
+                f"👇 **Tap below to Enter the Hub:**",
         reply_markup=reply_markup,
         parse_mode='Markdown'
     )
@@ -331,6 +338,9 @@ def main():
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     threading.Thread(target=run_flask).start()
+    
+    print(f"Bot {BOT_USERNAME} is Live!")
+    # ✅ CONFLICT FIX: Drop pending updates & Clean Start
     application.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 if __name__ == "__main__":
