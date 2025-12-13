@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Personal Growth Hub</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script> <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="glass-header">
+        <div class="user-profile">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User" id="header-pfp">
+            <div class="user-details">
+                <span id="username">Loading...</span>
+                <span class="rank-badge">Rank #<span id="user-rank">...</span></span>
+            </div>
+        </div>
+        <div class="coin-display">
+            <i class="fas fa-coins text-gold"></i>
+            <span id="header-coins">0</span>
+        </div>
+    </header>
+
+    <main id="main-content">
+
+        <section id="tab-hub" class="active-section fade-in">
+            
+            <div class="glass-card mb-20">
+                <div class="section-title"><i class="fas fa-fire"></i> Daily Goals</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="daily-progress" style="width: 0%;"></div>
+                </div>
+                <p class="small-text text-muted">Complete tasks to boost rank</p>
+            </div>
+
+            <div class="section-header">
+                <h3><i class="fas fa-tv text-gold"></i> Watch & Earn</h3>
+                <span class="tag">500 Coins</span>
+            </div>
+            <div class="ad-grid">
+                <div class="glass-card ad-card" onclick="watchAd(1)">
+                    <div class="ad-icon"><i class="fas fa-play"></i></div>
+                    <span>Ad Server 1</span>
+                </div>
+                <div class="glass-card ad-card" onclick="watchAd(2)">
+                    <div class="ad-icon"><i class="fas fa-play"></i></div>
+                    <span>Ad Server 2</span>
+                </div>
+            </div>
+
+            <div class="section-header mt-20">
+                <h3><i class="fab fa-telegram text-blue"></i> Premium Channels</h3>
+                <span class="tag">1000 Coins</span>
+            </div>
+            <div id="channel-list" class="channel-grid">
+                </div>
+        </section>
+
+        <section id="tab-games" class="fade-in hidden">
+            <div class="section-header">
+                <h3><i class="fas fa-gamepad text-purple"></i> Game Zone</h3>
+                <span class="tag">Play & Earn</span>
+            </div>
+            
+            <div class="games-grid">
+                <div class="game-card" onclick="launchGame('Subway Surfers', 'https://html5.gamedistribution.com/rvvASMiM/index.html')">
+                    <img src="https://img.gamedistribution.com/rvvASMiM/512x512.jpg" alt="Subway">
+                    <div class="game-info">
+                        <h4>Subway Run</h4>
+                        <span class="reward-tag">+100 Coins</span>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="launchGame('Temple Run', 'https://html5.gamedistribution.com/6817/index.html')">
+                    <img src="https://img.gamedistribution.com/6817/512x512.jpg" alt="Temple">
+                    <div class="game-info">
+                        <h4>Tomb Runner</h4>
+                        <span class="reward-tag">+100 Coins</span>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="launchGame('Ludo', 'https://html5.gamedistribution.com/5d2d480922834b6e9273574221c54848/')">
+                    <img src="https://img.gamedistribution.com/5d2d480922834b6e9273574221c54848/512x512.jpeg" alt="Ludo">
+                    <div class="game-info">
+                        <h4>Ludo Legend</h4>
+                        <span class="reward-tag">+100 Coins</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-oracle" class="fade-in hidden">
+            
+            <div class="glass-card mb-20">
+                <div class="section-title"><i class="fas fa-file-pdf text-red"></i> Premium CV Builder</div>
+                <p class="small-text">Create a professional ATS-friendly resume.</p>
+                <button class="btn-primary mt-10 w-100" onclick="openCVModal()">Build CV (10k Coins)</button>
+            </div>
+
+            <div class="section-header">
+                <h3><i class="fas fa-magic text-gold"></i> AI Oracle</h3>
+            </div>
+
+            <div class="oracle-grid">
+                <div class="glass-card tool-card" onclick="openOracle('love')">
+                    <i class="fas fa-heart text-red"></i>
+                    <span>Love Calc</span>
+                </div>
+                <div class="glass-card tool-card" onclick="openOracle('marry')">
+                    <i class="fas fa-ring text-gold"></i>
+                    <span>Marriage?</span>
+                </div>
+                <div class="glass-card tool-card" onclick="openOracle('career')">
+                    <i class="fas fa-briefcase text-blue"></i>
+                    <span>Career '26</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-profile" class="fade-in hidden">
+            
+            <div class="profile-header glass-card">
+                <div class="profile-top">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="large-pfp">
+                    <div class="profile-info">
+                        <h2 id="profile-name">User Name</h2>
+                        <span class="rank-chip">Current Rank: #<span id="profile-rank">99</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wallet-card glass-card">
+                <div class="wallet-header">
+                    <span><i class="fas fa-wallet"></i> Total Balance</span>
+                </div>
+                <div class="wallet-balance">
+                    <h1 id="wallet-coins">0</h1>
+                    <span class="currency">Coins</span>
+                </div>
+                <div class="wallet-value">
+                    ≈ ₹<span id="wallet-fiat">0.00</span> INR
+                </div>
+                
+                <div class="withdraw-section">
+                    <input type="text" id="upi-id" class="glass-input" placeholder="Enter UPI ID (e.g. name@okhdfcbank)">
+                    <button class="btn-success w-100 mt-10" onclick="attemptWithdraw()">
+                        Request Withdrawal <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <p class="legal-text mt-10" id="withdraw-msg">*Rank 1-10: Instant. Others: Month End.</p>
+                </div>
+            </div>
+
+            <div class="glass-card mt-20">
+                <div class="section-title space-between">
+                    <span><i class="fas fa-trophy text-gold"></i> Leaderboard</span>
+                    <span class="timer" id="reset-timer">14:00:00</span>
+                </div>
+                <div id="leaderboard-list">
+                    </div>
+            </div>
+
+            <div class="glass-card mt-20">
+                <div class="section-title">Refer & Earn</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="referral-progress" style="width: 0%"></div>
+                </div>
+                <p class="small-text mt-5">Invite friends to unlock tiers!</p>
+                <div class="referral-link-box" onclick="copyReferral()">
+                    <span id="my-ref-link">t.me/bot?start=123</span>
+                    <i class="fas fa-copy"></i>
+                </div>
+            </div>
+
+            <div class="legal-links mt-20">
+                <span onclick="showLegal('Terms')">Terms</span> • 
+                <span onclick="showLegal('Privacy')">Privacy</span> • 
+                <span onclick="showLegal('Contact')">Contact</span>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="bottom-nav glass-nav">
+        <div class="nav-item active" onclick="switchTab('hub')">
+            <i class="fas fa-home"></i>
+            <span>Hub</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('games')">
+            <i class="fas fa-gamepad"></i>
+            <span>Games</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('oracle')">
+            <i class="fas fa-crystal-ball"></i>
+            <span>Oracle</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile')">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </div>
+    </nav>
+
+    <div id="game-overlay" class="hidden">
+        <button class="close-game-btn" onclick="closeGame()">Exit Game</button>
+        <iframe id="game-frame" src="" frameborder="0"></iframe>
+    </div>
+
+    <div id="cv-modal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <h3>Professional CV</h3>
+            <p class="text-gold">Cost: 10,000 Coins</p>
+            <input type="text" id="cv-name" placeholder="Full Name" class="glass-input">
+            <input type="text" id="cv-email" placeholder="Email" class="glass-input">
+            <textarea id="cv-skills" placeholder="Skills (comma separated)" class="glass-input"></textarea>
+            <textarea id="cv-edu" placeholder="Education" class="glass-input"></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeCVModal()">Cancel</button>
+                <button class="btn-primary" onclick="generateCV()">Generate PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="oracle-modal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <h3>Enter Details</h3>
+            <input type="text" id="oracle-name" placeholder="Your Name" class="glass-input">
+            <input type="file" id="oracle-photo" class="glass-input" accept="image/*">
+            <button class="btn-primary w-100" onclick="generateOracleResult()">Reveal Destiny</button>
+            <button class="btn-cancel w-100 mt-10" onclick="document.getElementById('oracle-modal').classList.add('hidden')">Close</button>
+        </div>
+    </div>
+
+    <div id="oracle-capture-area" class="hidden">
+        <div class="watermark-card">
+            <img id="capture-img" src="" class="capture-pfp">
+            <h2 id="capture-title">CAREER 2026</h2>
+            <h1 id="capture-result" class="text-gold">CEO of Google</h1>
+            <p id="capture-name">Name: User</p>
+            <div class="watermark">@PersonalGrowth_Bot</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
