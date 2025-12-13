@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Growth Super App</title>
+    <title>Growth Hub</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <script type="module" src="{{ url_for('static', filename='js/script.js') }}"></script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -35,11 +35,11 @@
     <main id="main-content">
         <section id="tab-hub" class="active-section fade-in">
             <div class="glass-card mb-20">
-                <div class="section-title"><i class="fas fa-fire"></i> Daily Goals</div>
+                <div class="section-title"><i class="fas fa-fire"></i> Your Progress</div>
                 <div class="progress-bar-bg">
                     <div id="daily-progress" class="progress-fill" style="width: 0%;"></div>
                 </div>
-                <p class="small-text text-muted" style="margin-top:5px;">Complete tasks to boost rank</p>
+                <p class="small-text text-muted mt-5">Referral Tier: <span id="ref-tier">Starter</span></p>
             </div>
 
             <div class="section-header">
@@ -47,13 +47,13 @@
                 <span class="tag">500 Coins</span>
             </div>
             <div class="ad-grid">
-                <div class="glass-card ad-card" onclick="watchAd(1)">
+                <div class="glass-card ad-card" id="btn-ad-1">
                     <div class="ad-icon"><i class="fas fa-play"></i></div>
-                    <span>Ad Server 1</span>
+                    <span>Server 1</span>
                 </div>
-                <div class="glass-card ad-card" onclick="watchAd(2)">
+                <div class="glass-card ad-card" id="btn-ad-2">
                     <div class="ad-icon"><i class="fas fa-play"></i></div>
-                    <span>Ad Server 2</span>
+                    <span>Server 2</span>
                 </div>
             </div>
 
@@ -67,43 +67,29 @@
         <section id="tab-games" class="fade-in hidden">
             <div class="section-header">
                 <h3><i class="fas fa-gamepad text-purple"></i> Game Zone</h3>
-                <span class="tag">Play & Earn</span>
+                <span class="tag">Ad Boost</span>
             </div>
             <div class="games-grid">
-                <div class="game-card" onclick="launchGame('Subway Surfers', 'https://html5.gamedistribution.com/rvvASMiM/index.html')">
+                <div class="game-card" id="game-subway">
                     <img src="https://img.gamedistribution.com/rvvASMiM/512x512.jpg">
                     <div class="game-info"><h4>Subway Run</h4><span class="reward-tag">+100 Coins</span></div>
                 </div>
-                <div class="game-card" onclick="launchGame('Temple Run', 'https://html5.gamedistribution.com/6817/index.html')">
+                <div class="game-card" id="game-temple">
                     <img src="https://img.gamedistribution.com/6817/512x512.jpg">
                     <div class="game-info"><h4>Tomb Runner</h4><span class="reward-tag">+100 Coins</span></div>
                 </div>
-                <div class="game-card" onclick="launchGame('Ludo', 'https://html5.gamedistribution.com/5d2d480922834b6e9273574221c54848/')">
+                <div class="game-card" id="game-ludo">
                     <img src="https://img.gamedistribution.com/5d2d480922834b6e9273574221c54848/512x512.jpeg">
                     <div class="game-info"><h4>Ludo Legend</h4><span class="reward-tag">+100 Coins</span></div>
                 </div>
             </div>
         </section>
 
-        <section id="tab-oracle" class="fade-in hidden">
-            <div class="glass-card mb-20">
-                <div class="section-title"><i class="fas fa-file-pdf text-red"></i> CV Builder</div>
-                <p class="small-text text-muted">Create professional resume.</p>
-                <button class="btn-primary mt-10 w-100" onclick="openCVModal()">Build CV (10k Coins)</button>
-            </div>
-            <div class="section-header"><h3><i class="fas fa-magic text-gold"></i> AI Oracle</h3></div>
-            <div class="oracle-grid">
-                <div class="glass-card tool-card" onclick="openOracle('love')"><i class="fas fa-heart text-red"></i><span>Love Calc</span></div>
-                <div class="glass-card tool-card" onclick="openOracle('marry')"><i class="fas fa-ring text-gold"></i><span>Marriage</span></div>
-                <div class="glass-card tool-card" onclick="openOracle('career')"><i class="fas fa-briefcase text-blue"></i><span>Career '26</span></div>
-            </div>
-        </section>
-
         <section id="tab-profile" class="fade-in hidden">
-            <div class="profile-header glass-card" style="text-align:center;">
+            <div class="profile-header glass-card center-text">
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="large-pfp">
                 <h2 id="profile-name">User</h2>
-                <span class="rank-badge">Rank: #<span id="profile-rank">99</span></span>
+                <span class="rank-badge">Global Rank: #<span id="profile-rank">999</span></span>
             </div>
             
             <div class="wallet-card glass-card">
@@ -111,75 +97,38 @@
                 <h1 id="wallet-coins">0</h1>
                 <p>≈ ₹<span id="wallet-fiat">0.00</span> INR</p>
                 <input type="text" id="upi-id" class="glass-input" placeholder="Enter UPI ID">
-                <button class="btn-success w-100 mt-10" onclick="attemptWithdraw()">Withdraw</button>
+                <button class="btn-success w-100 mt-10" id="btn-withdraw">Withdraw</button>
                 <p id="withdraw-msg" class="small-text mt-10"></p>
             </div>
 
             <div class="glass-card mt-20">
-                <div class="section-title" style="display:flex; justify-content:space-between;">
-                    <span>Leaderboard</span> <span class="text-gold" id="reset-timer">14:00:00</span>
+                <div class="section-title flex-between">
+                    <span><i class="fas fa-trophy text-gold"></i> Top 100 Leaderboard</span>
                 </div>
-                <div id="leaderboard-list"></div>
+                <div id="leaderboard-list">Loading...</div>
             </div>
 
             <div class="glass-card mt-20">
-                <div class="section-title">Refer & Earn</div>
-                <div class="progress-bar-bg"><div id="referral-progress" class="progress-fill" style="width:0%"></div></div>
-                <div class="glass-input mt-10" onclick="copyReferral()" style="cursor:pointer; display:flex; justify-content:space-between;">
+                <div class="section-title">Referral Link</div>
+                <div class="glass-input mt-10 flex-between pointer" id="btn-copy-ref">
                     <span id="my-ref-link">Generating...</span> <i class="fas fa-copy"></i>
                 </div>
+                <p class="small-text mt-5">Share to earn up to 6000 Coins!</p>
             </div>
         </section>
     </main>
 
     <nav class="glass-nav">
-        <div class="nav-item active" onclick="switchTab('hub')"><i class="fas fa-home"></i><span>Hub</span></div>
-        <div class="nav-item" onclick="switchTab('games')"><i class="fas fa-gamepad"></i><span>Games</span></div>
-        <div class="nav-item" onclick="switchTab('oracle')"><i class="fas fa-crystal-ball"></i><span>Oracle</span></div>
-        <div class="nav-item" onclick="switchTab('profile')"><i class="fas fa-user"></i><span>Profile</span></div>
+        <div class="nav-item active" id="nav-hub"><i class="fas fa-home"></i><span>Hub</span></div>
+        <div class="nav-item" id="nav-games"><i class="fas fa-gamepad"></i><span>Games</span></div>
+        <div class="nav-item" id="nav-profile"><i class="fas fa-user"></i><span>Profile</span></div>
     </nav>
 
     <div id="game-overlay" class="hidden">
-        <button class="close-game-btn" onclick="closeGame()">Exit Game</button>
+        <button class="close-game-btn" id="btn-close-game">Exit Game</button>
         <iframe id="game-frame" src="" frameborder="0"></iframe>
     </div>
 
-    <div id="cv-modal" class="modal hidden">
-        <div class="modal-content glass-card">
-            <h3>Professional CV</h3>
-            <p class="text-gold small-text">Cost: 10,000 Coins</p>
-            <input type="text" id="cv-name" placeholder="Full Name" class="glass-input">
-            <input type="text" id="cv-email" placeholder="Email" class="glass-input">
-            <textarea id="cv-skills" placeholder="Skills" class="glass-input"></textarea>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-cancel w-100" onclick="document.getElementById('cv-modal').classList.add('hidden')">Cancel</button>
-                <button class="btn-primary w-100" onclick="generateCV()">Generate</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="oracle-modal" class="modal hidden">
-        <div class="modal-content glass-card">
-            <h3>Enter Details</h3>
-            <input type="text" id="oracle-name" placeholder="Your Name" class="glass-input">
-            <input type="file" id="oracle-photo" class="glass-input" accept="image/*">
-            <button class="btn-primary w-100" onclick="generateOracleResult()">Reveal Destiny</button>
-            <button class="btn-cancel w-100 mt-10" onclick="document.getElementById('oracle-modal').classList.add('hidden')">Close</button>
-        </div>
-    </div>
-
-    <div id="oracle-capture-area">
-        <div class="watermark-card">
-            <img id="capture-img" src="" class="capture-pfp">
-            <h2 id="capture-title">CAREER 2026</h2>
-            <h1 id="capture-result" class="text-gold">CEO</h1>
-            <p id="capture-name">Name: User</p>
-            <div class="watermark">@PersonalGrowth_Bot</div>
-        </div>
-    </div>
-
-    <script>const adLink = "{{ ad_link }}";</script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>const AD_LINK = "{{ ad_link }}";</script>
 </body>
 </html>
-
