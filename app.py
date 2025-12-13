@@ -1,4 +1,3 @@
-
 import os
 import threading
 import signal
@@ -33,19 +32,89 @@ HTML_TEMPLATE = """
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --gold: #fbbf24; --green: #22c55e; --red: #ef4444; --blue: #3b82f6; --purple: #8b5cf6; }
-        body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; padding-bottom: 90px; text-align: center; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; margin: 0; padding: 0; padding-bottom: 90px; text-align: center; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        /* HEADER & ECONOMY */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .user-info { text-align: left; }
-        .user-name { font-weight: 800; font-size: 16px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .coin-box { background: linear-gradient(135deg, #FFD700, #B8860B); color: #000; padding: 5px 12px; border-radius: 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 5px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); animation: pulse 2s infinite; cursor: pointer; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* --- 1. NEW NAVBAR CSS --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #0B1120; /* Dark Blue */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            background: linear-gradient(90deg, #6C63FF, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .coin-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .coin-badge:active { transform: scale(0.95); }
+        .coin-icon { font-size: 16px; }
+        
+        .coin-count {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #FFD700;
+        }
+
+        .plus-icon {
+            background: #FFD700;
+            color: #000;
+            font-size: 10px;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+
+        .menu-icon svg {
+            width: 28px;
+            height: 28px;
+            color: #ffffff;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        /* --- REST OF THE CSS --- */
+        .container { padding: 15px; }
 
         /* PROGRESS BAR */
-        .progress-wrapper { background: #334155; height: 6px; border-radius: 10px; margin-bottom: 5px; position: relative; overflow: hidden; }
+        .progress-wrapper { background: #334155; height: 6px; border-radius: 10px; margin: 15px 15px 5px 15px; position: relative; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--green); width: 0%; transition: 1s; }
-        .progress-text { font-size: 10px; color: #94a3b8; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .progress-text { font-size: 10px; color: #94a3b8; margin: 0 15px 20px 15px; display: flex; justify-content: space-between; }
 
         /* TABS */
         .nav-tabs { display: flex; justify-content: center; gap: 8px; margin: 20px 0; background: #000; padding: 6px; border-radius: 50px; border: 1px solid #333; }
@@ -104,189 +173,207 @@ HTML_TEMPLATE = """
 </head>
 <body>
 
-    <div class="floating-gift" onclick="openBonusGift()"></div>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-text">Personal Growth</span>
+        </div>
 
-    <div class="top-bar">
-        <div class="user-info">
-            <div class="user-name" id="userNameDisplay">Hi, Future Star</div>
-            <div style="font-size: 10px; color: #aaa;">Let's grow today!</div>
+        <div class="nav-actions">
+            <div class="coin-badge" onclick="showEarnModal()">
+                <span class="coin-icon">🪙</span>
+                <span class="coin-count" id="userCoins">0</span>
+                <div class="plus-icon">+</div>
+            </div>
+
+            <div class="menu-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
-        <div class="coin-box" onclick="showEarnModal()">
-            <span>🪙</span> <span id="coinBalance">0</span>
-        </div>
+    </nav>
+
+    <div style="margin-top: 10px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center;">
+        <div id="userNameDisplay" style="color: #aaa; font-size: 14px;">Hi, User</div>
+        <div style="color:var(--green); font-size: 12px; font-weight:bold;">● Online</div>
     </div>
 
-    <div class="progress-wrapper"><div class="progress-fill" id="dailyProg"></div></div>
-    <div class="progress-text">
-        <span>Daily Task: <span id="taskPct">0%</span></span>
-        <span id="badge" style="color:var(--gold); display:none;">🏆 PRO USER</span>
-    </div>
+    <div class="container">
 
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('home')">🏠 Hub</button>
-        <button class="tab-btn" onclick="switchTab('games')">🎮 Games</button>
-        <button class="tab-btn" onclick="switchTab('oracle')">🔮 Oracle</button>
-    </div>
+        <div class="floating-gift" onclick="openBonusGift()"></div>
 
-    <div id="home" class="section active">
-        
-        <div id="wordModal" class="modal-overlay">
-            <div class="modal-box" style="border-color: var(--green);">
-                <span class="close-btn" onclick="closeModal('wordModal')">&times;</span>
-                <h3>📖 Word of the Day</h3>
-                <h1 style="color: var(--green); margin: 10px 0;">TENACITY</h1>
-                <p style="font-size: 12px; color: #ccc;">(Noun) The quality of being very determined.</p>
-                <button class="btn-main" onclick="closeModal('wordModal'); addCoins(20);">✅ I Learned This (+20 Coins)</button>
-            </div>
+        <div class="progress-wrapper"><div class="progress-fill" id="dailyProg"></div></div>
+        <div class="progress-text">
+            <span>Daily Task: <span id="taskPct">0%</span></span>
+            <span id="badge" style="color:var(--gold); display:none;">🏆 PRO USER</span>
         </div>
 
-        <div class="ad-banner">
-            <script type="text/javascript">
-                atOptions = { 'key' : '0ec2eb9dc0e01b5f1b456f0f1e577f22', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
-            </script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/0ec2eb9dc0e01b5f1b456f0f1e577f22/invoke.js"></script>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('home')">🏠 Hub</button>
+            <button class="tab-btn" onclick="switchTab('games')">🎮 Games</button>
+            <button class="tab-btn" onclick="switchTab('oracle')">🔮 Oracle</button>
         </div>
 
-        <div class="group-title">🛠️ VIRAL TOOLS</div>
-        <div class="tools-grid">
-            <div class="tool-card" onclick="openResumeBuilder()">
-                <div class="hot-tag">HOT</div>
-                <div class="tool-icon">📄</div>
-                <div class="tool-name">CV Builder</div>
-            </div>
-            <div class="tool-card" onclick="tg.showAlert('Govt Scheme Checker: Coming Soon!')">
-                <div class="tool-icon">🏛️</div>
-                <div class="tool-name">Scheme Check</div>
-            </div>
-        </div>
-
-        <div class="group-title">🔒 PREMIUM (5000 Coins)</div>
-        <div class="link-row" onclick="unlockContent(5000, 'https://t.me/UPSC_Notes_Official')">
-            <span>📚 UPSC Notes PDF</span> <span>🔒</span>
-        </div>
-        <div class="link-row" onclick="unlockContent(5000, 'https://t.me/IAS_PrepQuiz_Zone')">
-            <span>🧠 IAS Secret Strategy</span> <span>🔒</span>
-        </div>
-
-        <div class="group-title">🔓 FREE RESOURCES</div>
-        <div class="link-row" onclick="openLink('https://t.me/The_EnglishRoom5')"><span>🇬🇧 English Hub</span> <span>➔</span></div>
-        <div class="link-row" onclick="openLink('https://t.me/PersonalFinanceWithShiv')"><span>💰 Finance Tips</span> <span>➔</span></div>
-
-        <div class="native-ad-container">
-            <div style="font-size:10px; color:#666; margin-bottom:5px;">SPONSORED</div>
-            <script async="async" data-cfasync="false" src="https://pl28245447.effectivegatecpm.com/8ca532b1ecc871c8269845a5294e401b/invoke.js"></script>
-            <div id="container-8ca532b1ecc871c8269845a5294e401b"></div>
-        </div>
-    </div>
-
-    <div id="games" class="section">
-        <div style="background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--gold); font-size:11px;">
-            🎮 Play & Earn <b>+500 Coins</b> per session!
-        </div>
-
-        <div class="game-grid">
-            <div class="game-card" onclick="playAndEarn('Subway Surfers', 'https://poki.com/en/g/subway-surfers')">
-                <div class="tournament-badge">🏆 LIVE</div>
-                <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Subway_Surfers_App_Icon.png">
-                <div class="earn-badge">EARN +500</div>
-            </div>
-            <div class="game-card" onclick="playAndEarn('Temple Run', 'https://poki.com/en/g/temple-run-2')">
-                <img src="https://upload.wikimedia.org/wikipedia/en/6/69/Temple_Run_2_icon.jpg">
-                <div class="earn-badge">EARN +500</div>
-            </div>
-            <div class="game-card" onclick="playAndEarn('Candy Saga', 'https://poki.com/en/g/sweet-world')">
-                <img src="https://upload.wikimedia.org/wikipedia/en/2/22/Candy_Crush_Saga_Icon.png">
-                <div class="earn-badge">EARN +500</div>
-            </div>
-            <div class="game-card" onclick="playAndEarn('Ludo Hero', 'https://poki.com/en/g/ludo-hero')">
-                <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Ludo_King_logo.png">
-                <div class="earn-badge">EARN +500</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="oracle" class="section">
-        <div class="group-title">VIRAL PREDICTIONS</div>
-        
-        <button class="viral-btn" onclick="openCalc('love')">
-            <span>❤️ Love Calculator</span> <span>👉</span>
-        </button>
-        <button class="viral-btn" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);" onclick="openCalc('marriage')">
-            <span>💍 When will I Marry?</span> <span>👉</span>
-        </button>
-        
-        <div id="oracleInput" style="margin-top:20px;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🔮</div>
-            <h3>2030 Career Prediction</h3>
-            <p style="font-size:11px; color:#aaa; margin-bottom:15px;">AI Neural Scan for Future Job</p>
-            <input type="text" id="userNameInput" class="input-glass" placeholder="Your Name">
-            <button class="btn-main" onclick="predictFuture()">✨ Reveal My Future</button>
-        </div>
-
-        <div id="oracleResult" style="display:none;">
-            <div id="captureArea" class="result-container">
-                <img src="" class="res-img" id="careerIcon">
-                <div style="font-size:10px; color:#aaa; margin-bottom:5px;">OFFICIAL PREDICTION</div>
-                <h1 class="res-title" id="careerResult">IAS OFFICER</h1>
-                <p style="font-size:12px; color:#ccc;" id="careerDesc">...</p>
-                <div style="background:#333; color:white; padding:5px; border-radius:5px; font-size:10px; display:inline-block; margin-top:10px;">
-                    Name: <span id="resName" style="color:var(--gold);">User</span>
+        <div id="home" class="section active">
+            
+            <div id="wordModal" class="modal-overlay">
+                <div class="modal-box" style="border-color: var(--green);">
+                    <span class="close-btn" onclick="closeModal('wordModal')">&times;</span>
+                    <h3>📖 Word of the Day</h3>
+                    <h1 style="color: var(--green); margin: 10px 0;">TENACITY</h1>
+                    <p style="font-size: 12px; color: #ccc;">(Noun) The quality of being very determined.</p>
+                    <button class="btn-main" onclick="closeModal('wordModal'); addCoins(20);">✅ I Learned This (+20 Coins)</button>
                 </div>
-                <div class="watermark">Verified by @PersonalGrowth24_Bot</div>
             </div>
 
-            <button class="btn-download" onclick="downloadImage()">
-                <span>📥</span> Download Photo (HD)
+            <div class="ad-banner">
+                <script type="text/javascript">
+                    atOptions = { 'key' : '0ec2eb9dc0e01b5f1b456f0f1e577f22', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+                </script>
+                <script type="text/javascript" src="https://www.highperformanceformat.com/0ec2eb9dc0e01b5f1b456f0f1e577f22/invoke.js"></script>
+            </div>
+
+            <div class="group-title">🛠️ VIRAL TOOLS</div>
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openResumeBuilder()">
+                    <div class="hot-tag">HOT</div>
+                    <div class="tool-icon">📄</div>
+                    <div class="tool-name">CV Builder</div>
+                </div>
+                <div class="tool-card" onclick="tg.showAlert('Govt Scheme Checker: Coming Soon!')">
+                    <div class="tool-icon">🏛️</div>
+                    <div class="tool-name">Scheme Check</div>
+                </div>
+            </div>
+
+            <div class="group-title">🔒 PREMIUM (5000 Coins)</div>
+            <div class="link-row" onclick="unlockContent(5000, 'https://t.me/UPSC_Notes_Official')">
+                <span>📚 UPSC Notes PDF</span> <span>🔒</span>
+            </div>
+            <div class="link-row" onclick="unlockContent(5000, 'https://t.me/IAS_PrepQuiz_Zone')">
+                <span>🧠 IAS Secret Strategy</span> <span>🔒</span>
+            </div>
+
+            <div class="group-title">🔓 FREE RESOURCES</div>
+            <div class="link-row" onclick="openLink('https://t.me/The_EnglishRoom5')"><span>🇬🇧 English Hub</span> <span>➔</span></div>
+            <div class="link-row" onclick="openLink('https://t.me/PersonalFinanceWithShiv')"><span>💰 Finance Tips</span> <span>➔</span></div>
+
+            <div class="native-ad-container">
+                <div style="font-size:10px; color:#666; margin-bottom:5px;">SPONSORED</div>
+                <script async="async" data-cfasync="false" src="https://pl28245447.effectivegatecpm.com/8ca532b1ecc871c8269845a5294e401b/invoke.js"></script>
+                <div id="container-8ca532b1ecc871c8269845a5294e401b"></div>
+            </div>
+        </div>
+
+        <div id="games" class="section">
+            <div style="background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--gold); font-size:11px;">
+                🎮 Play & Earn <b>+500 Coins</b> per session!
+            </div>
+
+            <div class="game-grid">
+                <div class="game-card" onclick="playAndEarn('Subway Surfers', 'https://poki.com/en/g/subway-surfers')">
+                    <div class="tournament-badge">🏆 LIVE</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Subway_Surfers_App_Icon.png">
+                    <div class="earn-badge">EARN +500</div>
+                </div>
+                <div class="game-card" onclick="playAndEarn('Temple Run', 'https://poki.com/en/g/temple-run-2')">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/6/69/Temple_Run_2_icon.jpg">
+                    <div class="earn-badge">EARN +500</div>
+                </div>
+                <div class="game-card" onclick="playAndEarn('Candy Saga', 'https://poki.com/en/g/sweet-world')">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/2/22/Candy_Crush_Saga_Icon.png">
+                    <div class="earn-badge">EARN +500</div>
+                </div>
+                <div class="game-card" onclick="playAndEarn('Ludo Hero', 'https://poki.com/en/g/ludo-hero')">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/8/82/Ludo_King_logo.png">
+                    <div class="earn-badge">EARN +500</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="oracle" class="section">
+            <div class="group-title">VIRAL PREDICTIONS</div>
+            
+            <button class="viral-btn" onclick="openCalc('love')">
+                <span>❤️ Love Calculator</span> <span>👉</span>
             </button>
-            <button class="btn-main" style="background:#333; margin-top:5px;" onclick="location.reload()">🔄 Check Again</button>
-        </div>
-    </div>
+            <button class="viral-btn" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);" onclick="openCalc('marriage')">
+                <span>💍 When will I Marry?</span> <span>👉</span>
+            </button>
+            
+            <div id="oracleInput" style="margin-top:20px;">
+                <div style="font-size: 40px; margin-bottom: 10px;">🔮</div>
+                <h3>2030 Career Prediction</h3>
+                <p style="font-size:11px; color:#aaa; margin-bottom:15px;">AI Neural Scan for Future Job</p>
+                <input type="text" id="userNameInput" class="input-glass" placeholder="Your Name">
+                <button class="btn-main" onclick="predictFuture()">✨ Reveal My Future</button>
+            </div>
 
-    <div id="resumeModal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeModal('resumeModal')">&times;</span>
-            <h3>📄 Create Professional CV</h3>
-            <input type="text" id="cvName" class="input-glass" placeholder="Full Name">
-            <input type="text" id="cvSkill" class="input-glass" placeholder="Key Skills (e.g. Python)">
-            <button class="btn-main" onclick="generateCV()">✨ Generate PDF</button>
-        </div>
-    </div>
+            <div id="oracleResult" style="display:none;">
+                <div id="captureArea" class="result-container">
+                    <img src="" class="res-img" id="careerIcon">
+                    <div style="font-size:10px; color:#aaa; margin-bottom:5px;">OFFICIAL PREDICTION</div>
+                    <h1 class="res-title" id="careerResult">IAS OFFICER</h1>
+                    <p style="font-size:12px; color:#ccc;" id="careerDesc">...</p>
+                    <div style="background:#333; color:white; padding:5px; border-radius:5px; font-size:10px; display:inline-block; margin-top:10px;">
+                        Name: <span id="resName" style="color:var(--gold);">User</span>
+                    </div>
+                    <div class="watermark">Verified by @PersonalGrowth24_Bot</div>
+                </div>
 
-    <div id="calcModal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeModal('calcModal')">&times;</span>
-            <h3 id="calcTitle">Calculator</h3>
-            <input type="text" id="p1Name" class="input-glass" placeholder="Your Name">
-            <input type="text" id="p2Name" class="input-glass" placeholder="Partner Name (Optional)">
-            <button class="btn-main" style="background:var(--purple);" onclick="calculateResult()">🔮 Reveal Destiny</button>
+                <button class="btn-download" onclick="downloadImage()">
+                    <span>📥</span> Download Photo (HD)
+                </button>
+                <button class="btn-main" style="background:#333; margin-top:5px;" onclick="location.reload()">🔄 Check Again</button>
+            </div>
         </div>
-    </div>
 
-    <div id="noCoinModal" class="modal-overlay">
-        <div class="modal-box">
-            <div style="font-size:40px;">🚫</div>
-            <h3 style="color:var(--red);">Insufficient Coins!</h3>
-            <p style="font-size:12px; color:#ccc;">You need <b>5,000 Coins</b> to unlock this premium content.</p>
-            <hr style="border:1px solid #333; margin:15px 0;">
-            <button class="btn-main" style="background:var(--gold); color:black;" onclick="watchAdReward()">📺 Watch Ad (+1000 Coins)</button>
+        <div id="resumeModal" class="modal-overlay">
+            <div class="modal-box">
+                <span class="close-btn" onclick="closeModal('resumeModal')">&times;</span>
+                <h3>📄 Create Professional CV</h3>
+                <input type="text" id="cvName" class="input-glass" placeholder="Full Name">
+                <input type="text" id="cvSkill" class="input-glass" placeholder="Key Skills (e.g. Python)">
+                <button class="btn-main" onclick="generateCV()">✨ Generate PDF</button>
+            </div>
         </div>
-    </div>
 
-    <div id="resultModal" class="modal-overlay">
-        <div class="modal-box">
-             <span class="close-btn" onclick="closeModal('resultModal')">&times;</span>
-             <h2 id="finalResTitle">Result</h2>
-             <h1 id="finalResVal" style="color:var(--gold);">99%</h1>
-             <p style="font-size:11px; color:#aaa;">Screenshot & Share!</p>
+        <div id="calcModal" class="modal-overlay">
+            <div class="modal-box">
+                <span class="close-btn" onclick="closeModal('calcModal')">&times;</span>
+                <h3 id="calcTitle">Calculator</h3>
+                <input type="text" id="p1Name" class="input-glass" placeholder="Your Name">
+                <input type="text" id="p2Name" class="input-glass" placeholder="Partner Name (Optional)">
+                <button class="btn-main" style="background:var(--purple);" onclick="calculateResult()">🔮 Reveal Destiny</button>
+            </div>
         </div>
-    </div>
 
-    <script type="text/javascript" src="https://pl28245444.effectivegatecpm.com/50/d7/2c/50d72c91dd048c42dae784892264442e.js"></script>
+        <div id="noCoinModal" class="modal-overlay">
+            <div class="modal-box">
+                <span class="close-btn" onclick="closeModal('noCoinModal')">&times;</span>
+                <div style="font-size:40px;">💰</div>
+                <h3 style="color:var(--gold);">Earn Coins</h3>
+                <p style="font-size:12px; color:#ccc;">Get coins to unlock Premium Notes.</p>
+                <hr style="border:1px solid #333; margin:15px 0;">
+                <button class="btn-main" style="background:var(--gold); color:black;" onclick="watchAdReward()">📺 Watch Ad (+1000 Coins)</button>
+            </div>
+        </div>
+
+        <div id="resultModal" class="modal-overlay">
+            <div class="modal-box">
+                 <span class="close-btn" onclick="closeModal('resultModal')">&times;</span>
+                 <h2 id="finalResTitle">Result</h2>
+                 <h1 id="finalResVal" style="color:var(--gold);">99%</h1>
+                 <p style="font-size:11px; color:#aaa;">Screenshot & Share!</p>
+            </div>
+        </div>
+
+    </div> <script type="text/javascript" src="https://pl28245444.effectivegatecpm.com/50/d7/2c/50d72c91dd048c42dae784892264442e.js"></script>
 
     <script>
         const tg = Telegram.WebApp;
         tg.ready(); tg.expand();
-        tg.setHeaderColor('#0f172a'); tg.setBackgroundColor('#0f172a');
+        tg.setHeaderColor('#0B1120'); tg.setBackgroundColor('#0B1120'); // Changed header color to match Navbar
 
         const adLink = "{{ ad_link }}";
         const user = tg.initDataUnsafe.user;
@@ -294,32 +381,44 @@ HTML_TEMPLATE = """
         let tasks = parseInt(localStorage.getItem('daily_tasks')) || 0;
 
         // Init
-        document.getElementById('userNameDisplay').innerText = user ? "Hi, " + user.first_name : "Hi, Future Star";
-        updateBalance();
+        document.getElementById('userNameDisplay').innerText = user ? "Hi, " + user.first_name : "Hi, User";
+        updateCoinsDisplay(); // Updated Function Call
         updateProgress(0);
         setTimeout(() => document.getElementById('wordModal').style.display = 'flex', 2000);
 
         // --- ECONOMY ---
-        function updateBalance() {
-            document.getElementById('coinBalance').innerText = coins.toLocaleString();
+        function updateCoinsDisplay() {
+            // Updated to use the new ID 'userCoins' from the Navbar
+            const coinElement = document.getElementById('userCoins');
+            coinElement.innerText = coins.toLocaleString();
             localStorage.setItem('user_coins', coins);
+            
+            // Animation for coin update
+            const badge = document.querySelector('.coin-badge');
+            badge.style.background = "rgba(255, 215, 0, 0.4)";
+            setTimeout(() => {
+                badge.style.background = "rgba(255, 215, 0, 0.1)";
+            }, 300);
         }
+
         function addCoins(amount) {
             coins += amount;
-            updateBalance();
-            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            updateCoinsDisplay();
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.1 } }); // Confetti from top
             tg.showPopup({ title: 'Coins Earned!', message: `You received ${amount} coins.` });
             updateProgress(33);
         }
+
         function unlockContent(cost, url) {
             if (coins >= cost) {
                 tg.showConfirm(`Unlock this for ${cost} Coins?`, (ok) => {
-                    if(ok) { coins -= cost; updateBalance(); tg.openLink(url); }
+                    if(ok) { coins -= cost; updateCoinsDisplay(); tg.openLink(url); }
                 });
             } else {
                 document.getElementById('noCoinModal').style.display = 'flex';
             }
         }
+
         function showEarnModal() { document.getElementById('noCoinModal').style.display = 'flex'; }
         
         // --- ADS ---
@@ -476,7 +575,6 @@ def main():
     threading.Thread(target=run_flask).start()
     
     print("Bot Started...")
-    # Signal Handler for Render
     signal.signal(signal.SIGINT, lambda s, f: os._exit(0))
     signal.signal(signal.SIGTERM, lambda s, f: os._exit(0))
     
@@ -487,3 +585,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
