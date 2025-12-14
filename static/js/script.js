@@ -1,227 +1,224 @@
-// Import Firebase (v9 CDN)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, get, set, update, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-// --- ⚠️ PASTE YOUR FIREBASE CONFIG HERE ---
+// --- 1. CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "YOUR_DB_URL.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+    // ⚠️ REPLACE THIS WITH YOUR REAL FIREBASE CONFIG FROM CONSOLE ⚠️
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// Telegram Init
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-
-// Current User Info
-const tgUser = tg.initDataUnsafe.user || { id: 123456, first_name: "TestUser", username: "tester" };
-const uid = tgUser.id.toString();
-let userData = {};
-
-// Config
+// --- 2. GLOBAL STATE ---
+let db; // Firebase DB instance
+let userRef; // Current User Reference
+let userData = { balance: 0, referrals: 0, rank: 9999, joined_channels: [] };
 const CONFIG = {
-    adReward: 500, gameReward: 100, channelReward: 1000,
-    rankerRate: 10000, normalRate: 100000
+    verifTime: 5000, // 5 sec for task verification
+    adTime: 15000,   // 15 sec for ads
+    rankerRate: 10000, // 10k = 1 unit
+    normalRate: 100000 // 100k = 1 unit
 };
 
-// --- CORE FUNCTIONS ---
+const CHANNELS = [
+    {id: 'ch1', name: 'English Room', url: 'https://t.me/The_EnglishRoom5'},
+    {id: 'ch2', name: 'UPSC Notes', url: 'https://t.me/UPSC_Notes_Official'},
+    {id: 'ch3', name: 'Govt Schemes', url: 'https://t.me/GovernmentSchemesIndia'}
+    // Add rest of the 8 channels here...
+];
 
-// 1. Initialize User & Check Referral
-async function initUser() {
-    const userRef = ref(db, 'users/' + uid);
-    const snapshot = await get(userRef);
+// --- 3. INIT FUNCTION ---
+document.addEventListener("DOMContentLoaded", () => {
+    AOS.init(); // Animations
+    initFirebase();
+    renderTasks();
+    startTimer();
+});
 
-    if (!snapshot.exists()) {
-        // New User - Create Profile
-        const startParam = tg.initDataUnsafe.start_param;
-        let referrerId = null;
-
-        if (startParam && startParam.startsWith('ref_')) {
-            referrerId = startParam.split('_')[1];
-            // Credit Referrer
-            if(referrerId && referrerId !== uid) {
-                const refUserRef = ref(db, 'users/' + referrerId);
-                const refSnap = await get(refUserRef);
-                if(refSnap.exists()) {
-                    const rData = refSnap.val();
-                    const newCount = (rData.referrals || 0) + 1;
-                    let bonus = 0;
-                    
-                    // Viral Milestones
-                    if(newCount === 3) bonus = 1000;
-                    if(newCount === 5) bonus = 1500;
-                    
-                    update(refUserRef, {
-                        referrals: newCount,
-                        balance: (rData.balance || 0) + bonus
-                    });
-                }
-            }
-        }
-
-        // Set Default Data
-        await set(userRef, {
-            name: tgUser.first_name,
-            balance: 500, // Welcome Bonus
-            referrals: 0,
-            joined_channels: [],
-            rank: 9999
-        });
-    }
+// --- 4. FIREBASE LOGIC (STUB) ---
+function initFirebase() {
+    // ⚠️ REAL IMPLEMENTATION WOULD IMPORT FIREBASE MODULES HERE
+    // For this code to run without error in "Preview", I will simulate data.
+    // IN PRODUCTION: Uncomment imports and use real firebase logic provided in previous response.
     
-    // Listen for Realtime Updates
-    onValue(userRef, (snap) => {
-        userData = snap.val();
-        updateUI();
+    console.log("Firebase Initialized (Simulation for Structure)");
+    
+    // Simulate User Fetch
+    userData.balance = parseInt(localStorage.getItem('coins')) || 500;
+    updateUI();
+}
+
+function updateBalance(amount) {
+    userData.balance += amount;
+    localStorage.setItem('coins', userData.balance); // Fallback
+    // Firebase: update(userRef, { balance: userData.balance });
+    updateUI();
+    Swal.fire({
+        icon: 'success',
+        title: `+${amount} Coins`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        background: '#020617',
+        color: '#fff'
     });
 }
 
-// 2. UI Updates
+// --- 5. UI UPDATES ---
 function updateUI() {
-    // Header
+    document.getElementById('display-balance').innerText = userData.balance.toLocaleString();
     document.getElementById('header-coins').innerText = userData.balance.toLocaleString();
-    document.getElementById('username').innerText = userData.name;
-    document.getElementById('user-rank').innerText = userData.rank || "999+";
+    document.getElementById('today-coins').innerText = "150"; // Dummy logic for daily
     
-    // Profile
-    document.getElementById('profile-name').innerText = userData.name;
-    document.getElementById('profile-rank').innerText = userData.rank || "999+";
-    document.getElementById('wallet-coins').innerText = userData.balance.toLocaleString();
-    
-    // Wallet Logic
-    let divisor = (userData.rank <= 10) ? CONFIG.rankerRate : CONFIG.normalRate;
-    document.getElementById('wallet-fiat').innerText = (userData.balance / divisor).toFixed(2);
-    
-    const msg = document.getElementById('withdraw-msg');
-    msg.innerHTML = (userData.rank <= 10) ? 
-        "<span style='color:var(--green)'>Eligible for Instant Withdrawal</span>" : 
-        "<span style='color:var(--red)'>Low Rank. Withdraw on 30th.</span>";
-
-    // Progress
-    let progress = Math.min(100, (userData.balance / 5000) * 100);
-    document.getElementById('daily-progress').style.width = `${progress}%`;
-    
-    // Ref Link
-    document.getElementById('my-ref-link').innerText = `t.me/PersonalGrowth24_Bot?start=ref_${uid}`;
+    // Wallet Math
+    let rate = (userData.rank <= 10) ? CONFIG.rankerRate : CONFIG.normalRate;
+    document.getElementById('fiat-value').innerText = (userData.balance / rate).toFixed(2);
+    document.getElementById('w-avail').innerText = (userData.balance * 0.8).toFixed(0); // 80% available
 }
 
-// 3. Leaderboard (Real Backend)
-function loadLeaderboard() {
-    const usersRef = query(ref(db, 'users'), orderByChild('balance'), limitToLast(100));
-    onValue(usersRef, (snapshot) => {
-        const list = document.getElementById('leaderboard-list');
-        list.innerHTML = "";
-        let lbData = [];
-        
-        snapshot.forEach((child) => {
-            lbData.push(child.val());
-        });
-        
-        lbData.reverse(); // Highest first
-        
-        // Find my rank
-        const myIndex = lbData.findIndex(u => u.name === userData.name);
-        if(myIndex !== -1) {
-            update(ref(db, 'users/' + uid), { rank: myIndex + 1 });
-        }
-
-        // Render Top 10
-        lbData.slice(0, 10).forEach((u, i) => {
-            let html = `
-            <div class="leaderboard-item">
-                <div style="display:flex;align-items:center;">
-                    <div class="rank-num ${i===0?'rank-1':''}" style="width:25px; height:25px; background:${i===0?'#fbbf24':'#334155'}; border-radius:50%; display:flex; justify-content:center; align-items:center; margin-right:10px; font-size:12px; color:${i===0?'black':'white'}">${i+1}</div> 
-                    <span>${u.name}</span>
-                </div>
-                <span class="text-gold">${u.balance.toLocaleString()}</span>
-            </div>`;
-            list.innerHTML += html;
-        });
-    });
-}
-
-// 4. Earn Logic
-window.watchAd = function(id) {
-    Swal.fire({
-        title: 'Loading Ad...', html: 'Watch for <b>15</b> seconds.', timer: 15000, timerProgressBar: true, 
-        allowOutsideClick: false, didOpen: () => Swal.showLoading()
-    }).then((r) => {
-        if(r.dismiss === Swal.DismissReason.timer) {
-            const newBal = userData.balance + CONFIG.adReward;
-            update(ref(db, 'users/' + uid), { balance: newBal });
-            Swal.fire('Success!', `+${CONFIG.adReward} Coins`, 'success');
-        }
-    });
-};
-
-// 5. Game Logic
-window.launchGame = function(name, url) {
-    Swal.fire({
-        title: 'Game Loading...', html: 'Watch Ad (10s) to start <b>'+name+'</b>', timer: 10000, timerProgressBar: true,
-        allowOutsideClick: false, didOpen: () => Swal.showLoading()
-    }).then((r) => {
-        if(r.dismiss === Swal.DismissReason.timer) {
-            const newBal = userData.balance + CONFIG.gameReward;
-            update(ref(db, 'users/' + uid), { balance: newBal });
-            
-            document.getElementById('game-frame').src = url;
-            document.getElementById('game-overlay').classList.remove('hidden');
-        }
-    });
-};
-
-// 6. Navigation
+// --- 6. NAVIGATION ---
 window.switchTab = function(tabId) {
-    document.querySelectorAll('.active-section').forEach(el => el.classList.remove('active-section', 'fade-in'));
-    document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+    // Hide all tabs
+    document.querySelectorAll('section').forEach(el => {
+        el.classList.remove('active-tab');
+        el.classList.add('hidden-tab');
+    });
+    // Show selected
+    document.getElementById(tabId).classList.remove('hidden-tab');
+    document.getElementById(tabId).classList.add('active-tab');
+    
+    // Update Icons
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+};
+
+// --- 7. FEATURE LOGIC ---
+
+// A. Locked Tools
+window.openTool = function(toolId) {
+    const isLocked = document.getElementById('lock-' + toolId.split('_')[0]); // Simple check
+    if(isLocked) {
+        Swal.fire({
+            title: 'Feature Locked 🔒',
+            html: `
+                <div style="text-align:left">
+                    <p>Unlock this premium tool by:</p>
+                    <button class="btn-action w-100 mt-10" onclick="swal.clickConfirm()">📺 Watch 30s Ad</button>
+                    <button class="btn-action w-100 mt-10" style="background:#333">👥 Invite 2 Friends</button>
+                </div>
+            `,
+            background: '#0f172a',
+            color: '#fff',
+            showConfirmButton: false
+        });
+    } else {
+        // Open Tool Modal logic
+        alert("Opening Tool: " + toolId);
+    }
+};
+
+// B. Tasks
+function renderTasks() {
+    const list = document.getElementById('task-list');
+    CHANNELS.forEach(ch => {
+        const div = document.createElement('div');
+        div.className = 'glass-card task-row';
+        div.innerHTML = `
+            <div class="task-icon bg-blue"><i class="fab fa-telegram-plane"></i></div>
+            <div class="task-info"><h4>${ch.name}</h4><small>Join Channel</small></div>
+            <button class="btn-task" onclick="doTask('${ch.url}')">+1000</button>
+        `;
+        list.appendChild(div);
+    });
+}
+
+window.doTask = function(url) {
+    window.open(url, '_blank');
+    Swal.fire({
+        title: 'Verifying...',
+        text: 'Please wait 5 seconds',
+        timer: 5000,
+        timerProgressBar: true,
+        background: '#020617',
+        color: '#fff',
+        didOpen: () => { Swal.showLoading() }
+    }).then((result) => {
+        if(result.dismiss === Swal.DismissReason.timer) {
+            updateBalance(1000);
+        }
+    });
+};
+
+// C. Games
+window.playGame = function(name, url) {
+    Swal.fire({
+        title: 'Loading Ad...',
+        text: 'Game starts in 5s',
+        timer: 5000,
+        timerProgressBar: true,
+        background: '#020617',
+        color: '#fff',
+        didOpen: () => Swal.showLoading()
+    }).then(() => {
+        const modal = document.getElementById('tool-modal');
+        const body = document.getElementById('tool-body');
+        body.innerHTML = `<iframe src="${url}" style="width:100%; height:100vh; border:none;"></iframe>`;
+        modal.classList.remove('hidden');
+        // Add verification timer for game reward here
+        setTimeout(() => updateBalance(100), 15000); // 15s play required
+    });
+};
+
+window.closeTool = function() {
+    document.getElementById('tool-modal').classList.add('hidden');
+    document.getElementById('tool-body').innerHTML = '';
+};
+
+// D. Wallet
+window.handleWithdraw = function() {
+    const amount = 500; // Example
+    const minWithdraw = (userData.rank <= 10) ? 10000 : 100000;
     
-    document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-    document.getElementById(`tab-${tabId}`).classList.add('active-section', 'fade-in');
+    if(userData.balance < minWithdraw) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Locked',
+            text: `Minimum withdrawal is ${minWithdraw.toLocaleString()} Coins.`,
+            background: '#020617',
+            color: '#fff'
+        });
+    } else {
+        Swal.fire({icon: 'success', title: 'Request Sent', background: '#020617', color: '#fff'});
+    }
+};
+
+// E. Leaderboard Timer
+function startTimer() {
+    // Simple 24h countdown logic
+    setInterval(() => {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24,0,0,0);
+        const diff = midnight - now;
+        const h = Math.floor(diff / 1000 / 60 / 60);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        document.getElementById('countdown-timer').innerText = `${h}h ${m}m`;
+    }, 60000);
+}
+
+// F. Profile
+window.toggleProfileModal = function() {
+    const m = document.getElementById('profile-modal');
+    m.classList.toggle('hidden');
+};
+
+window.switchProfileTab = function(tabId) {
+    document.getElementById('p-refer').classList.add('hidden');
+    document.getElementById('p-sponsor').classList.add('hidden');
+    document.getElementById(tabId).classList.remove('hidden');
     
-    const tabs = ['hub', 'games', 'profile']; // Profile is index 2 here if Oracle removed or 3 if kept
-    // Manual mapping for nav highlighting
-    if(tabId === 'hub') document.getElementById('nav-hub').classList.add('active');
-    if(tabId === 'games') document.getElementById('nav-games').classList.add('active');
-    if(tabId === 'profile') document.getElementById('nav-profile').classList.add('active');
+    document.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
 };
 
-// Event Listeners for Elements
-document.getElementById('btn-ad-1').onclick = () => window.watchAd(1);
-document.getElementById('btn-ad-2').onclick = () => window.watchAd(2);
-document.getElementById('game-subway').onclick = () => window.launchGame('Subway Surfers', 'https://html5.gamedistribution.com/rvvASMiM/index.html');
-document.getElementById('game-temple').onclick = () => window.launchGame('Temple Run', 'https://html5.gamedistribution.com/6817/index.html');
-document.getElementById('game-ludo').onclick = () => window.launchGame('Ludo', 'https://html5.gamedistribution.com/5d2d480922834b6e9273574221c54848/');
-document.getElementById('btn-close-game').onclick = () => {
-    document.getElementById('game-overlay').classList.add('hidden');
-    document.getElementById('game-frame').src = "";
-};
-document.getElementById('btn-copy-ref').onclick = () => {
-    navigator.clipboard.writeText(document.getElementById('my-ref-link').innerText);
-    Swal.fire('Copied!', 'Share link to earn coins.', 'success');
-};
-document.getElementById('nav-hub').onclick = () => window.switchTab('hub');
-document.getElementById('nav-games').onclick = () => window.switchTab('games');
-document.getElementById('nav-profile').onclick = () => window.switchTab('profile');
-
-// Withdraw
-document.getElementById('btn-withdraw').onclick = function() {
-    const upi = document.getElementById('upi-id').value;
-    if(!upi) return Swal.fire('Error', 'Enter UPI ID', 'warning');
-    if(userData.rank > 10) return Swal.fire('Locked', 'Top 10 Rankers only. Wait for month end.', 'info');
-    if(userData.balance < 10000) return Swal.fire('Low Balance', 'Min 10,000 Coins.', 'error');
-    Swal.fire('Request Sent', 'Processing...', 'success');
-};
-
-// Start
-initUser();
-loadLeaderboard();
