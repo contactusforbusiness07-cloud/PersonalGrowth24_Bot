@@ -1,0 +1,118 @@
+/* --- HERO CARD --- */
+.hero-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(251, 191, 36, 0.2); /* Gold border hint */
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.hero-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 60%);
+    animation: rotate 10s linear infinite;
+}
+
+.hero-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hero-title { color: #94a3b8; font-size: 14px; font-weight: 500; }
+.wallet-icon-3d { font-size: 24px; color: var(--gold); }
+
+.hero-balance { font-size: 36px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+.hero-balance i { color: var(--gold); font-size: 28px; }
+.hero-subtext { color: #64748b; font-size: 13px; margin-bottom: 15px; }
+
+.withdraw-btn-main {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+
+/* --- QUICK ACTIONS --- */
+.section-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+.action-card {
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    border-radius: 14px;
+    padding: 12px 5px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer;
+}
+.action-card span { font-size: 11px; color: #cbd5e1; }
+.icon-box {
+    width: 35px; height: 35px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+}
+.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+/* --- TOOLS GRID --- */
+.badge-viral { background: var(--gold); color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.tool-card {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 15px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+.tool-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+.bg-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.bg-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+.bg-gold { background: linear-gradient(135deg, #eab308, #a16207); }
+.bg-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+.tool-info h3 { font-size: 13px; margin-bottom: 2px; }
+.tool-info p { font-size: 10px; color: #64748b; }
+
+.lock-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: rgba(255,255,255,0.5);
+    opacity: 0.8; /* Initially locked look */
+}
+
+/* --- MOTIVATION STRIP --- */
+.motivation-strip {
+    position: fixed; bottom: var(--nav-height); left: 0; width: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white; font-size: 12px; text-align: center;
+    padding: 6px; z-index: 90;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s;
+}
+.modal-content {
+    background: #0f172a; width: 100%; max-width: 350px;
+    border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);
+}
+.modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.close-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
