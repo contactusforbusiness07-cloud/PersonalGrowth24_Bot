@@ -1,0 +1,12 @@
+/MyWebApp
+  /backend           <-- Node.js API + Bot Logic
+    package.json
+    server.js
+    firebaseConfig.js
+  /frontend          <-- React App
+    package.json
+    src/
+    dist/            <-- Build hone ke baad yaha aayega
+  package.json       <-- Root wala file
+  gitignore
+
