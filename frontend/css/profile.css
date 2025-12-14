@@ -1,69 +1,108 @@
-/* --- INTERNAL PAGE OVERLAY --- */
+/* --- INTERNAL PAGE (Base) --- */
 .internal-page {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #020617; z-index: 2000;
-    padding: 20px; overflow-y: auto;
+    padding: 20px; overflow-y: auto; padding-bottom: 80px;
     animation: slideInRight 0.3s ease;
 }
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-/* --- HEADER --- */
 .page-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
 .back-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; }
-.page-header h3 { font-size: 18px; font-weight: 600; }
 
-/* --- BRAND HERO --- */
-.brand-hero { text-align: center; margin-bottom: 30px; }
-.brand-hero h2 { font-size: 24px; background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.brand-hero p { color: #64748b; font-size: 13px; }
+/* --- PROFILE PAGE --- */
+.profile-card-main {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px; padding: 20px; text-align: center;
+    position: relative;
+}
+.profile-avatar-area { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
+.p-avatar { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; }
+.camera-btn {
+    position: absolute; bottom: 0; right: 0;
+    background: var(--gold); border: none; width: 30px; height: 30px; border-radius: 50%;
+    color: #000; font-size: 12px; cursor: pointer;
+}
+.p-info h2 { font-size: 18px; margin-bottom: 5px; }
+.text-blue { color: #3b82f6; }
+.p-userid { color: #94a3b8; font-size: 12px; }
+.btn-edit-profile {
+    margin-top: 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 16px; border-radius: 20px; font-size: 12px; cursor: pointer;
+}
+.flex-between { display: flex; justify-content: space-between; font-size: 13px; color: #cbd5e1; }
+.badge-gray { background: #334155; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
 
-/* --- FORM ELEMENTS --- */
-.form-label { font-size: 12px; color: #cbd5e1; font-weight: 600; margin-bottom: 8px; display: block; }
-.mt-4 { margin-top: 20px; }
-.mb-2 { margin-bottom: 10px; }
+/* --- REFER & EARN (Gamified) --- */
+.refer-summary-card {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    border-radius: 16px; padding: 20px; color: #fff;
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+}
+.rs-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+.rs-label { font-size: 11px; opacity: 0.8; }
+.rs-val { font-size: 18px; font-weight: 700; }
+.refer-code-box {
+    background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border: 1px dashed rgba(255,255,255,0.3);
+}
+.btn-copy { background: none; border: none; color: #fff; cursor: pointer; }
+.btn-share-main { background: #fff; color: #4f46e5; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; }
 
+/* Target Cards */
+.target-card {
+    background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.05); position: relative;
+}
+.target-card.completed { border-color: var(--green); background: rgba(16, 185, 129, 0.05); }
+.target-card.locked { opacity: 0.6; }
+
+.tc-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+.badge-status { font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+.badge-status.success { background: var(--green); color: #000; }
+.badge-status.pending { background: #3b82f6; color: #fff; }
+.badge-status.locked { background: #475569; color: #cbd5e1; }
+
+.tc-reward { font-size: 11px; color: var(--gold); margin-bottom: 8px; }
+.progress-track { background: #334155; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+.progress-fill { height: 100%; background: var(--green); border-radius: 3px; }
+.target-card.active-target .progress-fill { background: #3b82f6; }
+.tc-count { text-align: right; font-size: 10px; color: #94a3b8; }
+
+/* Refer History */
+.info-card-blue { background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(59, 130, 246, 0.3); }
+.info-card-blue h4 { font-size: 12px; color: #3b82f6; margin-bottom: 8px; }
+.info-card-blue li { font-size: 11px; color: #cbd5e1; margin-bottom: 4px; list-style-position: inside; }
+
+.refer-list { display: flex; flex-direction: column; gap: 8px; }
+.refer-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;
+}
+.ri-name { font-size: 13px; }
+.ri-date { font-size: 10px; color: #64748b; }
+.ri-status { font-size: 11px; }
+.ri-status.success { color: var(--green); }
+.ri-status.warning { color: var(--gold); }
+
+/* Motivation Banner */
+.motivation-banner-refer {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    padding: 15px; text-align: center; font-size: 12px; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 2005;
+}
+.motivation-banner-refer button { background: #fff; color: #059669; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+
+/* --- BRAND & CONTACT FORMS --- */
 .promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .promo-card { position: relative; cursor: pointer; }
 .promo-card input { position: absolute; opacity: 0; }
+.p-content { background: #1e293b; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.2s; }
+.promo-card input:checked + .p-content { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
+.form-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 10px; outline: none; margin-bottom: 10px; }
+.btn-submit-brand, .btn-primary { background: var(--gold); color: #000; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; }
+.trust-box { background: rgba(16, 185, 129, 0.05); padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 11px; color: #cbd5e1; }
 
-.p-content {
-    background: #1e293b; border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px; padding: 15px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    transition: all 0.2s;
-}
-.p-content i { font-size: 20px; }
-.p-content span { font-size: 11px; color: #94a3b8; }
-
-/* Active State for Radio Cards */
-.promo-card input:checked + .p-content {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
-}
-.promo-card input:checked + .p-content i { color: #3b82f6; }
-.promo-card input:checked + .p-content span { color: #fff; }
-
-.form-input {
-    width: 100%; background: #0f172a; border: 1px solid #334155;
-    color: #fff; padding: 12px; border-radius: 10px; outline: none; font-family: 'Poppins';
-}
-.form-input:focus { border-color: var(--gold); }
-.form-hint { font-size: 10px; color: #64748b; margin-top: 5px; }
-
-/* --- SUBMIT BUTTON --- */
-.btn-submit-brand {
-    background: linear-gradient(135deg, var(--gold), #f59e0b);
-    color: #000; font-weight: 700; width: 100%; padding: 14px;
-    border: none; border-radius: 12px; margin-top: 25px;
-    cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-}
-
-/* --- TRUST BOX --- */
-.trust-box { background: rgba(16, 185, 129, 0.05); border: 1px dashed rgba(16, 185, 129, 0.3); padding: 15px; border-radius: 10px; }
-.trust-box ul { list-style: none; padding: 0; }
-.trust-box li { font-size: 11px; color: #cbd5e1; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.trust-box i { color: var(--green); }
-
-/* --- REFER PAGE --- */
-.refer-hero { text-align: center; padding-top: 40px; }
-.refer-img { width: 120px; margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
