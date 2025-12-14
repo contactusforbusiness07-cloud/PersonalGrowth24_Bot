@@ -1,67 +1,52 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Ye line nayi hai (Path tool)
+const path = require('path');
 const { Telegraf, Markup } = require('telegraf');
-const db = require('./firebaseConfig');
+const admin = require("firebase-admin");
 require('dotenv').config();
 
+// Firebase Connection (Safety Check ke saath)
+try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    }
+} catch (e) {
+    console.error("Firebase Error:", e.message); // Agar key galat hui to bata dega
+}
+
+const db = admin.firestore ? admin.firestore() : null;
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-// --- 1. TELEGRAM BOT SETUP ---
-const bot = new Telegraf(process.env.BOT_TOKEN);
-const WEBAPP_URL = "https://pro-earner-app.onrender.com"; // Apna Render URL yaha daal dena agar alag ho to
-
-bot.start(async (ctx) => {
-  const userId = ctx.from.id.toString();
-  const referrerId = ctx.startPayload; 
-  
-  try {
-    const userRef = db.collection('users').doc(userId);
-    const userSnap = await userRef.get();
-
-    if (!userSnap.exists) {
-      await userRef.set({
-        telegramId: userId,
-        firstName: ctx.from.first_name,
-        username: ctx.from.username || "Unknown",
-        walletBalance: 0,
-        referralCount: 0,
-        referredBy: referrerId || null,
-        joinedAt: new Date().toISOString()
-      });
-      ctx.reply(`Welcome ${ctx.from.first_name}! 🚀\nStart earning now!`, 
-        Markup.inlineKeyboard([[Markup.button.webApp("💰 Open App", WEBAPP_URL)]])
-      );
-    } else {
-      ctx.reply("Welcome back! 🚀", 
-        Markup.inlineKeyboard([[Markup.button.webApp("💰 Open App", WEBAPP_URL)]])
-      );
-    }
-  } catch (error) {
-    console.log("Error:", error);
-  }
-});
-
-bot.launch();
-
-// --- 2. API ENDPOINTS ---
-app.get('/api/user/:id', async (req, res) => {
-  try {
-    const doc = await db.collection('users').doc(req.params.id).get();
-    if (doc.exists) res.json(doc.data());
-    else res.status(404).json({ error: "User not found" });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// --- 3. SERVE FRONTEND (Ye Naya Part Hai) ---
-// Server ko batao ki frontend files kahan hain
+// --- SABSE ZAROORI LINE (Isse Buttons Chalenge) ---
+// Ye line server ko batati hai ki frontend folder me se script.js aur style.css uthao
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Koi bhi aur link khule to React App dikhao
+// Bot Setup
+const bot = new Telegraf(process.env.BOT_TOKEN);
+const WEBAPP_URL = "https://pro-earner-app.onrender.com"; 
+
+bot.start((ctx) => {
+    ctx.reply("Welcome! Open App:", 
+        Markup.inlineKeyboard([[Markup.button.webApp("💰 Open App", WEBAPP_URL)]])
+    );
+});
+bot.launch().catch(err => console.log("Bot Error:", err));
+
+// --- API Routes ---
+app.post('/api/reward', async (req, res) => {
+    // Fake logic for demo
+    res.json({ success: true, newBalance: 100 });
+});
+
+// --- CATCH ALL ROUTE (Jo file na mile, use index.html dedo) ---
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/', 'index.html'));
+    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
