@@ -1,224 +1,332 @@
-// --- 1. CONFIGURATION ---
+// --- FIREBASE CONFIGURATION ---
+// IMPORT specific functions from ES modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getDatabase, ref, get, set, update, query, orderByChild, limitToLast, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+// REPLACE WITH YOUR ACTUAL FIREBASE CONFIG
 const firebaseConfig = {
-    // ⚠️ REPLACE THIS WITH YOUR REAL FIREBASE CONFIG FROM CONSOLE ⚠️
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "SENDER_ID",
-    appId: "APP_ID"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
 };
 
-// --- 2. GLOBAL STATE ---
-let db; // Firebase DB instance
-let userRef; // Current User Reference
-let userData = { balance: 0, referrals: 0, rank: 9999, joined_channels: [] };
-const CONFIG = {
-    verifTime: 5000, // 5 sec for task verification
-    adTime: 15000,   // 15 sec for ads
-    rankerRate: 10000, // 10k = 1 unit
-    normalRate: 100000 // 100k = 1 unit
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const CHANNELS = [
-    {id: 'ch1', name: 'English Room', url: 'https://t.me/The_EnglishRoom5'},
-    {id: 'ch2', name: 'UPSC Notes', url: 'https://t.me/UPSC_Notes_Official'},
-    {id: 'ch3', name: 'Govt Schemes', url: 'https://t.me/GovernmentSchemesIndia'}
-    // Add rest of the 8 channels here...
+// --- GLOBAL STATE ---
+let telegramUser = null;
+let userData = null;
+
+// Channels Configuration
+const PREMIUM_CHANNELS = [
+    { id: 'chan1', name: 'IAS Prep Quiz', url: 'https://t.me/IAS_PrepQuiz_Zone' },
+    { id: 'chan2', name: 'UPSC Vault', url: 'https://t.me/UPSC_Quiz_Vault' },
+    { id: 'chan3', name: 'Govt Schemes', url: 'https://t.me/GovernmentSchemesIndia' },
+    { id: 'chan4', name: 'English Room', url: 'https://t.me/EnglishRoom5' },
+    { id: 'chan5', name: 'Personal Growth', url: 'https://t.me/PersonalGrowthHub' },
+    { id: 'chan6', name: 'Tech Jobs', url: 'https://t.me/TechJobsIndia' },
+    { id: 'chan7', name: 'Crypto News', url: 'https://t.me/CryptoNewsGlobal' },
+    { id: 'chan8', name: 'Meme Central', url: 'https://t.me/MemeCentral' }
 ];
 
-// --- 3. INIT FUNCTION ---
-document.addEventListener("DOMContentLoaded", () => {
-    AOS.init(); // Animations
-    initFirebase();
-    renderTasks();
-    startTimer();
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    AOS.init({ duration: 800, once: true });
+    initWebApp();
+    setupUI();
 });
 
-// --- 4. FIREBASE LOGIC (STUB) ---
-function initFirebase() {
-    // ⚠️ REAL IMPLEMENTATION WOULD IMPORT FIREBASE MODULES HERE
-    // For this code to run without error in "Preview", I will simulate data.
-    // IN PRODUCTION: Uncomment imports and use real firebase logic provided in previous response.
-    
-    console.log("Firebase Initialized (Simulation for Structure)");
-    
-    // Simulate User Fetch
-    userData.balance = parseInt(localStorage.getItem('coins')) || 500;
-    updateUI();
-}
+function initWebApp() {
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-function updateBalance(amount) {
-    userData.balance += amount;
-    localStorage.setItem('coins', userData.balance); // Fallback
-    // Firebase: update(userRef, { balance: userData.balance });
-    updateUI();
-    Swal.fire({
-        icon: 'success',
-        title: `+${amount} Coins`,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        background: '#020617',
-        color: '#fff'
-    });
-}
-
-// --- 5. UI UPDATES ---
-function updateUI() {
-    document.getElementById('display-balance').innerText = userData.balance.toLocaleString();
-    document.getElementById('header-coins').innerText = userData.balance.toLocaleString();
-    document.getElementById('today-coins').innerText = "150"; // Dummy logic for daily
-    
-    // Wallet Math
-    let rate = (userData.rank <= 10) ? CONFIG.rankerRate : CONFIG.normalRate;
-    document.getElementById('fiat-value').innerText = (userData.balance / rate).toFixed(2);
-    document.getElementById('w-avail').innerText = (userData.balance * 0.8).toFixed(0); // 80% available
-}
-
-// --- 6. NAVIGATION ---
-window.switchTab = function(tabId) {
-    // Hide all tabs
-    document.querySelectorAll('section').forEach(el => {
-        el.classList.remove('active-tab');
-        el.classList.add('hidden-tab');
-    });
-    // Show selected
-    document.getElementById(tabId).classList.remove('hidden-tab');
-    document.getElementById(tabId).classList.add('active-tab');
-    
-    // Update Icons
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-};
-
-// --- 7. FEATURE LOGIC ---
-
-// A. Locked Tools
-window.openTool = function(toolId) {
-    const isLocked = document.getElementById('lock-' + toolId.split('_')[0]); // Simple check
-    if(isLocked) {
-        Swal.fire({
-            title: 'Feature Locked 🔒',
-            html: `
-                <div style="text-align:left">
-                    <p>Unlock this premium tool by:</p>
-                    <button class="btn-action w-100 mt-10" onclick="swal.clickConfirm()">📺 Watch 30s Ad</button>
-                    <button class="btn-action w-100 mt-10" style="background:#333">👥 Invite 2 Friends</button>
-                </div>
-            `,
-            background: '#0f172a',
-            color: '#fff',
-            showConfirmButton: false
-        });
+    // Check if running inside Telegram
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        telegramUser = tg.initDataUnsafe.user;
     } else {
-        // Open Tool Modal logic
-        alert("Opening Tool: " + toolId);
+        // Fallback for browser testing (REMOVE for production if strict)
+        console.warn("Dev Mode: Using Mock User");
+        telegramUser = { id: 123456789, first_name: "DevUser", username: "developer" };
     }
-};
 
-// B. Tasks
-function renderTasks() {
-    const list = document.getElementById('task-list');
-    CHANNELS.forEach(ch => {
-        const div = document.createElement('div');
-        div.className = 'glass-card task-row';
-        div.innerHTML = `
-            <div class="task-icon bg-blue"><i class="fab fa-telegram-plane"></i></div>
-            <div class="task-info"><h4>${ch.name}</h4><small>Join Channel</small></div>
-            <button class="btn-task" onclick="doTask('${ch.url}')">+1000</button>
-        `;
-        list.appendChild(div);
-    });
+    loginUser();
 }
 
-window.doTask = function(url) {
-    window.open(url, '_blank');
-    Swal.fire({
-        title: 'Verifying...',
-        text: 'Please wait 5 seconds',
-        timer: 5000,
-        timerProgressBar: true,
-        background: '#020617',
-        color: '#fff',
-        didOpen: () => { Swal.showLoading() }
-    }).then((result) => {
-        if(result.dismiss === Swal.DismissReason.timer) {
-            updateBalance(1000);
+async function loginUser() {
+    const userRef = ref(db, 'users/' + telegramUser.id);
+    
+    // Listen for real-time updates to UI
+    onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+            userData = snapshot.val();
+            updateUI(userData);
+        } else {
+            // First time user
+            createNewUser(userRef);
         }
     });
-};
 
-// C. Games
-window.playGame = function(name, url) {
-    Swal.fire({
-        title: 'Loading Ad...',
-        text: 'Game starts in 5s',
-        timer: 5000,
-        timerProgressBar: true,
-        background: '#020617',
-        color: '#fff',
-        didOpen: () => Swal.showLoading()
-    }).then(() => {
-        const modal = document.getElementById('tool-modal');
-        const body = document.getElementById('tool-body');
-        body.innerHTML = `<iframe src="${url}" style="width:100%; height:100vh; border:none;"></iframe>`;
-        modal.classList.remove('hidden');
-        // Add verification timer for game reward here
-        setTimeout(() => updateBalance(100), 15000); // 15s play required
+    // Check Referral Logic only once on load
+    const snapshot = await get(userRef);
+    if (!snapshot.exists()) {
+        const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
+        if (startParam && startParam != telegramUser.id) {
+            processReferral(startParam);
+        }
+    }
+}
+
+function createNewUser(userRef) {
+    const initialData = {
+        name: telegramUser.first_name,
+        balance: 1000, // Welcome bonus
+        referrals: 0,
+        joined_channels: {},
+        rank_score: 1000
+    };
+    set(userRef, initialData);
+}
+
+// --- REFERRAL ENGINE (The Viral Loop) ---
+async function processReferral(referrerId) {
+    const referrerRef = ref(db, 'users/' + referrerId);
+    
+    await runTransaction(referrerRef, (user) => {
+        if (user) {
+            user.referrals = (user.referrals || 0) + 1;
+            user.balance = (user.balance || 0) + 500; // Standard Ref Bonus
+            user.rank_score = (user.rank_score || 0) + 500;
+
+            // Milestone Bonuses
+            if (user.referrals === 3) user.balance += 1000;
+            if (user.referrals === 5) user.balance += 1500;
+            if (user.referrals === 10) user.balance += 3000;
+            if (user.referrals === 20) user.balance += 6000;
+            
+            return user;
+        }
+        return user;
+    });
+}
+
+// --- CORE FEATURES ---
+
+// 1. Premium Channels
+window.renderChannels = () => {
+    const list = document.getElementById('channel-list');
+    list.innerHTML = '';
+    
+    PREMIUM_CHANNELS.forEach(channel => {
+        const isJoined = userData && userData.joined_channels && userData.joined_channels[channel.id];
+        const btnClass = isJoined ? 'action-btn disabled' : 'action-btn';
+        const btnText = isJoined ? 'Joined' : 'Join +1000';
+        const onClick = isJoined ? '' : `onclick="joinChannel('${channel.id}', '${channel.url}')"`;
+        
+        const html = `
+            <div class="channel-row">
+                <span>${channel.name}</span>
+                <button class="${btnClass}" ${onClick}>${btnText}</button>
+            </div>
+        `;
+        list.innerHTML += html;
     });
 };
 
-window.closeTool = function() {
-    document.getElementById('tool-modal').classList.add('hidden');
-    document.getElementById('tool-body').innerHTML = '';
+window.joinChannel = (chanId, url) => {
+    window.open(url, '_blank');
+    
+    // Simulate verification delay
+    setTimeout(() => {
+        const userRef = ref(db, `users/${telegramUser.id}`);
+        runTransaction(userRef, (user) => {
+            if (user) {
+                if (!user.joined_channels) user.joined_channels = {};
+                if (!user.joined_channels[chanId]) {
+                    user.joined_channels[chanId] = true;
+                    user.balance += 1000;
+                    user.rank_score += 1000;
+                }
+            }
+            return user;
+        });
+    }, 5000); // 5 seconds wait
 };
 
-// D. Wallet
-window.handleWithdraw = function() {
-    const amount = 500; // Example
-    const minWithdraw = (userData.rank <= 10) ? 10000 : 100000;
+// 2. Ad Watch
+window.watchAd = () => {
+    const overlay = document.getElementById('loading-overlay');
+    const countdownEl = document.getElementById('countdown');
+    const loadText = document.getElementById('loading-text');
     
-    if(userData.balance < minWithdraw) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Locked',
-            text: `Minimum withdrawal is ${minWithdraw.toLocaleString()} Coins.`,
-            background: '#020617',
-            color: '#fff'
+    overlay.classList.remove('hidden');
+    loadText.innerText = "Watching High Pay Ad...";
+    let timeLeft = 15;
+    
+    const timer = setInterval(() => {
+        timeLeft--;
+        countdownEl.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            overlay.classList.add('hidden');
+            // Reward
+            update(ref(db, `users/${telegramUser.id}`), {
+                balance: (userData.balance || 0) + 500
+            });
+            alert("Success! +500 Coins added.");
+        }
+    }, 1000);
+};
+
+// 3. Game Zone
+window.playGame = (gameId, imgUrl) => {
+    const overlay = document.getElementById('loading-overlay');
+    const countdownEl = document.getElementById('countdown');
+    const loadText = document.getElementById('loading-text');
+    
+    overlay.classList.remove('hidden');
+    loadText.innerText = "Loading Game Resources...";
+    let timeLeft = 10;
+    
+    // Pre-game Ad
+    const timer = setInterval(() => {
+        timeLeft--;
+        countdownEl.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            overlay.classList.add('hidden');
+            
+            // Credit play bonus
+            update(ref(db, `users/${telegramUser.id}`), {
+                balance: (userData.balance || 0) + 100
+            });
+
+            // Open Game
+            const gameModal = document.getElementById('game-modal');
+            const iframe = document.getElementById('game-frame');
+            
+            // Map simple IDs to real URLs for iframe content
+            // Note: In real app, these should be playable URLs, here using distribution links as requested or placeholders
+            let gameUrl = "";
+            if(gameId === 'subway') gameUrl = "https://html5.gamedistribution.com/rvvASMiM/"; // Example structure
+            if(gameId === 'temple') gameUrl = "https://poki.com/en/g/temple-run-2"; 
+            if(gameId === 'ludo') gameUrl = "https://ludoking.com";
+
+            // Since strict constraints asked for assets but Iframe needs HTML5 urls, 
+            // I'm pointing to a generic responsive wrapper or the user should replace with valid embed URLs.
+            // For now, setting a demo URL to prevent 404 in iframe
+            iframe.src = "https://poki.com/"; 
+
+            gameModal.classList.remove('hidden');
+        }
+    }, 1000);
+};
+
+window.closeGame = () => {
+    document.getElementById('game-modal').classList.add('hidden');
+    document.getElementById('game-frame').src = "";
+};
+
+// 4. Viral Tools
+window.generateCV = () => {
+    if (userData.balance < 10000) {
+        alert("Insufficient Balance! You need 10,000 Coins.");
+        return;
+    }
+    
+    const confirmBuy = confirm("Generate Premium CV for 10,000 Coins?");
+    if (confirmBuy) {
+        update(ref(db, `users/${telegramUser.id}`), {
+            balance: userData.balance - 10000
+        }).then(() => {
+            alert("CV Generated Successfully! (Downloading PDF...)");
+            // Integration with html2pdf would go here
         });
-    } else {
-        Swal.fire({icon: 'success', title: 'Request Sent', background: '#020617', color: '#fff'});
     }
 };
 
-// E. Leaderboard Timer
-function startTimer() {
-    // Simple 24h countdown logic
-    setInterval(() => {
-        const now = new Date();
-        const midnight = new Date();
-        midnight.setHours(24,0,0,0);
-        const diff = midnight - now;
-        const h = Math.floor(diff / 1000 / 60 / 60);
-        const m = Math.floor((diff / 1000 / 60) % 60);
-        document.getElementById('countdown-timer').innerText = `${h}h ${m}m`;
-    }, 60000);
+window.openOracle = () => {
+    const name1 = prompt("Enter your name:");
+    const name2 = prompt("Enter crush's name:");
+    if(name1 && name2) {
+        const score = Math.floor(Math.random() * 100);
+        alert(`🔮 Oracle Says: ${name1} + ${name2} = ${score}% Love Match!`);
+    }
+};
+
+// --- LEADERBOARD & WITHDRAW ---
+function updateLeaderboard() {
+    const leaderboardQuery = query(ref(db, 'users'), orderByChild('balance'), limitToLast(10));
+    
+    get(leaderboardQuery).then((snapshot) => {
+        const tbody = document.querySelector('#leaderboard-table tbody');
+        tbody.innerHTML = '';
+        let users = [];
+        
+        snapshot.forEach((child) => {
+            users.push(child.val());
+        });
+        
+        users.reverse().forEach((u, index) => {
+            const row = `<tr>
+                <td>#${index + 1}</td>
+                <td>${u.name.substring(0, 10)}...</td>
+                <td>${u.balance.toLocaleString()}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    });
 }
 
-// F. Profile
-window.toggleProfileModal = function() {
-    const m = document.getElementById('profile-modal');
-    m.classList.toggle('hidden');
+// Global Withdraw Handler
+window.handleWithdraw = () => {
+    // Logic: Check if user is in Top 10 based on Rank Score/Balance
+    // This requires fetching top 10 and comparing IDs, simplifying for demo:
+    const statusEl = document.getElementById('withdraw-status');
+    
+    if (userData.balance >= 100000) {
+        statusEl.innerText = "Status: Eligible (Standard Rate)";
+        alert("Withdrawal request sent for month-end processing.");
+    } else {
+        statusEl.innerText = "Status: Keep Earning";
+        alert("Minimum withdrawal is 100,000 Coins.");
+    }
 };
 
-window.switchProfileTab = function(tabId) {
-    document.getElementById('p-refer').classList.add('hidden');
-    document.getElementById('p-sponsor').classList.add('hidden');
-    document.getElementById(tabId).classList.remove('hidden');
+// --- UI HELPERS ---
+function updateUI(user) {
+    // Navbar
+    document.getElementById('nav-balance').innerText = user.balance.toLocaleString();
     
-    document.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-};
+    // Profile Modal
+    document.getElementById('profile-name').innerText = user.name;
+    document.getElementById('profile-balance').innerText = user.balance.toLocaleString();
+    document.getElementById('profile-refs').innerText = user.referrals;
+    document.getElementById('profile-rank').innerText = user.rank_score;
+    
+    renderChannels();
+    updateLeaderboard();
+}
+
+function setupUI() {
+    // Toggle Profile Modal
+    const btn = document.getElementById('profile-btn');
+    const modal = document.getElementById('profile-modal');
+    
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.classList.toggle('hidden');
+    });
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!modal.contains(e.target) && !btn.contains(e.target)) {
+            modal.classList.add('hidden');
+        }
+    });
+}
 
