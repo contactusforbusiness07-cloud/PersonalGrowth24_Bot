@@ -1,31 +1,78 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors'); // Agar nahi hai to install karein, ya hata dein
-const app = express();
+const cors = require('cors');
+const TelegramBot = require('node-telegram-bot-api'); // Bot Library import ki
 
+// --- CONFIGURATION ---
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS (Optional - Good for safety)
+// Render par Environment Variable se Token uthayega
+// Agar local chala rahe ho to 'YOUR_TOKEN' ki jagah apna token likh dena (Not recommended for GitHub)
+const token = process.env.BOT_TOKEN; 
+
+// --- EXPRESS APP SETUP (Website ke liye) ---
 app.use(cors());
 app.use(express.json());
-
-// --- CRITICAL STEP: Frontend Files Serve Karna ---
-// Server 'backend' folder me hai, isliye '../frontend' use karenge
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// --- API Routes (Future me yaha aayenge) ---
-app.get('/api/status', (req, res) => {
-    res.json({ status: 'active', message: 'Server is running!' });
+// --- TELEGRAM BOT SETUP ---
+// Polling true rakha hai taaki bot messages check karta rahe
+const bot = new TelegramBot(token, { polling: true });
+
+// 1. /start Command Handler
+bot.onText(/\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    const userName = msg.from.first_name || "User";
+
+    // Welcome Message Text
+    const welcomeMessage = `
+🚀 **Welcome back, ${userName}!**
+
+You are now connected to **FinGamePro** - The Ultimate Earning Ecosystem. 💰
+
+🎮 **Play Games**
+📺 **Watch Ads**
+🤝 **Refer & Earn**
+💼 **Withdraw Daily**
+
+👇 **Click the button below to launch your dashboard!**
+    `;
+
+    // Welcome Button (Web App Link)
+    // IMPORTANT: 'url' me apna Render wala Live Link dalein
+    const opts = {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    { 
+                        text: "💰 Open App & Earn", 
+                        web_app: { url: "https://fingamepro.onrender.com" } 
+                    }
+                ],
+                [
+                    { text: "📢 Join Community", url: "https://t.me/YourChannelLink" }
+                ]
+            ]
+        },
+        parse_mode: 'Markdown'
+    };
+
+    bot.sendMessage(chatId, welcomeMessage, opts);
 });
 
-// --- Catch-All Route (SPA Support) ---
-// Koi bhi aur link open ho to index.html hi dikhaye
+// --- SERVER ROUTES ---
+app.get('/api/status', (req, res) => {
+    res.json({ status: 'active', bot: 'online' });
+});
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
 });
 
-// Start Server
+// --- START SERVER ---
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
+    console.log('Telegram Bot is active...');
 });
 
