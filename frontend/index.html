@@ -42,10 +42,112 @@
 
         <main id="main-content">
             
-            <section id="home" class="page-section active">
-                <div class="loading-spinner">
-                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading...
+                        <section id="home" class="page-section active">
+                
+                <div class="hero-card" data-aos="fade-down">
+                    <div class="hero-header">
+                        <span class="hero-title">Total Balance</span>
+                        <div class="wallet-icon-3d"><i class="fa-solid fa-wallet"></i></div>
+                    </div>
+                    <div class="hero-balance">
+                        <i class="fa-solid fa-coins"></i>
+                        <span id="home-balance-display">0</span>
+                    </div>
+                    <div class="hero-subtext">≈ ₹ 0.00 INR</div>
+                    <button class="withdraw-btn-main" onclick="navigateTo('wallet')">
+                        Withdraw Funds <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
+
+                <div class="section-title">Quick Earn</div>
+                <div class="action-grid" data-aos="fade-up">
+                    <div class="action-card" onclick="navigateTo('tasks')">
+                        <div class="icon-box blue"><i class="fa-solid fa-list-check"></i></div>
+                        <span>Tasks</span>
+                    </div>
+                    <div class="action-card" onclick="navigateTo('games')">
+                        <div class="icon-box purple"><i class="fa-solid fa-gamepad"></i></div>
+                        <span>Games</span>
+                    </div>
+                    <div class="action-card" onclick="navigateTo('tasks')">
+                        <div class="icon-box red"><i class="fa-solid fa-play"></i></div>
+                        <span>Ads</span>
+                    </div>
+                    <div class="action-card" onclick="openInternalPage('refer')">
+                        <div class="icon-box green"><i class="fa-solid fa-user-plus"></i></div>
+                        <span>Refer</span>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    Smart Tools <span class="badge-viral">Viral</span>
+                </div>
+                <div class="tools-grid" data-aos="fade-up" data-aos-delay="100">
+                    
+                    <div class="tool-card" onclick="openToolModal('cv')">
+                        <div class="tool-icon bg-blue"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div class="tool-info">
+                            <h3>CV Builder</h3>
+                            <p>AI Resume Creator</p>
+                        </div>
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+
+                    <div class="tool-card" onclick="openToolModal('love')">
+                        <div class="tool-icon bg-pink"><i class="fa-solid fa-heart"></i></div>
+                        <div class="tool-info">
+                            <h3>Love Calc</h3>
+                            <p>AI Compatibility</p>
+                        </div>
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+
+                    <div class="tool-card" onclick="openToolModal('marriage')">
+                        <div class="tool-icon bg-gold"><i class="fa-solid fa-ring"></i></div>
+                        <div class="tool-info">
+                            <h3>Wedding Date</h3>
+                            <p>Prediction AI</p>
+                        </div>
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+
+                    <div class="tool-card" onclick="openToolModal('career')">
+                        <div class="tool-icon bg-purple"><i class="fa-solid fa-rocket"></i></div>
+                        <div class="tool-info">
+                            <h3>Career 2035</h3>
+                            <p>Future Role</p>
+                        </div>
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
+                    </div>
+                </div>
+
+                <div class="offer-slider" data-aos="fade-left">
+                    <div class="offer-card gradient-1">
+                        <div>
+                            <h4>Super Offer 🚀</h4>
+                            <p>Earn 500 Coins instantly!</p>
+                        </div>
+                        <button class="btn-sm" onclick="navigateTo('tasks')">Go</button>
+                    </div>
+                </div>
+
+                <div class="motivation-strip">
+                    🎉 You can still earn <b>1200 coins</b> today!
+                </div>
+
+            </section>
+
+            <div id="tool-modal" class="modal-overlay hidden">
+                <div class="modal-content glass-effect">
+                    <div class="modal-header">
+                        <h3 id="tool-modal-title">Tool Name</h3>
+                        <button class="close-btn" onclick="closeToolModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="modal-body" id="tool-modal-body">
+                        </div>
+                </div>
+            </div>
+
             </section>
 
             <section id="leaderboard" class="page-section hidden"></section>
