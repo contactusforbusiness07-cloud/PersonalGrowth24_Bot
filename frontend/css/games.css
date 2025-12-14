@@ -1,0 +1,78 @@
+/* --- HEADER --- */
+.game-header { text-align: center; margin-bottom: 20px; }
+.gh-title { font-size: 24px; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+.text-purple { color: #a855f7; }
+.gh-subtitle { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+.gh-subtitle b { color: var(--gold); }
+
+/* --- LABELS --- */
+.section-label { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.text-orange { color: #f97316; }
+.text-blue { color: #3b82f6; }
+
+/* --- TRENDING GAMES (Horizontal Scroll) --- */
+.trending-scroll {
+    display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+.trending-scroll::-webkit-scrollbar { height: 4px; } 
+.trending-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+.game-card-large {
+    min-width: 260px; height: 160px; border-radius: 16px;
+    position: relative; overflow: hidden; cursor: pointer;
+    scroll-snap-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+.game-card-large:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+.game-thumb { width: 100%; height: 100%; object-fit: cover; }
+
+.game-info-overlay {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(0deg, #000 0%, transparent 100%);
+    padding: 15px; padding-top: 40px;
+}
+.game-info-overlay h3 { font-size: 16px; color: #fff; margin-bottom: 4px; }
+.reward-pill { background: var(--green); color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 700; }
+
+.trending-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: #ef4444; color: #fff; font-size: 10px; font-weight: 800;
+    padding: 4px 8px; border-radius: 4px; z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.trending-badge.viral { background: #8b5cf6; }
+
+/* --- GAMES GRID (Small) --- */
+.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.game-card-small {
+    background: #1e293b; border-radius: 14px; padding: 8px;
+    border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+    position: relative; overflow: hidden;
+}
+.badge-tag {
+    position: absolute; top: 8px; right: 8px; background: var(--green);
+    font-size: 8px; font-weight: 700; color: #000; padding: 2px 5px; border-radius: 3px; z-index: 5;
+}
+.thumb-small { width: 100%; height: 80px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
+.small-info { text-align: center; }
+.small-info h4 { font-size: 12px; margin-bottom: 2px; }
+.coin-text { font-size: 10px; color: var(--gold); font-weight: 600; }
+
+/* --- GAME MODAL (Player) --- */
+.game-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 3000; display: flex; flex-direction: column;
+}
+.gm-header {
+    height: 50px; background: #0f172a; display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+    border-bottom: 1px solid #334155;
+}
+.gm-timer { color: #cbd5e1; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.gm-timer span { color: var(--gold); font-weight: bold; font-size: 15px; }
+.gm-close { background: #ef4444; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+.gm-iframe-container { flex: 1; width: 100%; height: 100%; }
+#game-frame { width: 100%; height: 100%; border: none; }
