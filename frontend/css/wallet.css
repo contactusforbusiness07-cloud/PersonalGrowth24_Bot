@@ -1,0 +1,84 @@
+/* --- HERO CARD --- */
+.wallet-hero {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px; padding: 25px; text-align: center;
+    position: relative; overflow: hidden; margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.wh-label { font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+.wh-balance { font-size: 38px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.text-gold { color: var(--gold); }
+.wh-value { font-size: 14px; color: #64748b; margin-top: 5px; }
+.wh-deco-icon { position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(255,255,255,0.03); transform: rotate(15deg); }
+
+/* --- BALANCE BREAKDOWN --- */
+.balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.bal-card {
+    background: var(--glass-bg); border-radius: 12px; padding: 10px; text-align: center;
+    border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+}
+.bc-label { font-size: 10px; color: #94a3b8; margin-bottom: 4px; }
+.bc-val { font-size: 14px; font-weight: 700; color: #fff; }
+
+.bal-card.green { border-left: 3px solid var(--green); }
+.bal-card.gray { border-left: 3px solid #64748b; }
+.bal-card.blue { border-left: 3px solid #3b82f6; }
+
+/* --- WITHDRAW PANEL --- */
+.withdraw-panel {
+    background: #111827; border-radius: 20px; padding: 20px;
+    border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;
+}
+.withdraw-panel h3 { font-size: 16px; margin-bottom: 15px; color: #fff; }
+
+/* Method Selector */
+.method-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+.method-chip {
+    padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    background: #1e293b; color: #94a3b8; cursor: pointer; border: 1px solid transparent;
+    transition: all 0.2s;
+}
+.method-chip.active { background: rgba(16, 185, 129, 0.1); color: var(--green); border-color: var(--green); }
+
+/* Input Group */
+.input-group {
+    background: #020617; border: 1px solid #334155; border-radius: 12px;
+    padding: 12px; display: flex; align-items: center; gap: 10px;
+}
+.currency-symbol { font-size: 18px; color: #94a3b8; font-weight: 600; }
+.input-group input {
+    background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 500;
+    width: 100%; outline: none;
+}
+.input-hint { font-size: 11px; color: #64748b; margin-top: 6px; text-align: right; }
+
+/* Action Button */
+.btn-withdraw {
+    background: #3b82f6; color: #fff; width: 100%; padding: 14px; border: none;
+    border-radius: 12px; font-weight: 600; font-size: 14px; margin-top: 15px;
+    cursor: pointer; transition: background 0.2s;
+}
+.btn-withdraw:hover { background: #2563eb; }
+
+/* --- HISTORY LIST --- */
+.history-section h3 { font-size: 15px; margin-bottom: 12px; color: #e2e8f0; }
+.hist-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hist-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; margin-right: 12px;
+}
+.hist-icon.in { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+.hist-icon.out { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+
+.hist-info h4 { font-size: 13px; margin-bottom: 2px; }
+.hist-info p { font-size: 11px; color: #64748b; }
+.hist-amount { font-size: 13px; font-weight: 600; }
+.hist-amount.positive { color: var(--green); }
+.hist-amount.negative { color: var(--red); }
+
+/* --- FOOTER --- */
+.wallet-footer { text-align: center; font-size: 10px; color: #475569; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
