@@ -47,11 +47,11 @@ You are now connected to **FinGamePro** - The Ultimate Earning Ecosystem. 💰
                 [
                     { 
                         text: "💰 Open App & Earn", 
-                        web_app: { url: "https://fingamepro.onrender.com" } 
+                        web_app: { url: "https://personalgrowth24-bot.onrender.com/" } 
                     }
                 ],
                 [
-                    { text: "📢 Join Community", url: "https://t.me/YourChannelLink" }
+                    { text: "📢 Join Community", url: "https://t.me/The_EnglishRoom5" }
                 ]
             ]
         },
