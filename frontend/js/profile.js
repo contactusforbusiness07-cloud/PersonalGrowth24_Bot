@@ -59,3 +59,49 @@ function submitBrandRequest(btn) {
 
     }, 2000);
 }
+// --- DYNAMIC INFO PAGES (Terms, Privacy, etc.) ---
+function openInfoPage(type) {
+    // 1. Close Menu
+    toggleProfileMenu();
+    
+    // 2. Prepare Content
+    let title = "Info";
+    let content = "Loading...";
+
+    if(type === 'withdraw_terms') {
+        title = "Withdrawal Rules";
+        content = `
+            <ul style="list-style:disc; padding-left:20px; color:#cbd5e1; font-size:13px; line-height:1.6;">
+                <li>Top 10 Rankers can withdraw instantly via UPI/Paytm.</li>
+                <li>Rank 11+ users' earnings are saved and paid at Month End.</li>
+                <li>Minimum withdrawal amount: ₹50.</li>
+                <li>Fake referral activity leads to permanent ban.</li>
+            </ul>
+        `;
+    } else if(type === 'terms') {
+        title = "Terms & Conditions";
+        content = "<p style='color:#cbd5e1'>By using FinGamePro, you agree to our fair usage policy. Bots and scripts are strictly prohibited.</p>";
+    } else if(type === 'privacy') {
+        title = "Privacy Policy";
+        content = "<p style='color:#cbd5e1'>We do not share your personal data. Your Telegram ID is used only for identification.</p>";
+    } else if(type === 'faq') {
+        title = "Help / FAQ";
+        content = `
+            <div style="margin-bottom:10px"><b>Q: How to earn more?</b><br><span style="color:#94a3b8">A: Refer friends and complete daily tasks.</span></div>
+            <div><b>Q: When do rankings reset?</b><br><span style="color:#94a3b8">A: Every night at 12:00 AM.</span></div>
+        `;
+    } else if(type === 'contact') {
+        title = "Contact Us";
+        content = "<p style='color:#cbd5e1'>Email: support@fingamepro.com<br>Telegram Support: @FinGameSupport</p>";
+    }
+
+    // 3. Show using SweetAlert2 (Best for text info)
+    Swal.fire({
+        title: title,
+        html: content,
+        background: '#0f172a',
+        color: '#fff',
+        confirmButtonColor: '#3b82f6',
+        confirmButtonText: 'Close'
+    });
+}
