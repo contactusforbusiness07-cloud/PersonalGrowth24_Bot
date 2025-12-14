@@ -443,75 +443,222 @@
             </section>
 
             
-                                <div id="menu-overlay" class="menu-overlay hidden" onclick="toggleProfileMenu()"></div>
-        
-        <div id="side-menu" class="side-menu">
-            <div class="menu-header">
-                <span class="text-gold">Menu</span>
-                <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
+                                            <div id="profile-section-container" class="hidden">
+                
+                <div id="page-profile" class="internal-page hidden">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="closeInternalPage()"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3>My Profile</h3>
+                    </div>
+
+                    <div class="profile-card-main">
+                        <div class="profile-avatar-area">
+                            <img src="https://i.pravatar.cc/300" id="user-avatar-img" class="p-avatar">
+                            <button class="camera-btn"><i class="fa-solid fa-camera"></i></button>
+                        </div>
+                        <div class="p-info">
+                            <h2 id="display-name">Morning Star <i class="fa-solid fa-circle-check text-blue"></i></h2>
+                            <p class="p-userid">ID: <span id="display-id">8739204</span></p>
+                        </div>
+                        <button class="btn-edit-profile" onclick="toggleEditMode(true)">
+                            <i class="fa-solid fa-pen"></i> Edit Profile
+                        </button>
+                    </div>
+
+                    <div class="glass-card mt-4">
+                        <div class="flex-between">
+                            <span>Total Earned</span>
+                            <span class="text-gold font-bold">15,400 Coins</span>
+                        </div>
+                        <div class="flex-between mt-2">
+                            <span>KYC Status</span>
+                            <span class="badge-gray">Coming Soon</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-profile-edit" class="internal-page hidden">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="toggleEditMode(false)"><i class="fa-solid fa-xmark"></i></button>
+                        <h3>Edit Profile</h3>
+                    </div>
+                    <div class="form-group mt-4">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="edit-name-input" class="form-input" value="Morning Star">
+                    </div>
+                    <div class="form-group mt-4">
+                        <label class="form-label">Change Photo URL</label>
+                        <input type="text" class="form-input" placeholder="Paste Image Link...">
+                    </div>
+                    <button class="btn-primary mt-4" onclick="saveProfileChanges()">Save Changes</button>
+                </div>
+
+                <div id="page-brand" class="internal-page hidden">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="closeInternalPage()"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3>Brand Collab</h3>
+                    </div>
+
+                    <div class="brand-hero">
+                        <h2>Grow with Us 🚀</h2>
+                        <p>Promote your brand to thousands of active users.</p>
+                    </div>
+
+                    <label class="form-label">What do you want to promote?</label>
+                    <div class="promo-grid">
+                        <label class="promo-card">
+                            <input type="radio" name="promo_type" value="telegram">
+                            <div class="p-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram Channel</span></div>
+                        </label>
+                        <label class="promo-card">
+                            <input type="radio" name="promo_type" value="app">
+                            <div class="p-content"><i class="fa-solid fa-mobile-screen text-green"></i><span>Mobile App</span></div>
+                        </label>
+                        <label class="promo-card">
+                            <input type="radio" name="promo_type" value="product">
+                            <div class="p-content"><i class="fa-solid fa-box-open text-gold"></i><span>Product</span></div>
+                        </label>
+                        <label class="promo-card">
+                            <input type="radio" name="promo_type" value="website">
+                            <div class="p-content"><i class="fa-solid fa-globe text-purple"></i><span>Website</span></div>
+                        </label>
+                    </div>
+
+                    <label class="form-label mt-4">Select Budget</label>
+                    <select class="form-input" id="budget-select">
+                        <option value="500-1k">₹500 - ₹1,000 (Basic)</option>
+                        <option value="1k-5k">₹1,000 - ₹5,000 (Standard)</option>
+                        <option value="5k-10k">₹5,000 - ₹10,000 (Premium)</option>
+                        <option value="10k+">₹10,000+ (Elite)</option>
+                    </select>
+                    <div class="form-hint">We will suggest the best plan for your budget.</div>
+
+                    <label class="form-label mt-4">Promotion Details</label>
+                    <input type="text" class="form-input mb-2" placeholder="Promotion Title">
+                    <textarea class="form-input" rows="3" placeholder="Describe requirement..."></textarea>
+                    
+                    <button class="btn-submit-brand" onclick="submitBrandRequest(this)">📩 Send Proposal</button>
+                    
+                    <div class="trust-box mt-4">
+                        <ul>
+                            <li><i class="fa-solid fa-user-shield"></i> Request goes directly to Admin</li>
+                            <li><i class="fa-solid fa-eye-slash"></i> Your contact details are private</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="page-refer" class="internal-page hidden">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="closeInternalPage()"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3>Refer & Earn</h3>
+                    </div>
+
+                    <div class="refer-summary-card">
+                        <div class="rs-row">
+                            <div>
+                                <div class="rs-label">Total Referrals</div>
+                                <div class="rs-val">7</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="rs-label">Coins Earned</div>
+                                <div class="rs-val text-gold">1,500</div>
+                            </div>
+                        </div>
+                        <div class="refer-code-box">
+                            <span>Code: <b class="text-white">SHIV123</b></span>
+                            <button class="btn-copy" onclick="copyCode()"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <button class="btn-share-main" onclick="shareReferral()"><i class="fa-solid fa-share-nodes"></i> Share Link</button>
+                    </div>
+
+                    <div class="section-title mt-4">🎯 Referral Targets</div>
+                    
+                    <div class="target-card completed">
+                        <div class="tc-header">
+                            <span>Refer 3 Friends</span>
+                            <span class="badge-status success">✅ Completed</span>
+                        </div>
+                        <div class="tc-reward">Reward: 🪙 1000 Coins</div>
+                        <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
+                        <div class="tc-count">3/3</div>
+                    </div>
+
+                    <div class="target-card active-target">
+                        <div class="tc-header">
+                            <span>Refer 5 Friends</span>
+                            <span class="badge-status pending">⏳ 1 More Needed</span>
+                        </div>
+                        <div class="tc-reward">Reward: 🪙 1500 Coins</div>
+                        <div class="progress-track"><div class="progress-fill" style="width: 80%;"></div></div>
+                        <div class="tc-count">4/5</div>
+                    </div>
+
+                    <div class="target-card locked">
+                        <div class="tc-header">
+                            <span>Refer 10 Friends</span>
+                            <span class="badge-status locked">🔒 Locked</span>
+                        </div>
+                        <div class="tc-reward">Reward: 🪙 3000 Coins</div>
+                        <div class="progress-track"><div class="progress-fill" style="width: 20%;"></div></div>
+                        <div class="tc-count">2/10</div>
+                    </div>
+
+                    <div class="info-card-blue mt-4">
+                        <h4><i class="fa-solid fa-shield-halved"></i> Verification Rules</h4>
+                        <ul>
+                            <li>Friend must join using your link.</li>
+                            <li>Fake/Self referrals = Ban 🚫.</li>
+                            <li>System auto-verifies every join.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-title mt-4">📜 My Referrals</div>
+                    <div class="refer-list">
+                        <div class="refer-item">
+                            <div class="ri-left">
+                                <div class="ri-name">Rahul K.</div>
+                                <div class="ri-date">Today</div>
+                            </div>
+                            <div class="ri-status success">✅ Verified</div>
+                        </div>
+                        <div class="refer-item">
+                            <div class="ri-left">
+                                <div class="ri-name">Aman S.</div>
+                                <div class="ri-date">Yesterday</div>
+                            </div>
+                            <div class="ri-status warning">⏳ Pending</div>
+                        </div>
+                    </div>
+
+                    <div class="motivation-banner-refer">
+                        Bas 2 aur doston ko invite karo aur 🪙1500 coins jeeto!
+                        <button onclick="shareReferral()">👉 Invite Now</button>
+                    </div>
+                </div>
+
+                <div id="page-contact" class="internal-page hidden">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="closeInternalPage()"><i class="fa-solid fa-arrow-left"></i></button>
+                        <h3>Contact Support</h3>
+                    </div>
+                    <div class="contact-form">
+                        <p class="text-sm text-gray-400 mb-4">Message will be sent anonymously to Admin.</p>
+                        <label class="form-label">Subject</label>
+                        <select class="form-input mb-3" id="contact-subject">
+                            <option>Payment Issue</option>
+                            <option>Task Verification</option>
+                            <option>Bug Report</option>
+                            <option>Other</option>
+                        </select>
+                        <label class="form-label">Message</label>
+                        <textarea class="form-input mb-3" rows="5" placeholder="Type your issue here..."></textarea>
+                        
+                        <button class="btn-primary" onclick="submitContactForm()">Send Message 🚀</button>
+                    </div>
+                </div>
+
             </div>
-            
-            <div class="menu-list">
-                <div class="menu-item" onclick="openInternalPage('profile')">
-                    <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
-                    <span>My Profile</span>
-                </div>
 
-                <div class="menu-item" onclick="navigateTo('wallet')">
-                    <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
-                    <span>My Wallet & Earnings</span>
-                </div>
-
-                <div class="menu-item" onclick="openInternalPage('refer')">
-                    <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
-                    <span>Refer & Earn</span>
-                </div>
-
-                <div class="menu-item highlight-box" onclick="openInternalPage('brand')">
-                    <div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div>
-                    <span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span>
-                </div>
-
-                <hr class="menu-divider">
-
-                <div class="menu-item small" onclick="openInfoPage('withdraw_terms')">
-                    <div class="mi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <span>Withdrawal Terms</span>
-                </div>
-
-                <div class="menu-item small" onclick="openInfoPage('terms')">
-                    <div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div>
-                    <span>Terms & Conditions</span>
-                </div>
-
-                <div class="menu-item small" onclick="openInfoPage('privacy')">
-                    <div class="mi-icon"><i class="fa-solid fa-lock"></i></div>
-                    <span>Privacy Policy</span>
-                </div>
-
-                <div class="menu-item small" onclick="openInfoPage('disclaimer')">
-                    <div class="mi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    <span>Disclaimer</span>
-                </div>
-
-                <hr class="menu-divider">
-
-                <div class="menu-item small" onclick="openInfoPage('faq')">
-                    <div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div>
-                    <span>Help / FAQ</span>
-                </div>
-
-                <div class="menu-item small" onclick="openInfoPage('contact')">
-                    <div class="mi-icon"><i class="fa-solid fa-headset"></i></div>
-                    <span>Contact Us</span>
-                </div>
-
-                <div class="menu-item logout" onclick="alert('Logged out successfully!')">
-                    <div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-                    <span>Logout</span>
-                </div>
-            </div>
-        </div>
 
 
         </main>
