@@ -3,265 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Growth Elite App</title>
+    <title>CyberElite Rewards</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
     <header class="glass-header">
         <div class="logo">
-            <i class="fas fa-bolt text-neon"></i> GROWTH<span class="text-white">ELITE</span>
+            <i class="fa-solid fa-bolt neon-text"></i> ELITE
         </div>
-        <div class="menu-btn" onclick="toggleProfileModal()">
-            <i class="fas fa-ellipsis-v"></i>
+        <div class="user-nav">
+            <div class="balance-pill">
+                <i class="fa-solid fa-coins"></i> <span id="nav-balance">0</span>
+            </div>
+            <div class="avatar-trigger" id="profile-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" id="user-avatar">
+            </div>
         </div>
     </header>
 
-    <main id="app-container">
-
-        <section id="tab-home" class="active-tab">
-            <div class="glass-card balance-card" data-aos="fade-down">
-                <div class="balance-row">
-                    <div>
-                        <p class="text-muted">Total Balance</p>
-                        <h1 class="text-white"><i class="fas fa-coins text-gold"></i> <span id="display-balance">0</span></h1>
-                    </div>
-                    <button class="btn-action pulse" onclick="switchTab('tab-wallet')">Withdraw</button>
-                </div>
-                <div class="daily-row">
-                    <span><i class="fas fa-calendar-day text-neon"></i> Today: +<span id="today-coins">0</span></span>
-                </div>
+    <div id="profile-modal" class="profile-popup hidden">
+        <div class="profile-content">
+            <h4 id="profile-name">User</h4>
+            <div class="stat-row">
+                <span>Balance:</span> <span class="accent" id="profile-balance">0</span>
             </div>
-
-            <div class="grid-4 mt-15" data-aos="fade-up">
-                <div class="action-btn" onclick="switchTab('tab-tasks')"><div class="icon-box bg-blue"><i class="fas fa-tasks"></i></div><span>Tasks</span></div>
-                <div class="action-btn" onclick="switchTab('tab-games')"><div class="icon-box bg-purple"><i class="fas fa-gamepad"></i></div><span>Games</span></div>
-                <div class="action-btn" onclick="watchAd()"><div class="icon-box bg-red"><i class="fas fa-play"></i></div><span>Ads</span></div>
-                <div class="action-btn" onclick="toggleProfileModal()"><div class="icon-box bg-green"><i class="fas fa-user-plus"></i></div><span>Refer</span></div>
+            <div class="stat-row">
+                <span>Rank Score:</span> <span class="accent" id="profile-rank">0</span>
             </div>
-
-            <div class="section-title mt-20">🚀 Smart Tools <span class="badge">Viral</span></div>
-            <div class="grid-2" data-aos="zoom-in">
-                <div class="glass-card tool-card" onclick="openTool('cv_builder')">
-                    <div class="tool-icon"><i class="fas fa-file-pdf text-blue"></i></div>
-                    <h4>CV Builder</h4>
-                    <div class="lock-overlay" id="lock-cv"><i class="fas fa-lock"></i></div>
-                </div>
-                <div class="glass-card tool-card" onclick="openTool('career_ai')">
-                    <div class="tool-icon"><i class="fas fa-user-astronaut text-purple"></i></div>
-                    <h4>Career 2035</h4>
-                    <div class="lock-overlay" id="lock-career"><i class="fas fa-lock"></i></div>
-                </div>
-                <div class="glass-card tool-card" onclick="openTool('love_calc')">
-                    <div class="tool-icon"><i class="fas fa-heart text-red"></i></div>
-                    <h4>Love Calc</h4>
-                </div>
-                <div class="glass-card tool-card" onclick="openTool('marriage')">
-                    <div class="tool-icon"><i class="fas fa-ring text-gold"></i></div>
-                    <h4>Marriage</h4>
-                </div>
+            <div class="stat-row">
+                <span>Referrals:</span> <span class="accent" id="profile-refs">0</span>
             </div>
-
-            <div class="offer-slider glass-card mt-15">
-                <div class="offer-content">
-                    <i class="fas fa-gift text-neon"></i>
-                    <div>
-                        <h4>Exclusive Offer</h4>
-                        <small>Complete daily streak for +500 Bonus</small>
-                    </div>
-                </div>
+            <hr class="divider">
+            <div class="withdraw-section">
+                <p class="status-text" id="withdraw-status">Checking Status...</p>
+                <button class="action-btn small" onclick="handleWithdraw()">Request Withdraw</button>
             </div>
+        </div>
+    </div>
 
-            <div class="sticky-motivation">
-                🎉 You can still earn <b>1200 coins</b> today!
-            </div>
-        </section>
+    <main class="container">
 
-        <section id="tab-leaderboard" class="hidden-tab">
-            <div class="countdown-header glass-card">
-                <p>Resets in:</p>
-                <h2 id="countdown-timer" class="text-neon">14:00:00</h2>
-            </div>
-
-            <div class="top-three mt-20">
-                <div class="rank-card rank-2">
-                    <div class="avatar">🥈</div>
-                    <span class="name">User_88</span>
-                    <span class="score">48k</span>
-                </div>
-                <div class="rank-card rank-1">
-                    <div class="crown">👑</div>
-                    <div class="avatar glow-gold">🥇</div>
-                    <span class="name">Alpha</span>
-                    <span class="score text-gold">52k</span>
-                </div>
-                <div class="rank-card rank-3">
-                    <div class="avatar">🥉</div>
-                    <span class="name">Dev_01</span>
-                    <span class="score">45k</span>
-                </div>
-            </div>
-
-            <div class="leaderboard-list glass-card mt-15" id="lb-list">
-                </div>
-            <p class="text-center text-muted text-xs mt-10">✔ Rankings update live. Fake coins removed.</p>
-        </section>
-
-        <section id="tab-tasks" class="hidden-tab">
-            <div class="section-title">Verified Channels <span class="badge">+1000</span></div>
-            <div id="task-list" class="task-container">
-                </div>
-
-            <div class="section-title mt-20">Watch & Earn <span class="badge">+500</span></div>
-            <div class="glass-card task-row" onclick="watchAd()">
-                <div class="task-icon bg-red"><i class="fas fa-play"></i></div>
-                <div class="task-info">
-                    <h4>Watch Promotional Video</h4>
-                    <small>15 Seconds</small>
-                </div>
-                <button class="btn-task">Watch</button>
-            </div>
-        </section>
-
-        <section id="tab-games" class="hidden-tab">
-            <div class="game-hero glass-card" onclick="playGame('Subway Surfers', 'https://html5.gamedistribution.com/rvvASMiM/index.html')">
-                <span class="badge-hot">🔥 Trending</span>
-                <img src="https://img.gamedistribution.com/rvvASMiM/512x384.jpeg" alt="Subway">
-                <div class="game-meta">
-                    <h3>Subway Surfers</h3>
-                    <span>+500 Coins/Win</span>
-                </div>
-            </div>
-
-            <div class="section-title mt-15">Arcade Zone</div>
+        <section class="section" data-aos="fade-up">
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Tools</h3>
             <div class="grid-2">
-                <div class="game-card glass-card" onclick="playGame('Temple Run', 'https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api')">
-                    <img src="https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api">
-                    <p>Temple Run</p>
+                <div class="card glass-panel" onclick="generateCV()">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135679.png" class="card-icon">
+                    <div class="card-info">
+                        <h4>Pro CV Builder</h4>
+                        <p>Cost: 10k Coins</p>
+                    </div>
                 </div>
-                <div class="game-card glass-card" onclick="playGame('Ludo', 'https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg')">
-                    <img src="https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg">
-                    <p>Ludo King</p>
+                <div class="card glass-panel" onclick="openOracle()">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2904/2904868.png" class="card-icon">
+                    <div class="card-info">
+                        <h4>Love Oracle</h4>
+                        <p>AI Prediction</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="tab-wallet" class="hidden-tab">
-            <div class="wallet-hero glass-card">
-                <p>Total Net Worth</p>
-                <h1>₹ <span id="fiat-value">0.00</span></h1>
-                <small>100k Coins = 1 Unit (Normal)</small>
-            </div>
+        <section class="section" data-aos="fade-up" data-aos-delay="100">
+            <h3><i class="fa-brands fa-telegram"></i> Premium Access</h3>
+            <div class="list-view" id="channel-list">
+                </div>
+        </section>
 
-            <div class="grid-3 mt-15">
-                <div class="stat-card green">
-                    <small>Withdrawable</small>
-                    <h4 id="w-avail">0</h4>
+        <section class="section" data-aos="fade-up" data-aos-delay="200">
+            <h3><i class="fa-solid fa-gamepad"></i> Game Zone</h3>
+            <div class="game-scroll">
+                <div class="game-card" onclick="playGame('subway', 'https://img.gamedistribution.com/rvvASMiM/512x384.jpeg')">
+                    <img src="https://img.gamedistribution.com/rvvASMiM/512x384.jpeg" alt="Subway">
+                    <div class="play-btn"><i class="fa-solid fa-play"></i></div>
                 </div>
-                <div class="stat-card red">
-                    <small>Locked</small>
-                    <h4>0</h4>
+                <div class="game-card" onclick="playGame('temple', 'https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api')">
+                    <img src="https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api" alt="Temple">
+                    <div class="play-btn"><i class="fa-solid fa-play"></i></div>
                 </div>
-                <div class="stat-card blue">
-                    <small>Monthly</small>
-                    <h4 id="w-monthly">0</h4>
+                <div class="game-card" onclick="playGame('ludo', 'https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg')">
+                    <img src="https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg" alt="Ludo">
+                    <div class="play-btn"><i class="fa-solid fa-play"></i></div>
                 </div>
-            </div>
-
-            <div class="glass-card mt-20 p-15">
-                <h3>Withdrawal Request</h3>
-                <input type="number" class="glass-input" placeholder="Amount (Coins)">
-                <select class="glass-input mt-10">
-                    <option>UPI (India)</option>
-                    <option>Paytm</option>
-                    <option>Binance (USDT)</option>
-                </select>
-                <button class="btn-action w-100 mt-15" id="withdraw-btn" onclick="handleWithdraw()">Initiate Transfer</button>
-                <p class="text-xs text-muted mt-10 text-center" id="withdraw-rules">Checking eligibility...</p>
             </div>
         </section>
 
+        <section class="section" data-aos="fade-up" data-aos-delay="300">
+            <h3><i class="fa-solid fa-sack-dollar"></i> Quick Earn</h3>
+            <div class="grid-3">
+                <button class="ad-btn glass-panel" onclick="watchAd()">
+                    <i class="fa-solid fa-video"></i> +500
+                </button>
+                <button class="ad-btn glass-panel" onclick="watchAd()">
+                    <i class="fa-solid fa-video"></i> +500
+                </button>
+                <button class="ad-btn glass-panel" onclick="watchAd()">
+                    <i class="fa-solid fa-video"></i> +500
+                </button>
+            </div>
+        </section>
+
+        <section class="section" data-aos="fade-up">
+            <h3><i class="fa-solid fa-trophy"></i> Top Elite 10</h3>
+            <div class="glass-panel table-container">
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
-    <div id="profile-modal" class="modal-overlay hidden">
-        <div class="modal-content glass-card" data-aos="zoom-in">
-            <div class="modal-header">
-                <h3>User Profile</h3>
-                <i class="fas fa-times" onclick="toggleProfileModal()"></i>
-            </div>
-            
-            <div class="profile-tabs">
-                <button class="p-tab active" onclick="switchProfileTab('p-refer')">Refer & Earn</button>
-                <button class="p-tab" onclick="switchProfileTab('p-sponsor')">Sponsorship</button>
-            </div>
-
-            <div id="p-refer" class="p-section">
-                <div class="ref-progress mt-15">
-                    <div class="ref-step completed">
-                        <span>3 Refs</span>
-                        <div class="bar full"></div>
-                        <i class="fas fa-check-circle text-green"></i>
-                    </div>
-                    <div class="ref-step">
-                        <span>5 Refs</span>
-                        <div class="bar"></div>
-                        <i class="fas fa-lock text-muted"></i>
-                    </div>
-                    <div class="ref-step">
-                        <span>10 Refs</span>
-                        <div class="bar"></div>
-                        <i class="fas fa-lock text-muted"></i>
-                    </div>
-                </div>
-                <div class="glass-input copy-box mt-20" onclick="copyRef()">
-                    <span>t.me/growthbot?start=123</span> <i class="fas fa-copy"></i>
-                </div>
-            </div>
-
-            <div id="p-sponsor" class="p-section hidden">
-                <input type="text" class="glass-input mt-10" placeholder="Brand Name">
-                <select class="glass-input mt-10">
-                    <option>Budget: ₹500 - ₹5000</option>
-                    <option>Budget: ₹5000 - ₹50k</option>
-                    <option>Budget: ₹50k+</option>
-                </select>
-                <textarea class="glass-input mt-10" placeholder="Details"></textarea>
-                <button class="btn-action w-100 mt-10" onclick="submitSponsor()">Send Request</button>
-            </div>
+    <div id="loading-overlay" class="overlay hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h2 id="loading-text">Loading Ad...</h2>
+            <div id="countdown" class="neon-text">10</div>
         </div>
     </div>
 
-    <div id="tool-modal" class="modal-overlay hidden">
-        <div class="modal-content glass-card fullscreen-modal">
-            <button class="close-float" onclick="closeTool()">X</button>
-            <div id="tool-body"></div> </div>
+    <div id="game-modal" class="overlay hidden">
+        <button class="close-game" onclick="closeGame()">X</button>
+        <iframe id="game-frame" src="" frameborder="0"></iframe>
     </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('tab-home')">
-            <i class="fas fa-home"></i><span>Home</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tab-leaderboard')">
-            <i class="fas fa-trophy"></i><span>Rank</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tab-tasks')">
-            <i class="fas fa-check-circle"></i><span>Tasks</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tab-games')">
-            <i class="fas fa-gamepad"></i><span>Games</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tab-wallet')">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
-        </div>
-    </nav>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
+
