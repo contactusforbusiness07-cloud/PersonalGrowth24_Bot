@@ -3,288 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinGame Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <title>FinGamePro</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="css/global.css">
+    
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/leaderboard.css">
+    <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/games.css">
+    <link rel="stylesheet" href="css/wallet.css">
+    <link rel="stylesheet" href="css/profile.css">
 </head>
 <body>
 
-    <header class="app-header">
-        <div class="logo">
-            <i class="fa-solid fa-bolt text-primary"></i> FinGame<span class="text-accent">Pro</span>
-        </div>
-        <div class="profile-trigger" onclick="openProfileMenu()">
-            <img src="https://i.pravatar.cc/100?img=33" alt="User">
-            <div class="status-dot"></div>
-        </div>
-    </header>
-
-    <main id="app-container">
+    <div id="app-container">
         
-        <section id="home" class="active-section">
-            <div class="glass-card balance-card" data-aos="fade-down">
-                <div class="balance-info">
-                    <span class="label">Total Balance</span>
-                    <h1 class="amount"><i class="fa-solid fa-coins text-gold"></i> <span id="user-balance">0</span></h1>
-                    <span class="sub-label text-green">+<span id="today-earnings">0</span> today</span>
-                </div>
-                <button class="btn-withdraw" onclick="navigateTo('wallet')">Withdraw</button>
+        <header class="app-header glass-effect">
+            <div class="logo-area">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span class="app-name">FinGamePro</span>
             </div>
+            <div class="header-actions">
+                <div class="coin-badge" onclick="navigateTo('wallet')">
+                    <i class="fa-solid fa-coins coin-glow"></i>
+                    <span id="header-coin-balance">0</span>
+                </div>
+                <div class="menu-trigger" onclick="toggleProfileMenu()">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+            </div>
+        </header>
 
-            <div class="grid-4" data-aos="fade-up">
-                <div class="action-btn" onclick="navigateTo('tasks')">
-                    <div class="icon-box bg-blue"><i class="fa-solid fa-list-check"></i></div>
-                    <span>Tasks</span>
-                </div>
-                <div class="action-btn" onclick="navigateTo('games')">
-                    <div class="icon-box bg-purple"><i class="fa-solid fa-gamepad"></i></div>
-                    <span>Games</span>
-                </div>
-                <div class="action-btn" onclick="watchAdReward()">
-                    <div class="icon-box bg-red"><i class="fa-solid fa-play"></i></div>
-                    <span>Ads</span>
-                </div>
-                <div class="action-btn" onclick="openReferralModal()">
-                    <div class="icon-box bg-green"><i class="fa-solid fa-user-plus"></i></div>
-                    <span>Refer</span>
-                </div>
-            </div>
-
-            <div class="section-title">
-                <h3>Smart Tools</h3>
-                <span class="badge-hot">Viral</span>
-            </div>
-            <div class="tools-grid">
-                <div class="glass-card tool-card" onclick="accessTool('CV Builder')">
-                    <div class="tool-icon"><i class="fa-solid fa-file-invoice"></i></div>
-                    <div class="tool-info">
-                        <h4>CV Builder</h4>
-                        <p>AI Resume Creator</p>
-                    </div>
-                    <div class="lock-overlay" id="lock-cv">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                </div>
-                <div class="glass-card tool-card" onclick="accessTool('Love Calc')">
-                    <div class="tool-icon"><i class="fa-solid fa-heart text-red"></i></div>
-                    <div class="tool-info">
-                        <h4>Love Calc</h4>
-                        <p>AI Compatibility</p>
-                    </div>
-                    <div class="lock-overlay" id="lock-love">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                </div>
-                 <div class="glass-card tool-card" onclick="accessTool('Marriage')">
-                    <div class="tool-icon"><i class="fa-solid fa-ring text-gold"></i></div>
-                    <div class="tool-info">
-                        <h4>Wedding Date</h4>
-                        <p>Prediction AI</p>
-                    </div>
-                    <div class="lock-overlay" id="lock-marriage">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                </div>
-                <div class="glass-card tool-card" onclick="accessTool('Career')">
-                    <div class="tool-icon"><i class="fa-solid fa-rocket text-purple"></i></div>
-                    <div class="tool-info">
-                        <h4>Career 2035</h4>
-                        <p>Future Role</p>
-                    </div>
-                    <div class="lock-overlay" id="lock-career">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-card offer-slider" data-aos="fade-left">
-                <div class="offer-content">
-                    <h3>Super Offer 🚀</h3>
-                    <p>Earn 500 Coins instantly!</p>
-                </div>
-                <button class="btn-sm">Go</button>
-            </div>
-
-            <div class="motivation-strip">
-                🎉 You can still earn <b>1200 coins</b> today!
-            </div>
-        </section>
-
-        <section id="leaderboard" class="hidden-section">
-            <div class="leaderboard-header">
-                <h2>Top Earners</h2>
-                <div class="timer-badge">
-                    <i class="fa-regular fa-clock"></i> Resets: <span id="countdown">12:00:00</span>
-                </div>
-            </div>
-
-            <div class="podium-container">
-                <div class="podium-item rank-2">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=12" alt=""></div>
-                    <div class="podium-base">
-                        <span>#2</span>
-                        <p>Alex</p>
-                        <small>85k</small>
-                    </div>
-                </div>
-                <div class="podium-item rank-1">
-                    <div class="crown"><i class="fa-solid fa-crown text-gold"></i></div>
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=5" alt=""></div>
-                    <div class="podium-base">
-                        <span>#1</span>
-                        <p>Sarah</p>
-                        <small>92k</small>
-                    </div>
-                </div>
-                <div class="podium-item rank-3">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=8" alt=""></div>
-                    <div class="podium-base">
-                        <span>#3</span>
-                        <p>John</p>
-                        <small>81k</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="leaderboard-list" id="lb-list">
-                </div>
+        <main id="main-content">
             
-            <p class="transparency-text"><i class="fa-solid fa-shield-halved"></i> Rankings update live. Fake coins removed.</p>
-        </section>
+            <section id="home" class="page-section active">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading...
+                </div>
+            </section>
 
-        <section id="tasks" class="hidden-section">
-            <div class="section-title">
-                <h3>Premium Tasks</h3>
-                <span class="badge-hot">High Pay</span>
+            <section id="leaderboard" class="page-section hidden"></section>
+            <section id="tasks" class="page-section hidden"></section>
+            <section id="games" class="page-section hidden"></section>
+            <section id="wallet" class="page-section hidden"></section>
+            
+            <div id="profile-section-container" class="hidden"></div>
+        </main>
+
+        <nav class="bottom-nav glass-effect">
+            <div class="nav-item active" onclick="navigateTo('home')">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
             </div>
-
-            <div class="task-list" id="telegram-task-list">
-                </div>
-
-            <div class="section-title mt-4">
-                <h3>Watch & Earn</h3>
+            <div class="nav-item" onclick="navigateTo('leaderboard')">
+                <i class="fa-solid fa-trophy"></i>
+                <span>Rank</span>
             </div>
-            <div class="glass-card task-card" onclick="watchAdReward()">
-                <div class="task-icon bg-red"><i class="fa-brands fa-youtube"></i></div>
-                <div class="task-info">
-                    <h4>Watch Premium Ad</h4>
-                    <p>+500 Coins</p>
-                </div>
-                <button class="btn-action">Watch</button>
+            <div class="nav-item" onclick="navigateTo('tasks')">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Tasks</span>
             </div>
-        </section>
-
-        <section id="games" class="hidden-section">
-            <div class="glass-card trending-game" onclick="playGame('trending')">
-                <div class="badge-trending">🔥 Trending</div>
-                <h3>Space Shooter X</h3>
-                <p>Play for 15s to earn</p>
-                <div class="reward-tag">+500 Coins</div>
+            <div class="nav-item" onclick="navigateTo('games')">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>Games</span>
             </div>
-
-            <div class="section-title">
-                <h3>All Games</h3>
+            <div class="nav-item" onclick="navigateTo('wallet')">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
             </div>
-            <div class="games-grid">
-                <div class="game-card" onclick="playGame('normal')">
-                    <div class="game-thumb bg-blue">🎮</div>
-                    <span>Puzzle</span>
-                    <small>+100 Coins</small>
-                </div>
-                <div class="game-card" onclick="playGame('normal')">
-                    <div class="game-thumb bg-green">🐍</div>
-                    <span>Snake</span>
-                    <small>+100 Coins</small>
-                </div>
-                <div class="game-card" onclick="playGame('normal')">
-                    <div class="game-thumb bg-purple">♟️</div>
-                    <span>Chess</span>
-                    <small>+100 Coins</small>
-                </div>
-                <div class="game-card" onclick="playGame('normal')">
-                    <div class="game-thumb bg-red">🏎️</div>
-                    <span>Race</span>
-                    <small>+100 Coins</small>
-                </div>
+        </nav>
+        
+        <div id="menu-overlay" class="menu-overlay hidden" onclick="toggleProfileMenu()"></div>
+        <div id="side-menu" class="side-menu hidden">
+            <div class="menu-header">Menu</div>
+            <div class="menu-list">
+                <div class="menu-item" onclick="openInternalPage('profile')"><i class="fa-solid fa-user"></i> My Profile</div>
+                <div class="menu-item" onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i> Wallet & Earnings</div>
+                <div class="menu-item" onclick="openInternalPage('refer')"><i class="fa-solid fa-gift"></i> Refer & Earn</div>
+                <div class="menu-item highlight" onclick="openInternalPage('brand')"><i class="fa-solid fa-handshake"></i> Brand / Sponsorship ⭐</div>
+                <hr>
+                <div class="menu-item small"><i class="fa-solid fa-file-contract"></i> Terms & Conditions</div>
+                <div class="menu-item small"><i class="fa-solid fa-door-open"></i> Logout</div>
             </div>
-        </section>
-
-        <section id="wallet" class="hidden-section">
-            <div class="glass-card wallet-hero">
-                <span>Current Balance</span>
-                <h1><i class="fa-solid fa-coins"></i> <span id="wallet-balance">0</span></h1>
-                <p>≈ ₹ <span id="wallet-inr">0.00</span></p>
-            </div>
-
-            <div class="wallet-breakdown">
-                <div class="mini-card green">
-                    <small>Withdrawable</small>
-                    <h4>100%</h4>
-                </div>
-                <div class="mini-card red">
-                    <small>Locked</small>
-                    <h4>0%</h4>
-                </div>
-                <div class="mini-card blue">
-                    <small>Monthly</small>
-                    <h4>₹0</h4>
-                </div>
-            </div>
-
-            <div class="glass-card withdrawal-panel">
-                <h3>Withdraw Funds</h3>
-                <div class="input-group">
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-                    <input type="number" placeholder="Enter Coins">
-                </div>
-                <div class="payment-methods">
-                    <div class="method active">UPI</div>
-                    <div class="method">Paytm</div>
-                    <div class="method">Crypto</div>
-                </div>
-                <button class="btn-main" onclick="attemptWithdraw()">Transfer Now</button>
-            </div>
-
-            <div class="history-list">
-                <h4>History</h4>
-                <div class="history-item">
-                    <div class="h-left">
-                        <i class="fa-solid fa-arrow-down text-green"></i>
-                        <div>
-                            <p>Daily Bonus</p>
-                            <small>Today, 10:00 AM</small>
-                        </div>
-                    </div>
-                    <span class="text-green">+100</span>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="navigateTo('home')">
-            <i class="fa-solid fa-house"></i>
         </div>
-        <div class="nav-item" onclick="navigateTo('leaderboard')">
-            <i class="fa-solid fa-trophy"></i>
-        </div>
-        <div class="nav-item" onclick="navigateTo('tasks')">
-            <i class="fa-solid fa-list-check"></i>
-        </div>
-        <div class="nav-item" onclick="navigateTo('games')">
-            <i class="fa-solid fa-gamepad"></i>
-        </div>
-        <div class="nav-item" onclick="navigateTo('wallet')">
-            <i class="fa-solid fa-wallet"></i>
-        </div>
-    </nav>
+
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="script.js"></script>
+
+    <script src="js/main.js"></script>
+    
+    <script src="js/home.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/games.js"></script>
+    <script src="js/wallet.js"></script>
+    <script src="js/profile.js"></script>
+
+    <script>
+        // Initialize Animations
+        AOS.init();
+    </script>
 </body>
 </html>
 
