@@ -367,10 +367,79 @@
                 </div>
             </div>
 
-            <section id="wallet" class="page-section hidden"></section>
+                        <section id="wallet" class="page-section hidden">
+                
+                <div class="wallet-hero">
+                    <div class="wh-label">Total Balance</div>
+                    <div class="wh-balance">
+                        <i class="fa-solid fa-coins text-gold"></i>
+                        <span id="wallet-total-coins">0</span>
+                    </div>
+                    <div class="wh-value">≈ ₹ <span id="wallet-inr-value">0.00</span> INR</div>
+                    
+                    <div class="wh-deco-icon"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+
+                <div class="balance-grid">
+                    <div class="bal-card green" onclick="showToast('Available for Instant Withdraw')">
+                        <div class="bc-label">Withdrawable</div>
+                        <div class="bc-val">100%</div>
+                    </div>
+                    <div class="bal-card gray" onclick="showToast('Locked for non-top 10 rankers')">
+                        <div class="bc-label">Locked</div>
+                        <div class="bc-val">0%</div>
+                    </div>
+                    <div class="bal-card blue" onclick="showToast('Eligible for Month-End Payout')">
+                        <div class="bc-label">Monthly</div>
+                        <div class="bc-val">₹0</div>
+                    </div>
+                </div>
+
+                <div class="withdraw-panel" data-aos="fade-up">
+                    <h3>Withdraw Funds</h3>
+                    
+                    <div class="method-selector">
+                        <div class="method-chip active" onclick="selectMethod(this, 'upi')">UPI</div>
+                        <div class="method-chip" onclick="selectMethod(this, 'paytm')">Paytm</div>
+                        <div class="method-chip" onclick="selectMethod(this, 'crypto')">Crypto</div>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" id="withdraw-amount" placeholder="Enter Coins" oninput="calculateWithdrawValue(this.value)">
+                    </div>
+                    <div class="input-hint">Value: ₹<span id="calc-value">0.00</span></div>
+
+                    <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdraw()">
+                        Transfer Now
+                    </button>
+                </div>
+
+                <div class="history-section mt-4">
+                    <h3>History</h3>
+                    <div class="history-list">
+                        <div class="hist-item">
+                            <div class="hist-icon in"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div class="hist-info">
+                                <h4>Daily Bonus</h4>
+                                <p>Today, 10:00 AM</p>
+                            </div>
+                            <div class="hist-amount positive">+100</div>
+                        </div>
+                        
+                        </div>
+                </div>
+
+                <div class="wallet-footer">
+                    <i class="fa-solid fa-lock"></i> 256-bit Secure Payments
+                </div>
+
+            </section>
+
             
             <div id="profile-section-container" class="hidden"></div>
         </main>
+        
 
         <nav class="bottom-nav glass-effect">
             <div class="nav-item active" onclick="navigateTo('home')">
