@@ -1,93 +1,37 @@
-// --- 1. OPEN INTERNAL PAGES (Profile, Brand, Refer, Contact) ---
+// --- 1. OPEN PAGES (Logic Fix) ---
 function openInternalPage(pageName) {
-    // Menu Band Karo
+    // Menu band karo taaki overlap na ho
     toggleProfileMenu(false);
 
-    // Profile Container Dikhao
+    // Profile Container ko visible karo
     const container = document.getElementById('profile-section-container');
     if(container) container.classList.remove('hidden');
 
-    // Pehle Saare Pages Chupao
+    // Pehle saare pages chupao
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
 
-    // Target Page Dikhao
+    // Jo page chahiye use dikhao
     const targetPage = document.getElementById('page-' + pageName);
     if(targetPage) {
         targetPage.classList.remove('hidden');
     } else {
-        console.error("Page not found:", pageName);
+        console.error("Page ID not found: page-" + pageName);
     }
 }
 
-// --- 2. BACK BUTTON LOGIC (User Menu par wapas aayega) ---
+// --- 2. BACK TO MENU (New Logic) ---
 function backToProfileMenu() {
-    // Internal Pages Band Karo
+    // 1. Current Page Chupao
     document.querySelectorAll('.internal-page').forEach(page => page.classList.add('hidden'));
+    
+    // 2. Container Chupao
     document.getElementById('profile-section-container').classList.add('hidden');
     
-    // Menu Wapas Kholo
-    toggleProfileMenu(); 
+    // 3. MENU WAPAS KHOLO (Taaki user Home par na gire)
+    toggleProfileMenu(true); 
 }
 
-// --- 3. INFO PAGES (Terms, Privacy, FAQ, Withdraw) ---
-function openInfoPage(type) {
-    toggleProfileMenu(false); // Menu temporarily band
-
-    let title = "Info";
-    let content = "Loading...";
-
-    if(type === 'withdraw_terms') { 
-        title = "Withdrawal Rules"; 
-        content = "1. Top 10 Rankers: Instant Payment.<br>2. Others: Monthly Payment.<br>3. Minimum Withdraw: ₹50."; 
-    }
-    else if(type === 'terms') { title = "Terms & Conditions"; content = "Using bots or scripts will lead to a permanent ban."; }
-    else if(type === 'privacy') { title = "Privacy Policy"; content = "We do not share your personal data with third parties."; }
-    else if(type === 'disclaimer') { title = "Disclaimer"; content = "Rewards are distributed from Ad Revenue."; }
-    else if(type === 'faq') { 
-        title = "Help / FAQ"; 
-        content = "<b>Q: How to earn?</b><br>A: Play games, complete tasks, and refer friends.<br><br><b>Q: Payment methods?</b><br>A: UPI and Paytm."; 
-    }
-
-    // Popup Dikhao
-    Swal.fire({
-        title: title,
-        html: content,
-        background: '#0f172a',
-        color: '#fff',
-        confirmButtonColor: '#3b82f6',
-        confirmButtonText: 'Back to Menu'
-    }).then(() => {
-        // Popup band hone par wapas Menu khulega
-        toggleProfileMenu();
-    });
-}
-
-// --- 4. LOGOUT FUNCTION ---
-function handleLogout() {
-    toggleProfileMenu(false);
-    Swal.fire({
-        title: 'Logout?',
-        text: "Are you sure you want to exit?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, Exit',
-        background: '#0f172a', color: '#fff'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            if(window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.close();
-            } else {
-                window.close();
-            }
-        } else {
-            toggleProfileMenu(); // Cancel kiya to wapas menu
-        }
-    });
-}
-
-// --- 5. BRAND PAGE LOGIC ---
+// --- 3. BRAND / SPONSORSHIP LOGIC ---
 function selectBudget(element, value) {
     document.querySelectorAll('.budget-chip').forEach(el => el.classList.remove('active'));
     element.classList.add('active');
@@ -100,7 +44,7 @@ function sendBrandProposal() {
     const msg = document.getElementById('brand-message').value;
 
     if(!promoType || !budget) {
-        Swal.fire({ icon: 'warning', title: 'Missing Details', text: 'Select Platform & Budget', background: '#0f172a', color: '#fff' });
+        Swal.fire({ icon: 'warning', title: 'Incomplete', text: 'Please select Platform & Budget', background: '#0f172a', color: '#fff' });
         return;
     }
 
@@ -111,23 +55,94 @@ function sendBrandProposal() {
         didOpen: () => Swal.showLoading(),
         background: '#0f172a', color: '#fff'
     }).then(() => {
-        Swal.fire({ icon: 'success', title: 'Sent!', background: '#0f172a', color: '#fff' })
-        .then(() => backToProfileMenu());
+        Swal.fire({ 
+            icon: 'success', 
+            title: 'Proposal Sent!', 
+            text: 'Admin will reply shortly.', 
+            background: '#0f172a', color: '#fff' 
+        }).then(() => {
+            backToProfileMenu(); // Wapas Menu par
+        });
     });
 }
 
-// --- 6. CONTACT FORM LOGIC ---
+// --- 4. REFERRAL SYSTEM (Gamified) ---
+const referTargets = [3, 5, 10, 15, 20, 25, 50, 100, 500, 1000];
+const currentRefers = 7; // Demo Data
+
+function renderReferralTargets() {
+    const container = document.getElementById('referral-targets-list');
+    if(!container) return;
+    container.innerHTML = '';
+
+    referTargets.forEach(target => {
+        let isUnlocked = currentRefers >= target;
+        let statusClass = isUnlocked ? 'btn-claim' : 'btn-locked';
+        let btnText = isUnlocked ? 'Claim 1000 🪙' : `<i class="fa-solid fa-lock"></i> Locked`;
+        let progress = Math.min((currentRefers / target) * 100, 100);
+
+        const html = `
+            <div class="target-item">
+                <div class="target-info">
+                    <h4>${target} Friends</h4>
+                    <p>Reward: <span class="text-gold">1000 Coins</span></p>
+                    <div style="width: 100px; height: 4px; background: #334155; margin-top: 5px; border-radius: 2px;">
+                        <div style="width: ${progress}%; height: 100%; background: #22c55e; border-radius: 2px;"></div>
+                    </div>
+                </div>
+                <button class="target-btn ${statusClass}" onclick="claimReferReward(${target})">${btnText}</button>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+}
+
+function switchReferTab(tabName) {
+    document.getElementById('tab-targets').classList.add('hidden');
+    document.getElementById('tab-list').classList.add('hidden');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+    if(tabName === 'targets') {
+        document.getElementById('tab-targets').classList.remove('hidden');
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    } else {
+        document.getElementById('tab-list').classList.remove('hidden');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    }
+}
+
+function claimReferReward(target) {
+    if(currentRefers < target) return;
+    Swal.fire({ icon: 'success', title: 'Claimed!', text: '1000 Coins Added.', background: '#0f172a', color: '#fff' });
+}
+
+// --- 5. CONTACT SUPPORT ---
 function submitContactForm() {
     const msg = document.getElementById('contact-message').value;
-    if(!msg) {
-        Swal.fire({ icon: 'warning', title: 'Empty', background: '#0f172a', color: '#fff' });
-        return;
-    }
-    Swal.fire({ icon: 'success', title: 'Sent to Admin', background: '#0f172a', color: '#fff' })
+    if(!msg) return;
+    Swal.fire({ icon: 'success', title: 'Sent!', text: 'Message sent to @Mr_MorningStar524', background: '#0f172a', color: '#fff' })
     .then(() => backToProfileMenu());
 }
 
-// --- 7. EDIT PROFILE LOGIC ---
+// --- 6. INFO PAGES (Menu Restore Fix) ---
+window.openInfoPage = function(type) {
+    toggleProfileMenu(false); 
+    let title = "Info", content = "Loading...";
+
+    if(type === 'withdraw_terms') { title = "Withdrawal Rules"; content = "Top 10 Rankers: Instant Payout.<br>Others: Monthly."; }
+    else if(type === 'terms') { title = "Terms"; content = "No Cheating Allowed."; }
+    else if(type === 'privacy') { title = "Privacy"; content = "Data is Safe."; }
+    else if(type === 'faq') { title = "FAQ"; content = "Refer friends to earn more."; }
+    else if(type === 'disclaimer') { title = "Disclaimer"; content = "Rewards depend on ads."; }
+
+    Swal.fire({
+        title: title, html: content, background: '#0f172a', color: '#fff', confirmButtonText: 'Back to Menu'
+    }).then(() => {
+        toggleProfileMenu(true); // Popup band hone par Menu wapas aayega
+    });
+}
+
+// --- 7. EDIT PROFILE ---
 function toggleEditMode(show) {
     if(show) {
         document.getElementById('page-profile').classList.add('hidden');
@@ -143,34 +158,6 @@ function saveProfileChanges() {
     toggleEditMode(false);
 }
 
-// --- 8. REFERRAL LOGIC ---
-// (Gamified Code included)
-const referTargets = [3, 5, 10, 15, 20, 25, 50, 100, 500, 1000, 10000];
-const currentRefers = 7;
-function renderReferralTargets() {
-    const container = document.getElementById('referral-targets-list');
-    if(!container) return;
-    container.innerHTML = '';
-    referTargets.forEach(target => {
-        let status = currentRefers >= target ? 'btn-claim' : 'btn-locked';
-        let text = currentRefers >= target ? 'Claim Reward' : 'Locked';
-        let progress = Math.min((currentRefers/target)*100, 100);
-        
-        container.innerHTML += `
-            <div class="target-item">
-                <div class="target-info"><h4>${target} Refers</h4><div style="width:100px;height:4px;background:#333"><div style="width:${progress}%;height:100%;background:#22c55e"></div></div></div>
-                <button class="target-btn ${status}" onclick="claimReferReward(${target})">${text}</button>
-            </div>`;
-    });
-}
-function claimReferReward(t) {
-    if(currentRefers < t) return;
-    Swal.fire({icon:'success', title:'Claimed!', background:'#0f172a', color:'#fff'});
-}
-function switchReferTab(t) {
-    document.getElementById('tab-targets').classList.toggle('hidden', t !== 'targets');
-    document.getElementById('tab-list').classList.toggle('hidden', t !== 'list');
-    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0 && t==='targets') || (i===1 && t==='list')));
-}
+// Init
 renderReferralTargets();
 
