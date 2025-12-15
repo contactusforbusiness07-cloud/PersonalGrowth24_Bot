@@ -1,0 +1,31 @@
+/* --- BRAND PAGE STYLES --- */
+
+.brand-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(255, 215, 0, 0.2); padding: 25px;
+    border-radius: 16px; text-align: center; margin-bottom: 25px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+}
+.brand-hero h2 { font-size: 22px; color: #fff; margin-bottom: 5px; }
+.brand-hero p { color: #94a3b8; font-size: 13px; }
+
+/* Grid */
+.promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.promo-content {
+    background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s;
+}
+.promo-card input:checked + .promo-content {
+    background: rgba(255, 215, 0, 0.1); border-color: #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+.promo-card input:checked + .promo-content i { color: #fbbf24; }
+
+/* Budget Chips */
+.budget-scroll { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 5px; margin-bottom: 20px; scrollbar-width: none; }
+.budget-chip {
+    white-space: nowrap; padding: 8px 16px; background: #1e293b; border-radius: 50px;
+    font-size: 11px; color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+}
+.budget-chip.active { background: #fbbf24; color: #000; font-weight: 700; border: none; }
