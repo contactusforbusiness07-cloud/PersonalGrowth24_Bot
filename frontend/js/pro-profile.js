@@ -1,91 +1,95 @@
-// --- MY PROFILE LOGIC (Real Gallery & Data Save) ---
+/* Module: Profile Logic 
+    Features: Telegram Sync, Gallery Upload, LocalStorage Persistence
+*/
 
-// 1. Load Data on Startup (Refresh hone par data wapas layega)
-document.addEventListener('DOMContentLoaded', () => {
-    loadProfileData();
-});
+const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-function loadProfileData() {
-    // Check Local Storage for Name
-    const savedName = localStorage.getItem('userName');
-    if(savedName) {
-        document.getElementById('display-name').innerHTML = `${savedName} <i class="fa-solid fa-circle-check text-blue"></i>`;
-        const inputField = document.getElementById('edit-name-input');
-        if(inputField) inputField.value = savedName;
+// 1. Initialize Profile (Call this when page loads or profile section opens)
+function initProfile() {
+    const storedProfile = JSON.parse(localStorage.getItem('finGameProfile')) || {};
+    
+    // Check if we have Telegram WebApp Data available
+    let tgUser = null;
+    if (window.Telegram && window.Telegram.WebApp) {
+        tgUser = window.Telegram.WebApp.initDataUnsafe.user;
     }
 
-    // Check Local Storage for Image
-    const savedImage = localStorage.getItem('userAvatar');
-    if(savedImage) {
-        const imgTag = document.getElementById('user-avatar-img');
-        if(imgTag) imgTag.src = savedImage;
+    // Logic: LocalStorage > Telegram Data > Default
+    const finalName = storedProfile.name || (tgUser ? `${tgUser.first_name} ${tgUser.last_name || ''}` : "Guest Player");
+    const finalID = storedProfile.id || (tgUser ? tgUser.id : "8739204"); // Fallback ID for testing
+    const finalImage = storedProfile.image || defaultAvatar;
+
+    // Update UI
+    document.getElementById('display-name').innerText = finalName;
+    document.getElementById('display-id').innerText = finalID;
+    document.getElementById('profile-img').src = finalImage;
+
+    // Initial Save if empty
+    if (!storedProfile.name && tgUser) {
+        saveToLocal(finalName, finalImage, finalID);
     }
 }
 
-// 2. Trigger Hidden Gallery Input
-function triggerFileUpload() {
-    const fileInput = document.getElementById('file-upload');
-    if(fileInput) fileInput.click();
-}
-
-// 3. Handle File Selection (Real Gallery Logic)
+// 2. Handle Real Gallery Image Upload
 function handleImageUpload(event) {
     const file = event.target.files[0];
     if (file) {
-        // Show Loading
-        if(typeof Swal !== 'undefined') {
-            Swal.fire({
-                title: 'Updating...',
-                timer: 500, didOpen: () => Swal.showLoading(),
-                background: '#0f172a', color: '#fff', showConfirmButton: false
-            });
-        }
-
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            const imageData = e.target.result; // Base64 String (Real Image Data)
+            const base64Image = e.target.result;
             
-            // Update UI
-            document.getElementById('user-avatar-img').src = imageData;
+            // UI Update turant karein
+            document.getElementById('profile-img').src = base64Image;
             
-            // Save to Storage (Persistent)
-            localStorage.setItem('userAvatar', imageData);
+            // Data Save karein
+            saveCurrentState();
         };
         
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // Convert image to Base64 string
     }
 }
 
-// 4. Save Name Changes
+// 3. Edit Modal Logic
+function openEditModal() {
+    const currentName = document.getElementById('display-name').innerText;
+    document.getElementById('edit-name-input').value = currentName;
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+}
+
 function saveProfileChanges() {
     const newName = document.getElementById('edit-name-input').value;
-    
-    if(!newName.trim()) {
-        if(typeof Swal !== 'undefined') {
-            Swal.fire({toast: true, icon: 'warning', title: 'Name cannot be empty', background: '#0f172a', color: '#fff'});
-        } else {
-            alert("Name cannot be empty");
-        }
-        return;
-    }
-
-    // Update UI
-    document.getElementById('display-name').innerHTML = `${newName} <i class="fa-solid fa-circle-check text-blue"></i>`;
-    
-    // Save to Storage
-    localStorage.setItem('userName', newName);
-    
-    // Success Animation
-    if(typeof Swal !== 'undefined') {
-        Swal.fire({
-            icon: 'success', title: 'Profile Updated', 
-            text: 'Changes saved successfully.',
-            background: '#0f172a', color: '#fff',
-            timer: 1500, showConfirmButton: false
-        });
+    if (newName.trim() !== "") {
+        document.getElementById('display-name').innerText = newName;
+        saveCurrentState();
+        closeEditModal();
     } else {
-        alert("Profile Updated Successfully!");
+        alert("Name cannot be empty!");
     }
 }
+
+// 4. Helper: Save to LocalStorage
+function saveCurrentState() {
+    const name = document.getElementById('display-name').innerText;
+    const img = document.getElementById('profile-img').src;
+    const id = document.getElementById('display-id').innerText;
+    
+    saveToLocal(name, img, id);
+}
+
+function saveToLocal(name, image, id) {
+    const profileData = {
+        name: name,
+        image: image,
+        id: id
+    };
+    localStorage.setItem('finGameProfile', JSON.stringify(profileData));
+}
+
+// Auto-run initialization
+document.addEventListener('DOMContentLoaded', initProfile);
 
