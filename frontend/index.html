@@ -455,11 +455,39 @@
                 </div>
             </div>
 
-            <div id="page-profile-edit" class="internal-page hidden">
-                <div class="page-header"><button class="back-btn" onclick="toggleEditMode(false)"><i class="fa-solid fa-xmark"></i></button><h3>Edit</h3></div>
-                <div class="form-group mt-4"><label class="form-label">Name</label><input type="text" id="edit-name-input" class="form-input"></div>
-                <button class="btn-primary mt-4" onclick="saveProfileChanges()">Save</button>
+                        <div id="page-profile" class="internal-page hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h3>My Profile</h3>
+                </div>
+                
+                <div class="profile-card-main">
+                    <div class="profile-avatar-area">
+                        <img src="https://i.pravatar.cc/300" id="user-avatar-img" class="p-avatar">
+                        
+                        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
+                        
+                        <div class="camera-btn" onclick="triggerFileUpload()">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="p-info">
+                        <h2 id="display-name">Morning Star <i class="fa-solid fa-circle-check text-blue"></i></h2>
+                        <span class="p-userid">ID: 8739204</span>
+                    </div>
+
+                    <div class="edit-field-group">
+                        <label class="input-label">Edit Display Name</label>
+                        <input type="text" id="edit-name-input" class="modern-input" value="Morning Star" placeholder="Enter new name...">
+                    </div>
+
+                    <button class="btn-save-profile" onclick="saveProfileChanges()">
+                        Save Changes
+                    </button>
+                </div>
             </div>
+
 
             <div id="page-brand" class="internal-page hidden">
                 <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Brand Collab</h3></div>
