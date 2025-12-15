@@ -1,41 +1,173 @@
-// --- POINT 4: REFER & EARN ---
+/* Module: Referral & Earn Logic (Hitech) */
 
-const targets = [3, 5, 10, 20, 50, 100, 1000];
-const myRefers = 7; // Database se aayega
+// Configuration: Rewards for each target
+const REFERRAL_TARGETS = [
+    { target: 3, reward: 500 },
+    { target: 5, reward: 1000 },
+    { target: 10, reward: 2500 },
+    { target: 20, reward: 5000 },
+    { target: 50, reward: 15000 },
+    { target: 100, reward: 35000 },
+    { target: 500, reward: 200000 },
+    { target: 1000, reward: 500000 },
+    { target: 5000, reward: 3000000 },
+    { target: 10000, reward: 7000000 }
+];
 
-function renderReferralTargets() {
-    const box = document.getElementById('referral-targets-list');
-    if(!box) return;
-    box.innerHTML = '';
-    targets.forEach(t => {
-        let active = myRefers >= t;
-        let btnClass = active ? 'btn-claim' : 'btn-locked';
-        let btnTxt = active ? 'Claim 1000' : 'Locked';
-        let prog = Math.min((myRefers/t)*100, 100);
-        
-        box.innerHTML += `
-        <div class="target-item">
-            <div class="target-info"><h4>${t} Friends</h4><div style="width:100px;height:4px;background:#333;margin-top:5px"><div style="width:${prog}%;height:100%;background:#22c55e"></div></div></div>
-            <button class="target-btn ${btnClass}" onclick="claimRefer(${t})">${btnTxt}</button>
-        </div>`;
+// State Management
+let myReferralData = {
+    code: "",
+    count: 0, // Kitne log join huye (Real logic)
+    claimedTargets: [], // Kaunse rewards le liye
+    totalEarnings: 0
+};
+
+// 1. Initialize System
+function initReferralSystem() {
+    const userProfile = JSON.parse(localStorage.getItem('finGameProfile')) || { id: '8739204', name: 'User' };
+    
+    // Generate Unique Code based on ID (e.g., FGP-8739204)
+    myReferralData.code = `FGP-${userProfile.id}`;
+    
+    // Load Saved Data or Default
+    const savedData = JSON.parse(localStorage.getItem('referralData'));
+    if (savedData) {
+        myReferralData = savedData;
+    } else {
+        // SIMULATION FOR DEMO: Let's assume 7 people joined so you can see the UI working
+        myReferralData.count = 7; 
+        saveReferralData();
+    }
+
+    // Update UI
+    document.getElementById('my-referral-code').innerText = myReferralData.code;
+    document.getElementById('total-referrals').innerText = myReferralData.count;
+    document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
+
+    renderMilestones();
+    renderTeamList();
+}
+
+// 2. Render Milestones Logic (Progress Bars)
+function renderMilestones() {
+    const list = document.getElementById('milestone-list');
+    list.innerHTML = ""; // Clear current
+
+    REFERRAL_TARGETS.forEach((tier, index) => {
+        const isClaimed = myReferralData.claimedTargets.includes(tier.target);
+        const progressPercent = Math.min((myReferralData.count / tier.target) * 100, 100);
+        const isUnlocked = myReferralData.count >= tier.target;
+
+        // Dynamic Button State
+        let btnHTML = '';
+        if (isClaimed) {
+            btnHTML = `<button class="btn-claim claimed"><i class="fa-solid fa-check"></i> CLAIMED</button>`;
+        } else if (isUnlocked) {
+            btnHTML = `<button class="btn-claim ready" onclick="claimReferralReward(${tier.target}, ${tier.reward})">CLAIM ${tier.reward} COINS</button>`;
+        } else {
+            btnHTML = `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> Locked</button>`;
+        }
+
+        const html = `
+        <div class="milestone-card">
+            <div class="milestone-header">
+                <span class="target-title">${tier.target} Friends</span>
+                <span class="reward-badge">+${tier.reward.toLocaleString()} Coins</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:12px; color:#aaa;">
+                <span>Current: ${myReferralData.count}</span>
+                <span>Target: ${tier.target}</span>
+            </div>
+            ${btnHTML}
+        </div>
+        `;
+        list.innerHTML += html;
     });
 }
 
-function claimRefer(t) {
-    if(myRefers < t) return;
-    Swal.fire({icon:'success', title:'Claimed!', background:'#0f172a', color:'#fff'});
+// 3. Claim Reward Logic
+function claimReferralReward(target, amount) {
+    // Add to Wallet (Calls main wallet function)
+    updateWalletBalance(amount); 
+    
+    // Update State
+    myReferralData.claimedTargets.push(target);
+    myReferralData.totalEarnings += amount;
+    saveReferralData();
+
+    // Refresh UI
+    renderMilestones();
+    document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
+    
+    // Show Success Animation (Simple Alert for now, can be upgraded)
+    alert(`🎉 Success! ${amount} Coins added to wallet.`);
 }
 
-function switchReferTab(type) {
-    document.getElementById('tab-targets').classList.toggle('hidden', type !== 'targets');
-    document.getElementById('tab-list').classList.toggle('hidden', type !== 'list');
-    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0 && type==='targets')||(i===1 && type==='list')));
+// 4. Render Team & 10% Commission Logic
+function renderTeamList() {
+    const list = document.getElementById('team-list');
+    // Mock Data: Real app me ye data database se aayega
+    const mockFriends = [
+        { name: "Rahul K.", id: "9928..", earned: 5000 },
+        { name: "CryptoKing", id: "1120..", earned: 12000 },
+        { name: "Sarah J.", id: "3321..", earned: 200 },
+    ];
+
+    let html = "";
+    let totalCommission = 0;
+
+    mockFriends.forEach(friend => {
+        // Strict 10% Calculation
+        const commission = Math.floor(friend.earned * 0.10);
+        totalCommission += commission;
+
+        html += `
+        <div class="team-item">
+            <div class="team-info">
+                <h4>${friend.name}</h4>
+                <p>ID: ${friend.id} • Earned: ${friend.earned}</p>
+            </div>
+            <div class="commission-box">
+                <span class="comm-amount">+${commission}</span>
+                <span class="comm-label">Your 10%</span>
+            </div>
+        </div>
+        `;
+    });
+
+    list.innerHTML = html;
 }
 
-function copyCode() {
-    navigator.clipboard.writeText('SHIV123');
-    Swal.fire({toast:true, icon:'success', title:'Copied', position:'top', timer:1500, showConfirmButton:false, background:'#0f172a', color:'#fff'});
+// 5. Utility: Copy Code
+function copyReferralCode() {
+    navigator.clipboard.writeText(myReferralData.code);
+    alert("Referral Code Copied! Share it with friends.");
 }
 
-// Auto Load
-document.addEventListener('DOMContentLoaded', renderReferralTargets);
+// 6. Tabs Switcher
+function switchReferTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    event.target.classList.add('active');
+}
+
+// Save to LocalStorage
+function saveReferralData() {
+    localStorage.setItem('referralData', JSON.stringify(myReferralData));
+}
+
+// Helper to update main wallet (Make sure this exists in main.js or define here)
+function updateWalletBalance(amount) {
+    let current = parseInt(localStorage.getItem('userBalance')) || 0;
+    localStorage.setItem('userBalance', current + amount);
+    // If you have a global updateUI function, call it here
+}
+
+// Auto-init
+document.addEventListener('DOMContentLoaded', initReferralSystem);
+
