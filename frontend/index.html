@@ -503,18 +503,53 @@
             </div>
 
             <div id="page-refer" class="internal-page hidden">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Refer & Earn</h3></div>
-                <div class="refer-header-card">
-                    <div class="ref-stats-row"><div><h3>7</h3><p>Joined</p></div><div><h3 class="text-gold">1,500</h3><p>Coins</p></div></div>
-                    <div class="refer-code-area"><span class="text-gray-400 text-xs">CODE:</span><span class="code-text">SHIV123</span></div>
-                </div>
-                <div class="tab-container">
-                    <button class="tab-btn active" onclick="switchReferTab('targets')">Targets</button>
-                    <button class="tab-btn" onclick="switchReferTab('list')">My Team</button>
-                </div>
-                <div id="tab-targets" class="tab-content"><div id="referral-targets-list"></div></div>
-                <div id="tab-list" class="tab-content hidden"><div class="joined-user-row"><div class="u-avatar">U</div><div class="u-name">User 1</div></div></div>
+    <div class="page-header flex-center-start">
+        <button class="back-btn" onclick="backToProfileMenu()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h2 class="neon-text">Affiliate Center</h2>
+    </div>
+
+    <div class="refer-hero-card">
+        <div class="refer-stat">
+            <span class="stat-label">Total Partners</span>
+            <h3 id="total-referrals" class="stat-value neon-blue">0</h3>
+        </div>
+        <div class="vertical-divider"></div>
+        <div class="refer-stat">
+            <span class="stat-label">Earnings (Coins)</span>
+            <h3 id="referral-earnings" class="stat-value neon-gold">0</h3>
+        </div>
+    </div>
+
+    <div class="copy-code-container">
+        <label>YOUR UNIQUE ACCESS CODE</label>
+        <div class="code-box" onclick="copyReferralCode()">
+            <span id="my-referral-code">LOADING...</span>
+            <i class="fa-regular fa-copy"></i>
+        </div>
+    </div>
+
+    <div class="refer-tabs">
+        <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
+        <button class="tab-btn" onclick="switchReferTab('team')">My Team (10%)</button>
+    </div>
+
+    <div id="tab-milestones" class="tab-content active-tab">
+        <div id="milestone-list" class="scrollable-list">
             </div>
+    </div>
+
+    <div id="tab-team" class="tab-content hidden">
+        <div class="team-header">
+            <p>Earn 10% of your friends' income forever.</p>
+            <button class="btn-claim-all" onclick="claimAllCommissions()">Claim All</button>
+        </div>
+        <div id="team-list" class="scrollable-list">
+            </div>
+    </div>
+</div>
+
 
             <div id="page-contact" class="internal-page hidden">
                 <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Support</h3></div>
