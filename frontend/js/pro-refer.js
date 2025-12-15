@@ -1,6 +1,5 @@
-/* Module: Referral & Earn Logic (Hitech) */
+/* Module: Referral & Earn Logic (Locked Design, Updated Logic) */
 
-// Configuration: Rewards for each target
 const REFERRAL_TARGETS = [
     { target: 3, reward: 500 },
     { target: 5, reward: 1000 },
@@ -8,63 +7,63 @@ const REFERRAL_TARGETS = [
     { target: 20, reward: 5000 },
     { target: 50, reward: 15000 },
     { target: 100, reward: 35000 },
-    { target: 500, reward: 200000 },
-    { target: 1000, reward: 500000 },
-    { target: 5000, reward: 3000000 },
-    { target: 10000, reward: 7000000 }
+    { target: 1000, reward: 500000 }
 ];
 
-// State Management
 let myReferralData = {
     code: "",
-    count: 0, // Kitne log join huye (Real logic)
-    claimedTargets: [], // Kaunse rewards le liye
+    count: 0, 
+    claimedTargets: [],
     totalEarnings: 0
 };
 
 // 1. Initialize System
 function initReferralSystem() {
-    const userProfile = JSON.parse(localStorage.getItem('finGameProfile')) || { id: '8739204', name: 'User' };
+    const userProfile = JSON.parse(localStorage.getItem('finGameProfile')) || { id: '8739204' };
     
-    // Generate Unique Code based on ID (e.g., FGP-8739204)
-    myReferralData.code = `FGP-${userProfile.id}`;
-    
-    // Load Saved Data or Default
+    // Load Saved Data or Default to 0
     const savedData = JSON.parse(localStorage.getItem('referralData'));
+    
     if (savedData) {
         myReferralData = savedData;
     } else {
-        // SIMULATION FOR DEMO: Let's assume 7 people joined so you can see the UI working
-        myReferralData.count = 7; 
+        // DEFAULT START STATE: 0 Joined
+        myReferralData = {
+            code: `FGP-${userProfile.id}`,
+            count: 0, 
+            claimedTargets: [],
+            totalEarnings: 0
+        };
         saveReferralData();
     }
 
-    // Update UI
+    // Update UI Elements
     document.getElementById('my-referral-code').innerText = myReferralData.code;
-    document.getElementById('total-referrals').innerText = myReferralData.count;
+    document.getElementById('total-referrals').innerText = myReferralData.count; // Shows 0 initially
     document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
 
     renderMilestones();
     renderTeamList();
 }
 
-// 2. Render Milestones Logic (Progress Bars)
+// 2. Render Milestones (Locked/Unlocked Logic)
 function renderMilestones() {
     const list = document.getElementById('milestone-list');
-    list.innerHTML = ""; // Clear current
+    list.innerHTML = ""; 
 
-    REFERRAL_TARGETS.forEach((tier, index) => {
+    REFERRAL_TARGETS.forEach((tier) => {
         const isClaimed = myReferralData.claimedTargets.includes(tier.target);
+        // Progress Logic: Agar count 0 hai, to width 0% hogi
         const progressPercent = Math.min((myReferralData.count / tier.target) * 100, 100);
         const isUnlocked = myReferralData.count >= tier.target;
 
-        // Dynamic Button State
         let btnHTML = '';
         if (isClaimed) {
             btnHTML = `<button class="btn-claim claimed"><i class="fa-solid fa-check"></i> CLAIMED</button>`;
         } else if (isUnlocked) {
-            btnHTML = `<button class="btn-claim ready" onclick="claimReferralReward(${tier.target}, ${tier.reward})">CLAIM ${tier.reward} COINS</button>`;
+            btnHTML = `<button class="btn-claim ready" onclick="claimReferralReward(${tier.target}, ${tier.reward})">CLAIM ${tier.reward}</button>`;
         } else {
+            // Locked State Design
             btnHTML = `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> Locked</button>`;
         }
 
@@ -88,86 +87,35 @@ function renderMilestones() {
     });
 }
 
-// 3. Claim Reward Logic
-function claimReferralReward(target, amount) {
-    // Add to Wallet (Calls main wallet function)
-    updateWalletBalance(amount); 
-    
-    // Update State
-    myReferralData.claimedTargets.push(target);
-    myReferralData.totalEarnings += amount;
-    saveReferralData();
-
-    // Refresh UI
-    renderMilestones();
-    document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
-    
-    // Show Success Animation (Simple Alert for now, can be upgraded)
-    alert(`🎉 Success! ${amount} Coins added to wallet.`);
-}
-
-// 4. Render Team & 10% Commission Logic
+// 3. Render Team (Only show list if friends exist)
 function renderTeamList() {
     const list = document.getElementById('team-list');
-    // Mock Data: Real app me ye data database se aayega
-    const mockFriends = [
-        { name: "Rahul K.", id: "9928..", earned: 5000 },
-        { name: "CryptoKing", id: "1120..", earned: 12000 },
-        { name: "Sarah J.", id: "3321..", earned: 200 },
-    ];
-
-    let html = "";
-    let totalCommission = 0;
-
-    mockFriends.forEach(friend => {
-        // Strict 10% Calculation
-        const commission = Math.floor(friend.earned * 0.10);
-        totalCommission += commission;
-
-        html += `
-        <div class="team-item">
-            <div class="team-info">
-                <h4>${friend.name}</h4>
-                <p>ID: ${friend.id} • Earned: ${friend.earned}</p>
-            </div>
-            <div class="commission-box">
-                <span class="comm-amount">+${commission}</span>
-                <span class="comm-label">Your 10%</span>
-            </div>
-        </div>
-        `;
-    });
-
-    list.innerHTML = html;
-}
-
-// 5. Utility: Copy Code
-function copyReferralCode() {
-    navigator.clipboard.writeText(myReferralData.code);
-    alert("Referral Code Copied! Share it with friends.");
-}
-
-// 6. Tabs Switcher
-function switchReferTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     
-    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-    event.target.classList.add('active');
+    // Agar 0 referrals hain, to "No Team" message dikhao
+    if (myReferralData.count === 0) {
+        list.innerHTML = `
+            <div style="text-align:center; padding:20px; color:#555;">
+                <i class="fa-solid fa-users-slash" style="font-size:30px; margin-bottom:10px;"></i>
+                <p>No partners yet. Share your link!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Logic for Real Data Integration (Placeholder for future)
+    // ... (Yaha real friends list aayegi jab backend connect hoga)
 }
 
-// Save to LocalStorage
 function saveReferralData() {
     localStorage.setItem('referralData', JSON.stringify(myReferralData));
 }
 
-// Helper to update main wallet (Make sure this exists in main.js or define here)
-function updateWalletBalance(amount) {
-    let current = parseInt(localStorage.getItem('userBalance')) || 0;
-    localStorage.setItem('userBalance', current + amount);
-    // If you have a global updateUI function, call it here
+// For Testing: Run console command 'addFakeReferral()' to test animation
+function addFakeReferral() {
+    myReferralData.count++;
+    saveReferralData();
+    initReferralSystem();
 }
 
-// Auto-init
 document.addEventListener('DOMContentLoaded', initReferralSystem);
 
