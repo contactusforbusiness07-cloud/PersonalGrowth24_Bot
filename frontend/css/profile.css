@@ -1,108 +1,103 @@
-/* --- INTERNAL PAGE (Base) --- */
-.internal-page {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #020617; z-index: 2000;
-    padding: 20px; overflow-y: auto; padding-bottom: 80px;
-    animation: slideInRight 0.3s ease;
+/* --- PREMIUM PROFILE & MENU DESIGN --- */
+
+/* 1. Brand / Sponsorship Premium */
+.brand-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
 }
-@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.brand-hero h2 { font-size: 22px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; margin-bottom: 5px; }
+.brand-hero p { color: #64748b; font-size: 13px; }
 
-.page-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-.back-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; }
-
-/* --- PROFILE PAGE --- */
-.profile-card-main {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 20px; padding: 20px; text-align: center;
-    position: relative;
+.promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.promo-card input { display: none; }
+.promo-content {
+    background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: all 0.3s;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
-.profile-avatar-area { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
-.p-avatar { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; }
-.camera-btn {
-    position: absolute; bottom: 0; right: 0;
-    background: var(--gold); border: none; width: 30px; height: 30px; border-radius: 50%;
-    color: #000; font-size: 12px; cursor: pointer;
+.promo-content i { font-size: 20px; margin-bottom: 5px; }
+.promo-content span { font-size: 10px; font-weight: 500; color: #94a3b8; }
+/* Selected State */
+.promo-card input:checked + .promo-content {
+    background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
-.p-info h2 { font-size: 18px; margin-bottom: 5px; }
-.text-blue { color: #3b82f6; }
-.p-userid { color: #94a3b8; font-size: 12px; }
-.btn-edit-profile {
-    margin-top: 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
-    padding: 8px 16px; border-radius: 20px; font-size: 12px; cursor: pointer;
+.promo-card input:checked + .promo-content i, .promo-card input:checked + .promo-content span { color: #fff; }
+
+.budget-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
+.budget-chip {
+    white-space: nowrap; padding: 10px 15px; background: #1e293b; border-radius: 20px;
+    font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s;
 }
-.flex-between { display: flex; justify-content: space-between; font-size: 13px; color: #cbd5e1; }
-.badge-gray { background: #334155; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
+.budget-chip.active { background: linear-gradient(90deg, #f59e0b, #d97706); color: #000; font-weight: 700; border: none; }
 
-/* --- REFER & EARN (Gamified) --- */
-.refer-summary-card {
-    background: linear-gradient(135deg, #4f46e5, #4338ca);
-    border-radius: 16px; padding: 20px; color: #fff;
-    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+/* 2. Referral System Premium */
+.refer-header-card {
+    background: linear-gradient(135deg, #4f46e5, #3730a3);
+    padding: 25px; border-radius: 20px; text-align: center; color: #fff;
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5); margin-bottom: 20px;
 }
-.rs-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
-.rs-label { font-size: 11px; opacity: 0.8; }
-.rs-val { font-size: 18px; font-weight: 700; }
-.refer-code-box {
-    background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border: 1px dashed rgba(255,255,255,0.3);
+.ref-stats-row { display: flex; justify-content: space-around; margin-bottom: 20px; }
+.ref-stat h3 { font-size: 24px; font-weight: 700; margin: 0; }
+.ref-stat p { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+
+.refer-code-area {
+    background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: space-between; border: 1px dashed rgba(255,255,255,0.3);
 }
-.btn-copy { background: none; border: none; color: #fff; cursor: pointer; }
-.btn-share-main { background: #fff; color: #4f46e5; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.code-text { font-family: monospace; font-size: 16px; letter-spacing: 2px; font-weight: 700; color: #fbbf24; }
 
-/* Target Cards */
-.target-card {
-    background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 12px;
-    border: 1px solid rgba(255,255,255,0.05); position: relative;
+.tab-container { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.tab-btn {
+    padding: 10px 5px; color: #64748b; font-size: 13px; background: none; border: none; cursor: pointer; position: relative;
 }
-.target-card.completed { border-color: var(--green); background: rgba(16, 185, 129, 0.05); }
-.target-card.locked { opacity: 0.6; }
+.tab-btn.active { color: #fff; font-weight: 600; }
+.tab-btn.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #3b82f6;
+}
 
-.tc-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-.badge-status { font-size: 10px; padding: 2px 6px; border-radius: 4px; }
-.badge-status.success { background: var(--green); color: #000; }
-.badge-status.pending { background: #3b82f6; color: #fff; }
-.badge-status.locked { background: #475569; color: #cbd5e1; }
-
-.tc-reward { font-size: 11px; color: var(--gold); margin-bottom: 8px; }
-.progress-track { background: #334155; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
-.progress-fill { height: 100%; background: var(--green); border-radius: 3px; }
-.target-card.active-target .progress-fill { background: #3b82f6; }
-.tc-count { text-align: right; font-size: 10px; color: #94a3b8; }
-
-/* Refer History */
-.info-card-blue { background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(59, 130, 246, 0.3); }
-.info-card-blue h4 { font-size: 12px; color: #3b82f6; margin-bottom: 8px; }
-.info-card-blue li { font-size: 11px; color: #cbd5e1; margin-bottom: 4px; list-style-position: inside; }
-
-.refer-list { display: flex; flex-direction: column; gap: 8px; }
-.refer-item {
+/* Refer Targets List */
+.target-item {
+    background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 10px;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;
 }
-.ri-name { font-size: 13px; }
-.ri-date { font-size: 10px; color: #64748b; }
-.ri-status { font-size: 11px; }
-.ri-status.success { color: var(--green); }
-.ri-status.warning { color: var(--gold); }
-
-/* Motivation Banner */
-.motivation-banner-refer {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    background: linear-gradient(90deg, #10b981, #059669);
-    padding: 15px; text-align: center; font-size: 12px; font-weight: 600;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 2005;
+.target-info h4 { font-size: 14px; margin: 0 0 5px 0; color: #e2e8f0; }
+.target-info p { font-size: 11px; color: #94a3b8; margin: 0; }
+.target-btn {
+    padding: 6px 15px; border-radius: 8px; font-size: 11px; font-weight: 700; border: none; cursor: pointer;
 }
-.motivation-banner-refer button { background: #fff; color: #059669; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+.btn-claim { background: linear-gradient(90deg, #22c55e, #16a34a); color: #fff; animation: pulse 2s infinite; }
+.btn-locked { background: #334155; color: #94a3b8; cursor: not-allowed; }
+.btn-done { background: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid #22c55e; }
 
-/* --- BRAND & CONTACT FORMS --- */
-.promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.promo-card { position: relative; cursor: pointer; }
-.promo-card input { position: absolute; opacity: 0; }
-.p-content { background: #1e293b; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.2s; }
-.promo-card input:checked + .p-content { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
-.form-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 10px; outline: none; margin-bottom: 10px; }
-.btn-submit-brand, .btn-primary { background: var(--gold); color: #000; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; }
-.trust-box { background: rgba(16, 185, 129, 0.05); padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 11px; color: #cbd5e1; }
+/* Joined Users List */
+.joined-user-row {
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.u-avatar { width: 30px; height: 30px; background: #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; }
+.u-name { font-size: 13px; color: #e2e8f0; flex: 1; }
+.u-date { font-size: 11px; color: #64748b; }
+
+/* 3. Contact Premium */
+.contact-premium-card {
+    background: #1e293b; border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.05);
+}
+.contact-input {
+    width: 100%; background: #0f172a; border: 1px solid #334155; padding: 15px;
+    border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none; transition: 0.3s;
+}
+.contact-input:focus { border-color: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.1); }
+.btn-send-msg {
+    width: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb); color: #fff;
+    padding: 15px; border: none; border-radius: 12px; font-weight: 700; font-size: 14px;
+}
+
+/* Animations */
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+
+/* KYC Badge */
+.kyc-badge-menu { background: #334155; color: #94a3b8; font-size: 9px; padding: 2px 6px; border-radius: 4px; margin-left: auto; }
 
