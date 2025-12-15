@@ -449,46 +449,36 @@
                                     <div id="profile-section-container" class="hidden">
             
             <div id="page-profile" class="internal-page hidden">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>My Profile</h3></div>
-                <div class="profile-card-main">
-                    <div class="profile-avatar-area"><img src="https://i.pravatar.cc/300" class="p-avatar"></div>
-                    <div class="p-info"><h2>Morning Star <i class="fa-solid fa-circle-check text-blue"></i></h2><p>ID: 8739204</p></div>
-                    <button class="btn-edit-profile" onclick="toggleEditMode(true)">Edit Profile</button>
-                </div>
+    <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h2 class="neon-text" style="margin: 0; font-family: 'Poppins', sans-serif;">My Identity</h2>
+    </div>
+
+    <div class="glass-card profile-card">
+        <div class="avatar-wrapper">
+            <div class="neon-avatar-container">
+                <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
             </div>
-
-                        <div id="page-profile" class="internal-page hidden">
-                <div class="page-header">
-                    <button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button>
-                    <h3>My Profile</h3>
-                </div>
-                
-                <div class="profile-card-main">
-                    <div class="profile-avatar-area">
-                        <img src="https://i.pravatar.cc/300" id="user-avatar-img" class="p-avatar">
-                        
-                        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
-                        
-                        <div class="camera-btn" onclick="triggerFileUpload()">
-                            <i class="fa-solid fa-camera"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="p-info">
-                        <h2 id="display-name">Morning Star <i class="fa-solid fa-circle-check text-blue"></i></h2>
-                        <span class="p-userid">ID: 8739204</span>
-                    </div>
-
-                    <div class="edit-field-group">
-                        <label class="input-label">Edit Display Name</label>
-                        <input type="text" id="edit-name-input" class="modern-input" value="Morning Star" placeholder="Enter new name...">
-                    </div>
-
-                    <button class="btn-save-profile" onclick="saveProfileChanges()">
-                        Save Changes
-                    </button>
-                </div>
+            <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
+                <i class="fa-solid fa-camera"></i>
             </div>
+        </div>
+        
+        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
+
+        <div class="profile-info">
+            <h3 id="display-name">Loading...</h3>
+            <span class="user-id">ID: <span id="display-id">...</span> <i class="fa-solid fa-circle-check verified-icon"></i></span>
+        </div>
+
+        <button class="btn-glow-border" onclick="openEditModal()">
+            Edit Details
+        </button>
+    </div>
+</div>
+
 
 
             <div id="page-brand" class="internal-page hidden">
@@ -561,7 +551,20 @@
             
         
         </main>
-    
+    <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-glass">
+        <h3>Update Profile</h3>
+        <div class="input-group">
+            <label>Display Name</label>
+            <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
 
         <nav class="bottom-nav glass-effect">
             <div class="nav-item active" onclick=""navigateTo('home')">
