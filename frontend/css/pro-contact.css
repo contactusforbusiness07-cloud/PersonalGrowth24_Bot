@@ -1,0 +1,18 @@
+/* --- CONTACT STYLES --- */
+
+.contact-premium-card {
+    background: #1e293b; border-radius: 16px; padding: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.contact-input {
+    width: 100%; background: #0f172a; border: 1px solid #334155;
+    padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 12px; outline: none;
+}
+.contact-input:focus { border-color: #3b82f6; }
+.btn-send-msg {
+    width: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb);
+    color: #fff; padding: 12px; border-radius: 8px; font-weight: 700; border: none;
+}
+
+/* Badges */
+.kyc-badge { background: #334155; color: #94a3b8; font-size: 9px; padding: 2px 5px; border-radius: 4px; margin-left: auto; }
