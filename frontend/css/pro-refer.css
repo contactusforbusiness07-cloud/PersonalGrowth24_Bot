@@ -1,95 +1,56 @@
-/* --- Refer Hero Section --- */
-.refer-hero-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
 
-.stat-label { font-size: 12px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; }
-.stat-value { font-size: 24px; margin: 5px 0 0; font-family: 'Orbitron', sans-serif; }
-.neon-blue { color: #00f2fe; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
-.neon-gold { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-.vertical-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.1); }
+/* Existing styles remain same (Do not delete old code), just ADD/UPDATE these classes */
 
-/* --- Code Box --- */
-.copy-code-container { margin-bottom: 25px; text-align: center; }
-.copy-code-container label { font-size: 10px; color: #00f2fe; letter-spacing: 2px; }
-.code-box {
-    margin-top: 8px;
-    background: rgba(0, 242, 254, 0.1);
-    border: 1px dashed #00f2fe;
-    padding: 15px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.code-box:active { background: rgba(0, 242, 254, 0.3); transform: scale(0.98); }
-.code-box span { font-family: 'Courier New', monospace; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
-
-/* --- Tabs --- */
-.refer-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #0f0f15; padding: 5px; border-radius: 15px; }
-.tab-btn {
-    flex: 1;
-    padding: 12px;
-    background: transparent;
-    border: none;
-    color: #666;
-    border-radius: 10px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-.tab-btn.active { background: #1a1a2e; color: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.5); border: 1px solid #333; }
-
-/* --- Milestones List --- */
-.milestone-card {
-    background: #151520;
-    border-radius: 16px;
-    padding: 15px;
+/* Hitech Text for "Earn 10%..." */
+.hitech-instruction {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800; /* Extra Bold */
+    font-size: 15px;
+    background: linear-gradient(90deg, #fff, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
     margin-bottom: 15px;
-    border: 1px solid #222;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+/* Claim All Button - Animated & Hitech */
+.btn-claim-all {
+    width: 100%;
+    background: linear-gradient(90deg, #ff00cc, #333399);
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
     position: relative;
     overflow: hidden;
+    animation: heartbeat 2s infinite; /* Animation Logic */
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
-.milestone-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.target-title { font-size: 16px; font-weight: bold; color: #fff; }
-.reward-badge { background: rgba(255, 215, 0, 0.15); color: #ffd700; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-/* Progress Bar */
-.progress-track { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-bottom: 15px; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, #00f2fe, #4facfe); width: 0%; transition: width 1s ease-in-out; box-shadow: 0 0 10px #4facfe; }
+.btn-claim-all:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 204, 0.8);
+    transform: scale(1.02);
+}
 
-/* Claim Buttons */
-.btn-claim { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
-.btn-claim.locked { background: #222; color: #555; cursor: not-allowed; }
-.btn-claim.ready { background: linear-gradient(90deg, #00c6ff, #0072ff); color: white; box-shadow: 0 0 15px rgba(0, 114, 255, 0.4); animation: pulse 2s infinite; }
-.btn-claim.claimed { background: transparent; border: 1px solid #00f260; color: #00f260; cursor: default; }
+/* Heartbeat Animation Keyframes */
+@keyframes heartbeat {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 204, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 0, 204, 0.7); }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 204, 0.4); }
+}
 
-/* --- Team List --- */
-.team-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #111;
-    padding: 15px;
-    border-radius: 12px;
+/* Team List Container spacing */
+.team-header {
+    text-align: center;
+    padding: 10px;
     margin-bottom: 10px;
-    border-left: 3px solid #00f2fe;
 }
-.team-info h4 { margin: 0; font-size: 14px; color: white; }
-.team-info p { margin: 2px 0 0; font-size: 11px; color: #888; }
-.commission-box { text-align: right; }
-.comm-amount { display: block; color: #00f260; font-weight: bold; font-size: 14px; }
-.comm-label { font-size: 10px; color: #555; }
-
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
-
