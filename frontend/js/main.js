@@ -36,12 +36,17 @@ function navigateTo(sectionId) {
     });
 }
 
-// --- MENU TOGGLE ---
+// --- MENU TOGGLE FUNCTION (Global Scope) ---
 function toggleProfileMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     
-    if(menu.classList.contains('open')) {
+    if (!menu || !overlay) {
+        console.error("Menu elements not found!");
+        return;
+    }
+
+    if (menu.classList.contains('open')) {
         menu.classList.remove('open');
         overlay.classList.add('hidden');
     } else {
@@ -49,6 +54,87 @@ function toggleProfileMenu() {
         overlay.classList.remove('hidden');
     }
 }
+
+// --- NAVIGATION SYSTEM ---
+function navigateTo(sectionId) {
+    // 1. Hide all main sections
+    document.querySelectorAll('.page-section').forEach(sec => {
+        sec.classList.add('hidden');
+        sec.classList.remove('active');
+    });
+
+    // 2. Hide all internal profile pages
+    document.querySelectorAll('.internal-page').forEach(page => {
+        page.classList.add('hidden');
+    });
+    
+    // 3. Hide Profile Container if open
+    const profileContainer = document.getElementById('profile-section-container');
+    if(profileContainer) profileContainer.classList.add('hidden');
+
+    // 4. Close Menu if open
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    if(menu) menu.classList.remove('open');
+    if(overlay) overlay.classList.add('hidden');
+
+    // 5. Show Target Section
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+    }
+
+    // 6. Update Bottom Nav Icons
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if(item.getAttribute('onclick') && item.getAttribute('onclick').includes(sectionId)) {
+            item.classList.add('active');
+        }
+    });
+}
+
+// --- APP INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("App Initialized");
+
+    // Telegram Setup
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.setHeaderColor('#020617'); // Matches theme
+    }
+
+    // Load Default Page
+    navigateTo('home');
+});
+
+// --- OPEN INTERNAL PAGE (Called from Menu) ---
+function openInternalPage(pageName) {
+    // Close Menu First
+    toggleProfileMenu();
+
+    // Show Container
+    const container = document.getElementById('profile-section-container');
+    if(container) container.classList.remove('hidden');
+
+    // Hide all internal pages first
+    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
+
+    // Show specific page
+    const page = document.getElementById('page-' + pageName); // e.g., page-brand
+    if(page) {
+        page.classList.remove('hidden');
+    } else {
+        // Fallback for pages not using 'page-' prefix logic in HTML
+        if(pageName === 'brand') document.getElementById('page-brand').classList.remove('hidden');
+        if(pageName === 'refer') document.getElementById('page-refer').classList.remove('hidden');
+        if(pageName === 'profile') document.getElementById('page-profile').classList.remove('hidden');
+        if(pageName === 'contact') document.getElementById('page-contact').classList.remove('hidden');
+    }
+}
+
 
 // --- INTERNAL PAGES (Brand/Profile) ---
 function openInternalPage(pageName) {
