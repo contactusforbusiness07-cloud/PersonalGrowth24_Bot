@@ -1,0 +1,28 @@
+/* --- REFERRAL STYLES --- */
+
+.refer-header-card {
+    background: linear-gradient(135deg, #4f46e5, #312e81);
+    padding: 20px; border-radius: 16px; text-align: center; color: #fff;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); margin-bottom: 20px;
+}
+.ref-stats-row { display: flex; justify-content: space-around; margin-bottom: 15px; }
+.refer-code-area {
+    background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px dashed rgba(255,255,255,0.3);
+}
+.code-text { font-family: monospace; font-size: 16px; font-weight: 700; color: #fbbf24; letter-spacing: 1px; }
+
+/* Tabs */
+.tab-container { display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.tab-btn { background: none; border: none; color: #64748b; font-size: 13px; padding-bottom: 10px; cursor: pointer; }
+.tab-btn.active { color: #fff; font-weight: 600; border-bottom: 2px solid #3b82f6; }
+
+/* Targets */
+.target-item {
+    background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;
+}
+.target-btn { padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
+.btn-claim { background: linear-gradient(90deg, #22c55e, #16a34a); color: #fff; }
+.btn-locked { background: #334155; color: #64748b; cursor: not-allowed; }
