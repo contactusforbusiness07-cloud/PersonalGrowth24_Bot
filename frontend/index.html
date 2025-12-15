@@ -442,7 +442,7 @@
 
             </section>
 
-            <div id="profile-section-container" class="hidden">
+                    <div id="profile-section-container" class="hidden">
             
             <div id="page-profile" class="internal-page hidden">
                 <div class="page-header">
@@ -474,7 +474,7 @@
                     <input type="text" id="edit-name-input" class="form-input" value="Morning Star">
                 </div>
                 <div class="form-group mt-4">
-                    <label class="form-label">Change Photo URL</label>
+                    <label class="form-label">Photo URL</label>
                     <input type="text" class="form-input" placeholder="Paste Image Link...">
                 </div>
                 <button class="btn-primary mt-4" onclick="saveProfileChanges()">Save Changes</button>
@@ -487,8 +487,8 @@
                 </div>
                 
                 <div class="brand-hero">
-                    <h2><i class="fa-solid fa-rocket"></i> Boost Your Brand</h2>
-                    <p>Reach 50,000+ Active Users Instantly.</p>
+                    <h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2>
+                    <p>Promote your brand to 50k+ Active Users</p>
                 </div>
 
                 <label class="form-label">1. Choose Platform</label>
@@ -507,7 +507,7 @@
                     </label>
                 </div>
 
-                <label class="form-label">2. Select Budget Range</label>
+                <label class="form-label">2. Select Budget</label>
                 <div class="budget-scroll">
                     <div class="budget-chip" onclick="selectBudget(this, '500-1000')">₹500 - ₹1k</div>
                     <div class="budget-chip" onclick="selectBudget(this, '1000-5000')">₹1k - ₹5k</div>
@@ -515,15 +515,12 @@
                     <div class="budget-chip" onclick="selectBudget(this, '10000-20000')">₹10k - ₹20k</div>
                     <div class="budget-chip" onclick="selectBudget(this, '25000-50000')">₹25k - ₹50k</div>
                 </div>
-                <input type="hidden" id="selected-budget" value="">
+                <input type="hidden" id="selected-budget">
 
-                <label class="form-label">3. Your Proposal</label>
-                <textarea class="contact-input" id="brand-message" rows="4" placeholder="Describe your requirement..."></textarea>
+                <label class="form-label">3. Message</label>
+                <textarea class="contact-input" id="brand-message" rows="3" placeholder="Describe your requirement..."></textarea>
 
-                <button class="btn-send-msg" onclick="sendBrandProposal()">
-                    <i class="fa-solid fa-paper-plane"></i> Submit Proposal
-                </button>
-                <p class="text-center mt-3 text-xs text-gray-500"><i class="fa-solid fa-lock"></i> Sent anonymously to Admin</p>
+                <button class="btn-send-msg" onclick="sendBrandProposal()">Submit Proposal <i class="fa-solid fa-paper-plane"></i></button>
             </div>
 
             <div id="page-refer" class="internal-page hidden">
@@ -534,62 +531,50 @@
                 
                 <div class="refer-header-card">
                     <div class="ref-stats-row">
-                        <div class="ref-stat"><h3>7</h3><p>Invited</p></div>
-                        <div class="ref-stat"><h3 class="text-gold">1,500</h3><p>Earned</p></div>
+                        <div class="ref-stat"><h3>7</h3><p>Joined</p></div>
+                        <div class="ref-stat"><h3 class="text-gold">1,500</h3><p>Coins</p></div>
                     </div>
                     <div class="refer-code-area">
-                        <span class="text-gray-400 text-xs">YOUR CODE:</span>
+                        <span class="text-gray-400 text-xs">CODE:</span>
                         <span class="code-text">SHIV123</span>
                         <i class="fa-regular fa-copy text-white cursor-pointer" onclick="copyCode()"></i>
                     </div>
-                    <button class="btn-share-main mt-3" onclick="shareReferral()">Invite Now</button>
+                    <button class="btn-share-main mt-3" onclick="shareReferral()">Invite Friends</button>
                 </div>
 
                 <div class="tab-container">
                     <button class="tab-btn active" onclick="switchReferTab('targets')">🎯 Targets</button>
-                    <button class="tab-btn" onclick="switchReferTab('list')">👥 Joined Users</button>
+                    <button class="tab-btn" onclick="switchReferTab('list')">👥 My Team</button>
                 </div>
 
                 <div id="tab-targets" class="tab-content">
-                    <div id="referral-targets-list">
-                        </div>
+                    <div id="referral-targets-list"></div>
                 </div>
 
                 <div id="tab-list" class="tab-content hidden">
-                    <div class="joined-user-row">
-                        <div class="u-avatar">AK</div><div class="u-name">Aman K***r</div><div class="u-date">Today</div>
-                    </div>
-                    <div class="joined-user-row">
-                        <div class="u-avatar">RS</div><div class="u-name">Rahul S***h</div><div class="u-date">Yesterday</div>
-                    </div>
+                    <div class="joined-user-row"><div class="u-avatar">AK</div><div class="u-name">Aman K.</div><div class="u-date">Today</div></div>
+                    <div class="joined-user-row"><div class="u-avatar">RS</div><div class="u-name">Rahul S.</div><div class="u-date">Yesterday</div></div>
                 </div>
             </div>
 
             <div id="page-contact" class="internal-page hidden">
                 <div class="page-header">
                     <button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button>
-                    <h3>Contact Support</h3>
+                    <h3>Support</h3>
                 </div>
-                
                 <div class="contact-premium-card">
                     <div class="text-center mb-4">
-                        <div style="font-size: 40px; margin-bottom: 10px;">🎧</div>
+                        <div style="font-size: 30px;">🎧</div>
                         <h4 class="text-white">Admin Support</h4>
-                        <p class="text-gray-400 text-sm">Direct line to @Mr_MorningStar524</p>
+                        <p class="text-gray-400 text-xs">Direct message to @Mr_MorningStar524</p>
                     </div>
-
                     <label class="form-label">Subject</label>
                     <select class="contact-input" id="contact-subject">
-                        <option>Payment Issue</option>
-                        <option>Bug Report</option>
-                        <option>Account Verification</option>
-                        <option>Collaboration</option>
+                        <option>Payment Issue</option><option>Bug Report</option><option>Collaboration</option><option>Other</option>
                     </select>
-
                     <label class="form-label">Message</label>
-                    <textarea class="contact-input" id="contact-message" rows="5" placeholder="Type your message here..."></textarea>
-
-                    <button class="btn-send-msg" onclick="submitContactForm()">Send Message 🚀</button>
+                    <textarea class="contact-input" id="contact-message" rows="4" placeholder="Type here..."></textarea>
+                    <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
                 </div>
             </div>
         </div>
@@ -597,33 +582,15 @@
         <div id="menu-overlay" class="menu-overlay hidden" onclick="toggleProfileMenu()"></div>
 
         <div id="side-menu" class="side-menu">
-            <div class="menu-header">
-                <span class="text-gold">Menu</span>
-                <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
-            </div>
-            
+            <div class="menu-header"><span class="text-gold">Menu</span><i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i></div>
             <div class="menu-list">
-                <div class="menu-item" onclick="openInternalPage('profile')">
-                    <div class="mi-icon"><i class="fa-solid fa-user"></i></div><span>My Profile</span>
-                </div>
+                <div class="menu-item" onclick="openInternalPage('profile')"><div class="mi-icon"><i class="fa-solid fa-user"></i></div><span>My Profile</span></div>
+                <div class="menu-item" onclick="navigateTo('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
                 
-                <div class="menu-item" onclick="navigateTo('wallet')">
-                    <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span>
-                </div>
+                <div class="menu-item disabled" style="opacity: 0.6;"><div class="mi-icon"><i class="fa-solid fa-id-card"></i></div><span>KYC Verification</span><span class="kyc-badge">Coming Soon</span></div>
                 
-                <div class="menu-item" style="opacity: 0.6; cursor: default;">
-                    <div class="mi-icon"><i class="fa-solid fa-id-card"></i></div>
-                    <span>KYC Verification</span>
-                    <span class="kyc-badge">Coming Soon</span>
-                </div>
-
-                <div class="menu-item" onclick="openInternalPage('refer')">
-                    <div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span>
-                </div>
-                
-                <div class="menu-item highlight-box" onclick="openInternalPage('brand')">
-                    <div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span class="text-gold" style="font-weight:700">Brand / Sponsorship ⭐</span>
-                </div>
+                <div class="menu-item" onclick="openInternalPage('refer')"><div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></div>
+                <div class="menu-item highlight-box" onclick="openInternalPage('brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span class="text-gold" style="font-weight:700">Brand / Sponsorship ⭐</span></div>
                 
                 <hr class="menu-divider">
                 
@@ -636,11 +603,11 @@
                 
                 <div class="menu-item small" onclick="openInfoPage('faq')"><div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div><span>Help / FAQ</span></div>
                 <div class="menu-item small" onclick="openInternalPage('contact')"><div class="mi-icon"><i class="fa-solid fa-headset"></i></div><span>Contact Support</span></div>
-                
                 <div class="menu-item logout" onclick="handleLogout()"><div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></div>
             </div>
         </div>
-        
+
+   
         </main>
         
 
