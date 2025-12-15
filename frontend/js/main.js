@@ -41,11 +41,8 @@ function toggleProfileMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     
-    // Safety Check
-    if (!menu || !overlay) {
-        console.error("Menu elements not found");
-        return;
-    }
+    // Safety check
+    if (!menu || !overlay) return;
 
     if (menu.classList.contains('open')) {
         menu.classList.remove('open');
@@ -55,6 +52,91 @@ function toggleProfileMenu() {
         overlay.classList.remove('hidden');
     }
 }
+
+// --- NAVIGATION SYSTEM ---
+function navigateTo(sectionId) {
+    // 1. Hide All Sections
+    document.querySelectorAll('.page-section').forEach(sec => {
+        sec.classList.add('hidden');
+        sec.classList.remove('active');
+    });
+
+    // 2. Hide Profile Pages
+    document.querySelectorAll('.internal-page').forEach(page => page.classList.add('hidden'));
+    const profileContainer = document.getElementById('profile-section-container');
+    if(profileContainer) profileContainer.classList.add('hidden');
+
+    // 3. Close Menu
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    if(menu) menu.classList.remove('open');
+    if(overlay) overlay.classList.add('hidden');
+
+    // 4. Show Target Section
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+    }
+
+    // 5. Update Bottom Nav
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        const attr = item.getAttribute('onclick');
+        if(attr && attr.includes(sectionId)) item.classList.add('active');
+    });
+}
+
+// --- OPEN INTERNAL PAGE (Brand, Refer, Profile, Contact) ---
+function openInternalPage(pageName) {
+    toggleProfileMenu(); // Close menu first
+
+    // Show Container
+    const container = document.getElementById('profile-section-container');
+    if(container) container.classList.remove('hidden');
+
+    // Hide all first
+    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
+
+    // Special Case: Brand Page Loading Effect
+    if (pageName === 'brand') {
+        const brandPage = document.getElementById('page-brand');
+        if(brandPage) brandPage.classList.remove('hidden');
+        
+        // CORRECTION: Yeh bracket pehle miss tha
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Opening Sponsorship Page',
+            icon: 'info',
+            timer: 800,
+            showConfirmButton: false,
+            background: '#0f172a',
+            color: '#fff'
+        });
+        return;
+    }
+
+    // Standard Page Open
+    const targetPage = document.getElementById('page-' + pageName);
+    if(targetPage) {
+        targetPage.classList.remove('hidden');
+    }
+}
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("App Initialized 🚀");
+    
+    // Telegram Setup
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    }
+
+    // Load Default
+    navigateTo('home');
+});
+
 
 // --- NAVIGATION SYSTEM ---
 function navigateTo(sectionId) {
