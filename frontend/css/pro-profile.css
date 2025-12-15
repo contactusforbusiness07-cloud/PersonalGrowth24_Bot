@@ -1,0 +1,43 @@
+/* --- MY PROFILE PREMIUM STYLES --- */
+
+.profile-card-main {
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px; padding: 30px 20px; text-align: center;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+}
+.profile-card-main::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 60%);
+    animation: rotate 15s linear infinite; pointer-events: none;
+}
+
+/* Avatar */
+.profile-avatar-area { position: relative; width: 110px; height: 110px; margin: 0 auto 15px; }
+.p-avatar {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    border: 3px solid #0f172a; outline: 3px solid #3b82f6;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+.camera-btn {
+    position: absolute; bottom: 5px; right: 5px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff; width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid #0f172a; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Inputs */
+.edit-field-group { text-align: left; margin-top: 20px; }
+.input-label { color: #94a3b8; font-size: 12px; margin-bottom: 8px; display: block; margin-left: 5px; }
+.modern-input {
+    width: 100%; background: #020617; border: 1px solid #334155;
+    padding: 14px 16px; border-radius: 12px; color: #fff; font-size: 15px; outline: none;
+}
+.modern-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+.btn-save-profile {
+    width: 100%; margin-top: 25px; background: linear-gradient(90deg, #22c55e, #16a34a);
+    color: #fff; padding: 15px; border-radius: 14px; font-weight: 600; border: none;
+}
