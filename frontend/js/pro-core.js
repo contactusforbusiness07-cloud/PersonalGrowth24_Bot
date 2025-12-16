@@ -1,24 +1,25 @@
-/* --- CORE LOGIC: FINAL MENU FIX --- */
+/* --- FINAL DIAGNOSTIC MENU LOGIC --- */
 
+// 1. Ensure Menu Button works
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("App Ready. Checking Menu...");
-    // Force Home Screen Visible
-    const home = document.getElementById('home') || document.getElementById('page-home');
-    if(home) home.classList.remove('hidden');
+    console.log("App Ready. Linking Menu...");
+    const trigger = document.querySelector('.menu-trigger');
+    if(trigger) trigger.style.cursor = "pointer";
 });
 
-/* 1. MENU TOGGLE FUNCTION */
+// 2. The Toggle Function
 function toggleProfileMenu() {
+    // Elements dhoondo
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
-    
-    // Debugging Alert (Agar menu na khule to ye batayega kyu)
+
+    // DEBUG CHECK: Agar HTML sahi jagah nahi hai to Alert aayega
     if (!menu || !overlay) {
-        console.error("Menu HTML Missing!"); 
-        // alert("Menu Error: HTML code missing at bottom of index.html"); 
+        alert("ERROR FIX: Step 1 (HTML) sahi se paste nahi hua hai. 'side-menu' id nahi mil rahi.");
         return;
     }
 
+    // Toggle Class
     if (menu.classList.contains('active')) {
         menu.classList.remove('active');
         overlay.classList.add('hidden');
@@ -28,43 +29,27 @@ function toggleProfileMenu() {
     }
 }
 
-/* 2. NAVIGATION */
-function navigateTo(targetId) {
-    // Menu Band Karo
+// 3. Navigation Helpers (Baaki app chalane ke liye)
+function navigateTo(id) {
+    // Menu band karo
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
-    if(menu && menu.classList.contains('active')) {
-        menu.classList.remove('active');
-        overlay.classList.add('hidden');
-    }
+    if(menu) menu.classList.remove('active');
+    if(overlay) overlay.classList.add('hidden');
 
-    // Hide All
-    document.querySelectorAll('.internal-page, .page-section, section').forEach(el => {
-        if(!el.classList.contains('app-header') && !el.classList.contains('side-menu')) {
-            el.classList.add('hidden');
-        }
-    });
-
-    // Show Target
-    let target = document.getElementById(targetId) || document.getElementById('page-' + targetId);
-    if (target) {
-        target.classList.remove('hidden');
-        window.scrollTo(0,0);
-    } else {
-        // Fallback to Home
-        const home = document.getElementById('home');
+    // Page Change Logic
+    document.querySelectorAll('.internal-page, .page-section').forEach(el => el.classList.add('hidden'));
+    
+    // Support 'wallet' and 'page-wallet' IDs
+    let target = document.getElementById(id) || document.getElementById('page-'+id);
+    if(target) target.classList.remove('hidden');
+    else {
+        const home = document.getElementById('home') || document.getElementById('page-home');
         if(home) home.classList.remove('hidden');
     }
 }
 
-/* 3. HELPERS */
 function openInternalPage(id) { navigateTo(id); }
-function backToProfileMenu() { navigateTo('home'); }
-function openInfoPage(type) { 
-    toggleProfileMenu(); 
-    setTimeout(() => alert(type + " Info"), 100); 
-}
-function handleLogout() {
-    if(confirm("Logout?")) location.reload();
-}
+function openInfoPage(t) { toggleProfileMenu(); setTimeout(() => alert(t), 100); }
+function handleLogout() { if(confirm("Logout?")) location.reload(); }
 
