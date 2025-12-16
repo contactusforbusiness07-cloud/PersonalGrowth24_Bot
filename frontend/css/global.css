@@ -175,37 +175,36 @@ body {
     font-size: 24px;
     color: #ffffff;
 }
-/* --- STRICT MENU FIXES --- */
+/* --- FINAL RECOVERY STYLES --- */
 
-/* 1. Gap between Coin and Menu (White Circle Requirement) */
+/* 1. Header Layout Fix */
 .header-actions {
     display: flex !important;
     align-items: center !important;
-    gap: 20px !important; /* Coin aur Menu door rahenge */
+    gap: 20px !important;
+    position: relative;
+    z-index: 999;
 }
 
-/* 2. Menu Button Design (Blue Circle Requirement) */
+/* 2. Hamburger Button Design */
 .menu-trigger {
-    width: 45px !important;       /* Bada area click ke liye */
+    width: 45px !important;
     height: 45px !important;
-    background: rgba(255, 255, 255, 0.1) !important; /* Halka background taaki button dikhe */
-    border-radius: 12px !important; /* Thoda square rounded look */
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    z-index: 99999 !important;    /* Sabse upar */
-    transition: all 0.2s ease;
 }
 
-/* Button Click Effect */
-.menu-trigger:active {
-    transform: scale(0.90);
-    background: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Icon Size & Color */
 .menu-trigger i {
     font-size: 24px !important;
-    color: #ffffff !important;
+    color: white !important;
+}
+
+/* 3. Ensure Home/Sections are not permanently hidden by CSS conflicts */
+/* Ye important hai taaki page blank na dikhe */
+section:not(.hidden), .page-section:not(.hidden) {
+    display: block !important;
 }
