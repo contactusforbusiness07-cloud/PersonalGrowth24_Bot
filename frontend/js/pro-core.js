@@ -1,83 +1,70 @@
-/* --- FIN GAME PRO: CORE LOGIC (RESCUE VERSION) --- */
+/* --- CORE LOGIC: FINAL MENU FIX --- */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("System Loaded. Attempting to render Home...");
-    
-    // 1. Force Menu Button Cursor
-    const trigger = document.querySelector('.menu-trigger');
-    if(trigger) trigger.style.cursor = 'pointer';
-
-    // 2. FORCE SHOW HOME (Fixes Blank Screen)
-    // Ye check karega ki ID 'home' hai ya 'page-home' aur use dikhayega
-    const homeSection = document.getElementById('home') || document.getElementById('page-home');
-    if (homeSection) {
-        homeSection.classList.remove('hidden');
-        console.log("Home Section Restored.");
-    } else {
-        console.error("CRITICAL: Home ID not found! Check index.html");
-    }
+    console.log("App Ready. Checking Menu...");
+    // Force Home Screen Visible
+    const home = document.getElementById('home') || document.getElementById('page-home');
+    if(home) home.classList.remove('hidden');
 });
 
-/* 1. HAMBURGER MENU TOGGLE */
+/* 1. MENU TOGGLE FUNCTION */
 function toggleProfileMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     
-    if (menu && overlay) {
-        if (menu.classList.contains('active')) {
-            menu.classList.remove('active');   // Close
-            overlay.classList.add('hidden');   // Hide Overlay
-        } else {
-            menu.classList.add('active');      // Open
-            overlay.classList.remove('hidden'); // Show Overlay
-        }
+    // Debugging Alert (Agar menu na khule to ye batayega kyu)
+    if (!menu || !overlay) {
+        console.error("Menu HTML Missing!"); 
+        // alert("Menu Error: HTML code missing at bottom of index.html"); 
+        return;
+    }
+
+    if (menu.classList.contains('active')) {
+        menu.classList.remove('active');
+        overlay.classList.add('hidden');
     } else {
-        console.error("Menu elements missing in HTML");
+        menu.classList.add('active');
+        overlay.classList.remove('hidden');
     }
 }
 
-/* 2. NAVIGATION SYSTEM */
+/* 2. NAVIGATION */
 function navigateTo(targetId) {
-    // A. Menu Close
+    // Menu Band Karo
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
-    if (menu && menu.classList.contains('active')) {
-        toggleProfileMenu();
+    if(menu && menu.classList.contains('active')) {
+        menu.classList.remove('active');
+        overlay.classList.add('hidden');
     }
 
-    // B. Hide ALL Sections (Internal & Main)
-    const allSections = document.querySelectorAll('.internal-page, .page-section, section');
-    allSections.forEach(el => {
-        // Ensure we don't hide the header or menu itself
-        if (!el.classList.contains('app-header') && !el.classList.contains('side-menu')) {
+    // Hide All
+    document.querySelectorAll('.internal-page, .page-section, section').forEach(el => {
+        if(!el.classList.contains('app-header') && !el.classList.contains('side-menu')) {
             el.classList.add('hidden');
         }
     });
 
-    // C. Show Target
-    // Support for both 'wallet' and 'page-wallet' naming styles
-    let target = document.getElementById(targetId);
-    if (!target) target = document.getElementById('page-' + targetId);
-
+    // Show Target
+    let target = document.getElementById(targetId) || document.getElementById('page-' + targetId);
     if (target) {
         target.classList.remove('hidden');
         window.scrollTo(0,0);
     } else {
-        console.warn("Target ID not found:", targetId);
-        // Fallback to Home if error
+        // Fallback to Home
         const home = document.getElementById('home');
         if(home) home.classList.remove('hidden');
     }
 }
 
-/* 3. SUB-FUNCTIONS */
-function openInternalPage(pageId) { navigateTo(pageId); }
+/* 3. HELPERS */
+function openInternalPage(id) { navigateTo(id); }
 function backToProfileMenu() { navigateTo('home'); }
 function openInfoPage(type) { 
-    toggleProfileMenu();
-    setTimeout(() => alert(type + " - Content Loading..."), 200); 
+    toggleProfileMenu(); 
+    setTimeout(() => alert(type + " Info"), 100); 
 }
 function handleLogout() {
-    if(confirm("Confirm Logout?")) location.reload();
+    if(confirm("Logout?")) location.reload();
 }
 
