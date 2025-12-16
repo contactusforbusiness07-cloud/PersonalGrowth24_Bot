@@ -637,7 +637,7 @@
         </div>
 
 </div>  
-<div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
+     <div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
 
 <div id="side-menu" class="side-menu" style="z-index: 2147483647;">
     <div class="menu-header">
@@ -650,112 +650,55 @@
             <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
             <span>My Profile</span>
         </div>
-        
         <div class="menu-item" onclick="navigateTo('wallet')">
             <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
             <span>Wallet & Earnings</span>
         </div>
-        
         <div class="menu-item" onclick="openInternalPage('page-refer')">
             <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
             <span>Refer & Earn</span>
         </div>
         
-        <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')">
-            <div class="mi-icon"><i class="fa-solid fa-rocket text-gold"></i></div>
-            <span class="text-gold">Brand / Sponsorship</span>
-        </div>
-
         <hr class="menu-divider">
 
         <div class="menu-item small" onclick="openInfoPage('withdraw_terms')">
-            <i class="fa-solid fa-file-invoice-dollar"></i> <span>Withdrawal Terms</span>
-        </div>
-        <div class="menu-item small" onclick="openInfoPage('privacy')">
-            <i class="fa-solid fa-shield-halved"></i> <span>Privacy Policy</span>
+             <i class="fa-solid fa-file-invoice-dollar"></i> <span>Withdrawal Terms</span>
         </div>
         <div class="menu-item small" onclick="openInternalPage('page-contact')">
-            <i class="fa-solid fa-headset"></i> <span>Contact Support</span>
+             <i class="fa-solid fa-headset"></i> <span>Contact Support</span>
         </div>
-        
+
         <div class="menu-item logout" onclick="handleLogout()">
             <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<script>
-    console.log("🔥 System Started: Direct Code Mode");
-
-    // Menu Toggle Function
-    function toggleProfileMenu() {
-        console.log("⚡ Button Clicked!");
-        
-        const menu = document.getElementById('side-menu');
-        const overlay = document.getElementById('menu-overlay');
-
-        if (!menu || !overlay) {
-            alert("Error: Menu ID nahi mila! HTML check karein.");
-            return;
-        }
-
-        // Class Toggle Logic
-        if (menu.classList.contains('active')) {
-            menu.classList.remove('active');
-            overlay.classList.add('hidden');
-            // Overlay hide confirm
-            overlay.style.display = 'none'; 
-        } else {
-            menu.classList.add('active');
-            overlay.classList.remove('hidden');
-            // Force Show Overlay
-            overlay.style.display = 'block';
-        }
-    }
-
-    // Navigation & Page Logic
-    function navigateTo(targetId) {
-        // Menu band karo agar khula hai
-        const menu = document.getElementById('side-menu');
-        const overlay = document.getElementById('menu-overlay');
-        if (menu && menu.classList.contains('active')) {
-            toggleProfileMenu();
-        }
-
-        // Saare pages chupao
-        document.querySelectorAll('.internal-page, .page-section, section').forEach(el => {
-            if (!el.classList.contains('app-header') && !el.classList.contains('side-menu')) {
-                el.classList.add('hidden');
-            }
-        });
-
-        // Target page dikhao
-        let target = document.getElementById(targetId) || document.getElementById('page-' + targetId);
-        if (target) {
-            target.classList.remove('hidden');
-            window.scrollTo(0, 0);
-        } else {
-            // Fallback: Agar page na mile to Home dikhao
-            const home = document.getElementById('home');
-            if(home) home.classList.remove('hidden');
-        }
-    }
-
-    // Initialize Animations
-    AOS.init();
-</script>
+<script src="js/main.js"></script> 
+<script src="js/pro-core.js"></script>
 
 <script src="js/home.js"></script>
 <script src="js/wallet.js"></script>
 <script src="js/tasks.js"></script>
 <script src="js/games.js"></script>
 <script src="js/leaderboard.js"></script>
+
 <script src="js/pro-profile.js"></script>
+<script src="js/pro-refer.js"></script>
+<script src="js/pro-brand.js"></script>
+<script src="js/pro-contact.js"></script>
+<script src="js/pro-info.js"></script>
+
+<script>
+  AOS.init();
+</script>
 
 </body>
 </html>
-
+       
 
 </body>
 </html>
