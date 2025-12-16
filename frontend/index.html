@@ -629,27 +629,7 @@
             </div>
         </nav>
         
-        <div id="menu-overlay" class="menu-overlay hidden" onclick="toggleProfileMenu()"></div>
-        <div id="side-menu" class="side-menu">
-
-            <div class="menu-header">Menu</div>
-            <div class="menu-list">
-                <div class="menu-item" onclick=openInternalPage('profile')"><i class="fa-solid fa-user"></i> My Profile</div>
-                <div class="menu-item" onclick="navigateTo('wallet')"><i class="fa-solid fa-wallet"></i> Wallet & Earnings</div>
-                <div class="menu-item" onclick="openInternalPage('refer')"><i class="fa-solid fa-gift"></i> Refer & Earn</div>
-                <div class="menu-item highlight" onclick="openInternalPage('brand')"><i class="fa-solid fa-handshake"></i> Brand / Sponsorship ⭐</div>
-                <hr>
-                <div class="menu-item small" onclick="a'contact'c">
-    <div class="mi-icon"><i class="fa-solid fa-headset"></i></div>
-    <span>Contact Us</span>
-</div>
-
-<div class="menu-item logout" onclick="handleLogout()">
-    <div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-    <span>Logout</span>
-</div>
-
-            </div>
+        
         </div>
 
     </div>
@@ -678,6 +658,77 @@
     <script>
         AOS.init();
     </script>
+<div id="menu-overlay" class="menu-overlay hidden" style="z-index: 9998;" onclick="toggleProfileMenu()"></div>
+
+<div id="side-menu" class="side-menu" style="z-index: 9999;">
+    <div class="menu-header">
+        <span class="text-gold">Menu</span>
+        <i class="fa-solid fa-xmark" onclick="toggleProfileMenu()"></i>
+    </div>
+    
+    <div class="menu-list">
+        
+        <div class="menu-item" onclick="openInternalPage('page-profile'); toggleProfileMenu()">
+            <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
+            <span>My Profile</span>
+        </div>
+
+        <div class="menu-item" onclick="navigateTo('wallet'); toggleProfileMenu()">
+            <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
+            <span>Wallet & Earnings</span>
+        </div>
+
+        <div class="menu-item" style="opacity: 0.5; cursor: default;">
+            <div class="mi-icon"><i class="fa-solid fa-id-card"></i></div>
+            <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                <span>KYC Verification</span>
+                <span style="font-size: 10px; color: #00f2fe;">Coming Soon</span>
+            </div>
+        </div>
+
+        <div class="menu-item" onclick="openInternalPage('page-refer'); toggleProfileMenu()">
+            <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
+            <span>Refer & Earn</span>
+        </div>
+
+        <div class="menu-item" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3);" onclick="openInternalPage('page-brand'); toggleProfileMenu()">
+            <div class="mi-icon"><i class="fa-solid fa-handshake" style="color: #ffd700;"></i></div>
+            <span style="color: #ffd700; font-weight: bold;">Brand / Sponsorship <i class="fa-solid fa-star" style="font-size: 10px; margin-left: 5px;"></i></span>
+        </div>
+
+        <hr class="menu-divider">
+
+        <div class="menu-item small" onclick="openInfoPage('withdraw_terms'); toggleProfileMenu()">
+            <i class="fa-solid fa-file-invoice-dollar"></i> <span>Withdrawal Terms</span>
+        </div>
+
+        <div class="menu-item small" onclick="openInfoPage('terms'); toggleProfileMenu()">
+            <i class="fa-solid fa-file-contract"></i> <span>Terms & Conditions</span>
+        </div>
+
+        <div class="menu-item small" onclick="openInfoPage('privacy'); toggleProfileMenu()">
+            <i class="fa-solid fa-user-shield"></i> <span>Privacy Policy</span>
+        </div>
+
+        <div class="menu-item small" onclick="openInfoPage('disclaimer'); toggleProfileMenu()">
+            <i class="fa-solid fa-circle-exclamation"></i> <span>Disclaimer</span>
+        </div>
+
+        <hr class="menu-divider">
+
+        <div class="menu-item small" onclick="openInfoPage('faq'); toggleProfileMenu()">
+            <i class="fa-solid fa-circle-question"></i> <span>Help / FAQ</span>
+        </div>
+        
+        <div class="menu-item small" onclick="openInternalPage('page-contact'); toggleProfileMenu()">
+            <i class="fa-solid fa-headset"></i> <span>Contact Support</span>
+        </div>
+
+        <div class="menu-item small" style="margin-top: 10px; border: 1px solid rgba(255, 68, 68, 0.3); background: rgba(255, 68, 68, 0.05);" onclick="alert('Logged out successfully'); toggleProfileMenu()">
+            <i class="fa-solid fa-right-from-bracket" style="color: #ff4444;"></i> <span style="color: #ff4444;">Logout</span>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
