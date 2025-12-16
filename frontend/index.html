@@ -663,26 +663,25 @@
         AOS.init();
     </script>
     
-<div id="menu-overlay" class="menu-overlay hidden" style="z-index: 9998;" onclick="toggleProfileMenu()"></div>
+<div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
 
-<div id="side-menu" class="side-menu" style="z-index: 9999;">
+<div id="side-menu" class="side-menu" style="z-index: 2147483647;">
     <div class="menu-header">
         <span class="text-gold">Menu</span>
         <i class="fa-solid fa-xmark" onclick="toggleProfileMenu()"></i>
     </div>
     
     <div class="menu-list">
-        
         <div class="menu-item" onclick="openInternalPage('page-profile')">
             <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
             <span>My Profile</span>
         </div>
-
+        
         <div class="menu-item" onclick="navigateTo('wallet')">
             <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
             <span>Wallet & Earnings</span>
         </div>
-
+        
         <div class="menu-item" onclick="openInternalPage('page-refer')">
             <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
             <span>Refer & Earn</span>
@@ -704,12 +703,14 @@
         <div class="menu-item small" onclick="openInternalPage('page-contact')">
             <i class="fa-solid fa-headset"></i> <span>Contact Support</span>
         </div>
-
+        
         <div class="menu-item logout" onclick="handleLogout()">
             <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
         </div>
     </div>
 </div>
+
+
 
 
 </body>
