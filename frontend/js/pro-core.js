@@ -1,132 +1,99 @@
-// --- CORE: NAVIGATION & MENU LOGIC ---
+/* --- FIN GAME PRO: CORE LOGIC (Navigation & Menu) --- */
 
-// 1. OPEN INTERNAL PAGE (Fix for Home Redirect Issue)
-function openInternalPage(pageName) {
-    console.log("Opening Internal Page:", pageName);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Pro-Core Module Loaded");
+});
 
-    // Step A: Menu & Overlay ko turant band karo
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    if(menu) menu.classList.remove('open');
-    if(overlay) overlay.classList.add('hidden');
-
-    // Step B: MAIN APP SECTIONS (Home, Wallet, Tasks) KO CHUPAO
-    // (Ye zaroori hai taaki home screen peeche se na dikhe)
-    document.querySelectorAll('.page-section').forEach(sec => {
-        sec.classList.add('hidden');
-        sec.classList.remove('active');
-    });
-
-    // Step C: Profile Container ko Visible karo
-    const container = document.getElementById('profile-section-container');
-    if(container) {
-        container.classList.remove('hidden');
-    } else {
-        console.error("Error: 'profile-section-container' nahi mila!");
-        return;
-    }
-
-    // Step D: Pehle saare internal pages (Brand, Refer, Profile) ko chupao
-    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
-
-    // Step E: Sirf Target Page ko Dikhao
-    const targetPage = document.getElementById('page-' + pageName);
-    if(targetPage) {
-        targetPage.classList.remove('hidden');
-    } else {
-        console.error("Error: Target page nahi mila -> page-" + pageName);
-    }
-}
-
-// 2. BACK BUTTON LOGIC (Wapas Menu par layega)
-function backToProfileMenu() {
-    // Current Internal Page Chupao
-    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
-    
-    // Pura Container Chupao
-    document.getElementById('profile-section-container').classList.add('hidden');
-    
-    // MENU WAPAS KHOLO
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    if(menu && overlay) {
-        menu.classList.add('open');
-        overlay.classList.remove('hidden');
-    }
-}
-
-// 3. EDIT PROFILE LOGIC (Helper for Profile)
-function toggleEditMode(show) {
-    const viewMode = document.getElementById('page-profile');
-    const editMode = document.getElementById('page-profile-edit');
-    
-    if(show) {
-        if(viewMode) viewMode.classList.add('hidden');
-        if(editMode) editMode.classList.remove('hidden');
-    } else {
-        if(editMode) editMode.classList.add('hidden');
-        if(viewMode) viewMode.classList.remove('hidden');
-    }
-}
-
-function saveProfileChanges() {
-    const val = document.getElementById('edit-name-input').value;
-    const display = document.getElementById('display-name');
-    if(display) display.innerHTML = `${val} <i class="fa-solid fa-circle-check text-blue"></i>`;
-    
-    // SweetAlert agar load hai to use karo, warna alert
-    if(typeof Swal !== 'undefined') {
-        Swal.fire({
-            icon: 'success', title: 'Saved', text: 'Profile Updated!',
-            toast: true, position: 'top', timer: 2000, showConfirmButton: false,
-            background: '#0f172a', color: '#fff'
-        });
-    } else {
-        alert("Profile Saved!");
-    }
-    toggleEditMode(false);
-}
-
-/* --- MENU TOGGLE LOGIC --- */
+/* 1. SIDE MENU TOGGLE LOGIC */
 function toggleProfileMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     
     if (menu && overlay) {
         menu.classList.toggle('active');
-        overlay.classList.toggle('hidden');
+        // Overlay logic: agar hidden hai to hatao, nahi to lagao
+        if (overlay.classList.contains('hidden')) {
+            overlay.classList.remove('hidden');
+        } else {
+            overlay.classList.add('hidden');
+        }
     } else {
-        console.error("Menu elements not found in HTML!");
+        console.error("Menu UI elements (side-menu or menu-overlay) not found!");
     }
 }
 
-// Function to open internal pages (Profile, Refer, etc.)
+/* 2. OPEN INTERNAL PAGES (Profile, Refer, etc.) */
 function openInternalPage(pageId) {
-    // 1. Hide all pages
+    // A. Menu band karo agar khula hai
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    if (menu && menu.classList.contains('active')) {
+        toggleProfileMenu();
+    }
+
+    // B. Saare Pages Chupao
     document.querySelectorAll('.internal-page').forEach(page => {
         page.classList.add('hidden');
     });
-    
-    // 2. Show target page
+
+    // C. Home Page / Main Content Chupao
+    // (Aapke structure ke hisaab se main content ka wrapper)
+    const mainContent = document.getElementById('page-home') || document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.classList.add('hidden');
+    }
+
+    // D. Target Page Dikhao
     const target = document.getElementById(pageId);
     if (target) {
         target.classList.remove('hidden');
+        window.scrollTo(0, 0); // Top par scroll karo
+    } else {
+        console.error(`Page ID '${pageId}' not found in HTML.`);
     }
-    
-    // 3. Hide Main Content (Home) if needed
-    // (Adjust this ID based on your home container, e.g., 'main-content' or 'page-home')
-    const home = document.getElementById('page-home'); 
-    if(home) home.classList.add('hidden');
 }
 
-// Function to go BACK to Home/Menu
+/* 3. BACK BUTTON LOGIC (Return to Home) */
 function backToProfileMenu() {
-    // Hide all internal pages
+    // A. Saare Internal Pages Chupao
     document.querySelectorAll('.internal-page').forEach(page => {
         page.classList.add('hidden');
     });
 
-    // Show Home Logic
-    const home = document.getElementById('page-home');
-    if(home) home.classList.remove('hidden');
+    // B. Home Page Wapas Dikhao
+    const mainContent = document.getElementById('page-home') || document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.classList.remove('hidden');
+    }
 }
+
+/* 4. INFO PAGES (Terms, Privacy etc.) */
+function openInfoPage(type) {
+    // Filhal alert, baad me iska alag page bana sakte hain
+    alert("Opening Info Page: " + type);
+    toggleProfileMenu(); // Menu band karo
+}
+
+/* 5. BOTTOM NAVIGATION (Home, Wallet, Tasks) */
+function navigateTo(section) {
+    console.log("Navigating to:", section);
+    
+    // Logic: Internal pages hide karo aur home dikhao
+    if (section === 'home') {
+        backToProfileMenu();
+    } else if (section === 'wallet') {
+        // Agar wallet page alag hai to usse open karo, nahi to alert
+        alert("Wallet Section Loading...");
+    } else {
+        alert(section + " Coming Soon!");
+    }
+}
+
+/* 6. LOGOUT LOGIC */
+function handleLogout() {
+    if(confirm("Are you sure you want to logout?")) {
+        alert("Logged Out Successfully");
+        toggleProfileMenu();
+    }
+}
+
