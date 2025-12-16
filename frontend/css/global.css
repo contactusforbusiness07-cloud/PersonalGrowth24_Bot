@@ -281,3 +281,61 @@ section:not(.hidden), .page-section:not(.hidden) {
     text-align: center;
     color: #00f2fe;
 }
+
+/* === STRICT MENU CSS FORCE === */
+
+/* Menu Overlay */
+.menu-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(5px) !important;
+    display: block !important; /* Force show */
+    opacity: 1 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+/* Hide Overlay Logic */
+.menu-overlay.hidden {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Side Menu Panel */
+.side-menu {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 80% !important; /* Mobile friendly width */
+    max-width: 300px !important;
+    height: 100vh !important;
+    background: #0f1014 !important;
+    border-left: 1px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.8) !important;
+    
+    /* Animation Logic */
+    transform: translateX(100%) !important; /* Default Hidden */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    padding: 20px !important;
+    overflow-y: auto !important;
+}
+
+/* Open State */
+.side-menu.active {
+    transform: translateX(0) !important; /* Slide In */
+}
+
+/* Items Styling */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
