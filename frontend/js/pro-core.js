@@ -87,3 +87,46 @@ function saveProfileChanges() {
     toggleEditMode(false);
 }
 
+/* --- MENU TOGGLE LOGIC --- */
+function toggleProfileMenu() {
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    
+    if (menu && overlay) {
+        menu.classList.toggle('active');
+        overlay.classList.toggle('hidden');
+    } else {
+        console.error("Menu elements not found in HTML!");
+    }
+}
+
+// Function to open internal pages (Profile, Refer, etc.)
+function openInternalPage(pageId) {
+    // 1. Hide all pages
+    document.querySelectorAll('.internal-page').forEach(page => {
+        page.classList.add('hidden');
+    });
+    
+    // 2. Show target page
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+    
+    // 3. Hide Main Content (Home) if needed
+    // (Adjust this ID based on your home container, e.g., 'main-content' or 'page-home')
+    const home = document.getElementById('page-home'); 
+    if(home) home.classList.add('hidden');
+}
+
+// Function to go BACK to Home/Menu
+function backToProfileMenu() {
+    // Hide all internal pages
+    document.querySelectorAll('.internal-page').forEach(page => {
+        page.classList.add('hidden');
+    });
+
+    // Show Home Logic
+    const home = document.getElementById('page-home');
+    if(home) home.classList.remove('hidden');
+}
