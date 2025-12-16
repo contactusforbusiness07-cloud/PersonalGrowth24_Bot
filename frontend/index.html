@@ -683,27 +683,79 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<script src="js/main.js"></script>
-<script src="js/pro-core.js"></script>
+
+<script>
+    console.log("🔥 System Started: Direct Code Mode");
+
+    // Menu Toggle Function
+    function toggleProfileMenu() {
+        console.log("⚡ Button Clicked!");
+        
+        const menu = document.getElementById('side-menu');
+        const overlay = document.getElementById('menu-overlay');
+
+        if (!menu || !overlay) {
+            alert("Error: Menu ID nahi mila! HTML check karein.");
+            return;
+        }
+
+        // Class Toggle Logic
+        if (menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            overlay.classList.add('hidden');
+            // Overlay hide confirm
+            overlay.style.display = 'none'; 
+        } else {
+            menu.classList.add('active');
+            overlay.classList.remove('hidden');
+            // Force Show Overlay
+            overlay.style.display = 'block';
+        }
+    }
+
+    // Navigation & Page Logic
+    function navigateTo(targetId) {
+        // Menu band karo agar khula hai
+        const menu = document.getElementById('side-menu');
+        const overlay = document.getElementById('menu-overlay');
+        if (menu && menu.classList.contains('active')) {
+            toggleProfileMenu();
+        }
+
+        // Saare pages chupao
+        document.querySelectorAll('.internal-page, .page-section, section').forEach(el => {
+            if (!el.classList.contains('app-header') && !el.classList.contains('side-menu')) {
+                el.classList.add('hidden');
+            }
+        });
+
+        // Target page dikhao
+        let target = document.getElementById(targetId) || document.getElementById('page-' + targetId);
+        if (target) {
+            target.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        } else {
+            // Fallback: Agar page na mile to Home dikhao
+            const home = document.getElementById('home');
+            if(home) home.classList.remove('hidden');
+        }
+    }
+
+    // Initialize Animations
+    AOS.init();
+</script>
 
 <script src="js/home.js"></script>
 <script src="js/wallet.js"></script>
 <script src="js/tasks.js"></script>
 <script src="js/games.js"></script>
 <script src="js/leaderboard.js"></script>
-
 <script src="js/pro-profile.js"></script>
-<script src="js/pro-refer.js"></script>
-<script src="js/pro-brand.js"></script>
-<script src="js/pro-contact.js"></script>
-<script src="js/pro-info.js"></script>
 
-<script>
-  AOS.init();
-</script>
+</body>
+</html>
+
 
 </body>
 </html>
