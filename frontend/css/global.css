@@ -149,3 +149,29 @@ body {
 .glass-card { background: var(--glass-bg); border: var(--glass-border); border-radius: 16px; padding: 16px; backdrop-filter: var(--glass-blur); margin-bottom: 15px; }
 .btn-primary { background: linear-gradient(135deg, var(--primary), #4f46e5); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 600; cursor: pointer; }
 
+/* --- HEADER FIX (Strictly for Global Header) --- */
+
+/* 1. Coin aur 3-Dot ke beech space (Gap Fix) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px !important; /* Strictly 15px ka gap */
+}
+
+/* 2. 3-Dot Button ko Clickable Banana */
+.menu-trigger {
+    width: 45px;       /* Bada area taaki click miss na ho */
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent; /* Transparent taaki clean lage */
+    z-index: 10000;    /* Sabse upar rahe */
+}
+
+/* Icon ka size */
+.menu-trigger i {
+    font-size: 24px;
+    color: #ffffff;
+}
