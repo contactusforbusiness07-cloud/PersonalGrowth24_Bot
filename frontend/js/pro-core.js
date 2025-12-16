@@ -1,93 +1,64 @@
-/* --- FIN GAME PRO: CORE LOGIC (Final Version) --- */
+/* --- CORE LOGIC: MENU FIX --- */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Core Logic Loaded.");
-    // Ensure header elements are interactive
-    const trigger = document.querySelector('.menu-trigger');
-    if (trigger) trigger.style.cursor = 'pointer';
+    console.log("Fix Loaded: Menu Button Ready");
 });
 
-/* 1. MENU TOGGLE (Strict Logic) */
+/* FORCE TOGGLE FUNCTION */
 function toggleProfileMenu() {
-    console.log("Menu Toggle Triggered"); // Debugging
+    console.log("Menu Button Clicked!"); // Debugging Log
 
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
-    
-    // Safety Check
-    if (!menu || !overlay) {
-        console.error("Menu ID 'side-menu' or 'menu-overlay' not found in HTML");
-        return;
-    }
 
-    // Toggle Action
-    if (menu.classList.contains('active')) {
-        menu.classList.remove('active');   // Close
-        overlay.classList.add('hidden');   // Hide Overlay
+    if (menu && overlay) {
+        // Toggle Logic
+        if (menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            overlay.classList.add('hidden');
+        } else {
+            menu.classList.add('active');
+            overlay.classList.remove('hidden');
+        }
     } else {
-        menu.classList.add('active');      // Open
-        overlay.classList.remove('hidden');// Show Overlay
+        alert("Error: Menu ID not found inside HTML. Please check IDs.");
     }
 }
 
-/* 2. NAVIGATION SYSTEM (Page Switcher) */
+/* --- NAVIGATION LOGIC (Keep this) --- */
 function navigateTo(targetId) {
-    // A. Agar Menu khula hai to band karo
+    // Menu close karo
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     if (menu && menu.classList.contains('active')) {
-        toggleProfileMenu(); 
+        toggleProfileMenu();
     }
 
-    // B. Saare Pages Hide karo (Internal & Main)
-    const allPages = document.querySelectorAll('.internal-page, .page-section, .view-section');
-    allPages.forEach(page => {
-        page.classList.add('hidden');
+    // Hide all pages
+    document.querySelectorAll('.internal-page, .page-section').forEach(el => {
+        el.classList.add('hidden');
     });
 
-    // C. Specific ID Dhoondo
-    // Try 1: Direct ID (e.g., 'wallet')
-    let target = document.getElementById(targetId);
-    
-    // Try 2: Prefix ID (e.g., 'page-wallet')
-    if (!target) {
-        target = document.getElementById('page-' + targetId);
-    }
-
-    // D. Target Show karo
+    // Show Target
+    let target = document.getElementById(targetId) || document.getElementById('page-' + targetId);
     if (target) {
         target.classList.remove('hidden');
-        window.scrollTo(0, 0); // Scroll to top
-    } else {
-        console.warn("Page ID not found:", targetId);
-        // Fallback: Agar page nahi mila to Home dikha do
-        if(targetId !== 'home') navigateTo('home');
+        window.scrollTo(0, 0);
     }
 }
 
-/* 3. OPEN INTERNAL PAGES (Profile, Refer, etc.) */
-function openInternalPage(pageName) {
-    // Ye navigateTo function ko hi use karega
-    navigateTo(pageName);
+// Internal Pages Redirect
+function openInternalPage(pageId) {
+    navigateTo(pageId);
 }
-
-/* 4. BACK BUTTON LOGIC */
 function backToProfileMenu() {
     navigateTo('home');
 }
-
-/* 5. INFO PAGES & LOGOUT */
 function openInfoPage(type) {
-    toggleProfileMenu(); // Close menu
-    // Thoda delay taaki menu band ho jaye fir alert aaye
-    setTimeout(() => {
-        alert("Info Page: " + type); 
-    }, 200);
+    toggleProfileMenu();
+    setTimeout(() => alert(type), 200);
 }
-
 function handleLogout() {
-    if(confirm("Are you sure you want to logout?")) {
-        window.location.reload();
-    }
+    if(confirm("Logout?")) location.reload();
 }
 
