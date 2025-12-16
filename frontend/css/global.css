@@ -208,3 +208,76 @@ body {
 section:not(.hidden), .page-section:not(.hidden) {
     display: block !important;
 }
+
+/* --- SIDE MENU DESIGN (REQUIRED) --- */
+
+/* 1. Menu Container (Hidden by default) */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px; /* Menu ki chaurai */
+    height: 100vh;
+    background: #0f1014; /* Dark Background */
+    z-index: 20000 !important; /* Sabse upar */
+    transform: translateX(100%); /* Screen ke bahar */
+    transition: transform 0.3s ease-in-out;
+    border-left: 1px solid rgba(255, 215, 0, 0.2);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* 2. Menu OPEN State (Jab JS active karega) */
+.side-menu.active {
+    transform: translateX(0); /* Screen par wapas lao */
+}
+
+/* 3. Background Overlay */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 19999 !important;
+    backdrop-filter: blur(5px);
+}
+.menu-overlay.hidden {
+    display: none;
+}
+
+/* 4. Menu Header & Items */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 20px;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: rgba(255,255,255,0.03);
+}
+
+.menu-item:active {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.menu-item i {
+    width: 25px;
+    text-align: center;
+    color: #00f2fe;
+}
