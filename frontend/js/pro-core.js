@@ -1,99 +1,113 @@
-/* --- FIN GAME PRO: CORE LOGIC (Navigation & Menu) --- */
+/* --- FIN GAME PRO: CORE LOGIC (FIXED) --- */
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Pro-Core Module Loaded");
+    console.log("App Loaded: Core Logic Ready");
 });
 
-/* 1. SIDE MENU TOGGLE LOGIC */
+/* 1. SIDE MENU TOGGLE LOGIC (3-Dot Fix) */
 function toggleProfileMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     
     if (menu && overlay) {
-        menu.classList.toggle('active');
-        // Overlay logic: agar hidden hai to hatao, nahi to lagao
-        if (overlay.classList.contains('hidden')) {
-            overlay.classList.remove('hidden');
+        // Toggle Logic
+        if (menu.classList.contains('active')) {
+            menu.classList.remove('active'); // Close Menu
+            overlay.classList.add('hidden'); // Hide Overlay
         } else {
-            overlay.classList.add('hidden');
+            menu.classList.add('active');    // Open Menu
+            overlay.classList.remove('hidden'); // Show Overlay
         }
     } else {
-        console.error("Menu UI elements (side-menu or menu-overlay) not found!");
+        console.error("Menu UI elements not found! Check IDs 'side-menu' and 'menu-overlay'");
     }
 }
 
-/* 2. OPEN INTERNAL PAGES (Profile, Refer, etc.) */
-function openInternalPage(pageId) {
-    // A. Menu band karo agar khula hai
+/* 2. MAIN NAVIGATION (Bottom Nav & Sections) */
+function navigateTo(targetId) {
+    console.log("Navigating to:", targetId);
+
+    // Step A: Close Menu if open
     const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
     if (menu && menu.classList.contains('active')) {
         toggleProfileMenu();
     }
 
-    // B. Saare Pages Chupao
+    // Step B: Hide ALL Pages & Sections
+    // 1. Hide Internal Pages (Profile, Refer, etc.)
     document.querySelectorAll('.internal-page').forEach(page => {
         page.classList.add('hidden');
     });
 
-    // C. Home Page / Main Content Chupao
-    // (Aapke structure ke hisaab se main content ka wrapper)
-    const mainContent = document.getElementById('page-home') || document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.classList.add('hidden');
+    // 2. Hide Main Sections (Home, Wallet, Tasks etc.)
+    // Hum 'page-section' class aur direct IDs dono ko target karenge
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    // Explicitly hide common IDs to be safe
+    ['home', 'tasks', 'games', 'wallet', 'leaderboard'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+
+    // Step C: Show the Target Page
+    // Pehle direct ID check karo (e.g., 'wallet')
+    let target = document.getElementById(targetId);
+    
+    // Agar direct ID nahi mila, to 'page-' prefix ke saath try karo (e.g., 'page-wallet')
+    if (!target) {
+        target = document.getElementById('page-' + targetId);
     }
 
-    // D. Target Page Dikhao
-    const target = document.getElementById(pageId);
     if (target) {
         target.classList.remove('hidden');
-        window.scrollTo(0, 0); // Top par scroll karo
+        window.scrollTo(0, 0); // Reset scroll
+        updateBottomNav(targetId); // Highlight icon
     } else {
-        console.error(`Page ID '${pageId}' not found in HTML.`);
+        console.warn("Page not found:", targetId);
+        // Fallback: Agar page exist nahi karta tabhi alert dikhao
+        alert(targetId.toUpperCase() + " Page is under construction.");
     }
 }
 
-/* 3. BACK BUTTON LOGIC (Return to Home) */
+/* 3. OPEN INTERNAL PAGES (For Profile, Refer, Brand etc.) */
+function openInternalPage(pageId) {
+    // Re-use the smart navigation logic
+    // Agar ID 'page-profile' hai, to ye direct open karega
+    navigateTo(pageId.replace('page-', '')); 
+    // Note: Agar aapke IDs 'page-profile' hain, to upar wala logic 'page-' prefix khud handle kar lega
+}
+
+/* 4. BACK BUTTON (Returns to Home) */
 function backToProfileMenu() {
-    // A. Saare Internal Pages Chupao
-    document.querySelectorAll('.internal-page').forEach(page => {
-        page.classList.add('hidden');
+    navigateTo('home');
+}
+
+/* 5. HELPER: Update Bottom Nav Active State */
+function updateBottomNav(activeId) {
+    // Remove active class from all
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        
+        // Check if onclick contains the activeId
+        const onclickVal = item.getAttribute('onclick');
+        if (onclickVal && onclickVal.includes(`'${activeId}'`)) {
+            item.classList.add('active');
+        }
     });
-
-    // B. Home Page Wapas Dikhao
-    const mainContent = document.getElementById('page-home') || document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.classList.remove('hidden');
-    }
 }
 
-/* 4. INFO PAGES (Terms, Privacy etc.) */
+/* 6. INFO PAGES (Terms, Privacy) */
 function openInfoPage(type) {
-    // Filhal alert, baad me iska alag page bana sakte hain
-    alert("Opening Info Page: " + type);
-    toggleProfileMenu(); // Menu band karo
+    alert("Info Page: " + type + " (Content Loading...)");
+    toggleProfileMenu();
 }
 
-/* 5. BOTTOM NAVIGATION (Home, Wallet, Tasks) */
-function navigateTo(section) {
-    console.log("Navigating to:", section);
-    
-    // Logic: Internal pages hide karo aur home dikhao
-    if (section === 'home') {
-        backToProfileMenu();
-    } else if (section === 'wallet') {
-        // Agar wallet page alag hai to usse open karo, nahi to alert
-        alert("Wallet Section Loading...");
-    } else {
-        alert(section + " Coming Soon!");
-    }
-}
-
-/* 6. LOGOUT LOGIC */
+/* 7. LOGOUT */
 function handleLogout() {
     if(confirm("Are you sure you want to logout?")) {
-        alert("Logged Out Successfully");
-        toggleProfileMenu();
+        window.location.reload(); // Refresh app to simulate logout
     }
 }
 
