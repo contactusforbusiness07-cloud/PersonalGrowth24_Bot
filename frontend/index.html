@@ -452,13 +452,47 @@
 
                                     <div id="profile-section-container" class="hidden">
             
-            <div id="page-profile" class="internal-page hidden">
-    <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
-            <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <h2 class="neon-text" style="margin: 0; font-family: 'Poppins', sans-serif;">My Identity</h2>
+            <div id="profile-view" class="view-section hidden"> <div class="profile-header">
+        <h2 class="neon-text">My Identity</h2>
     </div>
+
+    <div class="glass-card profile-card">
+        <div class="avatar-wrapper">
+            <div class="neon-avatar-container">
+                <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+            </div>
+            <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
+                <i class="fas fa-camera"></i>
+            </div>
+        </div>
+        
+        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
+
+        <div class="profile-info">
+            <h3 id="display-name">Loading...</h3>
+            <span class="user-id">ID: <span id="display-id">...</span> <i class="fas fa-check-circle verified-icon"></i></span>
+        </div>
+
+        <button class="btn-glow-border" onclick="openEditModal()">
+            Edit Details
+        </button>
+    </div>
+</div>
+
+<div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-glass">
+        <h3>Update Profile</h3>
+        <div class="input-group">
+            <label>Display Name</label>
+            <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
 
     <div class="glass-card profile-card">
         <div class="avatar-wrapper">
