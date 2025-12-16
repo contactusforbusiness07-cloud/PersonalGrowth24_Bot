@@ -607,37 +607,75 @@
 <div id="side-menu" class="side-menu" style="z-index: 2147483647;">
     <div class="menu-header">
         <span class="text-gold">Menu</span>
-        <i class="fa-solid fa-xmark" onclick="toggleProfileMenu()"></i>
+        <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
     </div>
     
     <div class="menu-list">
+        
         <div class="menu-item" onclick="openInternalPage('page-profile')">
             <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
             <span>My Profile</span>
         </div>
+
         <div class="menu-item" onclick="navigateTo('wallet')">
             <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
             <span>Wallet & Earnings</span>
         </div>
+
+        <div class="menu-item" style="opacity: 0.6;">
+            <div class="mi-icon"><i class="fa-solid fa-id-card"></i></div>
+            <span>KYC Verification</span>
+            <span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span>
+        </div>
+
         <div class="menu-item" onclick="openInternalPage('page-refer')">
             <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
             <span>Refer & Earn</span>
         </div>
-        
+
+        <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')">
+            <div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div>
+            <span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span>
+        </div>
+
         <hr class="menu-divider">
 
         <div class="menu-item small" onclick="openInfoPage('withdraw_terms')">
-             <i class="fa-solid fa-file-invoice-dollar"></i> <span>Withdrawal Terms</span>
+            <div class="mi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <span>Withdrawal Terms</span>
+        </div>
+        <div class="menu-item small" onclick="openInfoPage('terms')">
+            <div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div>
+            <span>Terms & Conditions</span>
+        </div>
+        <div class="menu-item small" onclick="openInfoPage('privacy')">
+            <div class="mi-icon"><i class="fa-solid fa-lock"></i></div>
+            <span>Privacy Policy</span>
+        </div>
+        <div class="menu-item small" onclick="openInfoPage('disclaimer')">
+            <div class="mi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <span>Disclaimer</span>
+        </div>
+
+        <hr class="menu-divider">
+
+        <div class="menu-item small" onclick="openInfoPage('faq')">
+            <div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div>
+            <span>Help / FAQ</span>
         </div>
         <div class="menu-item small" onclick="openInternalPage('page-contact')">
-             <i class="fa-solid fa-headset"></i> <span>Contact Support</span>
+            <div class="mi-icon"><i class="fa-solid fa-headset"></i></div>
+            <span>Contact Support</span>
         </div>
 
         <div class="menu-item logout" onclick="handleLogout()">
-            <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+            <div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+            <span>Logout</span>
         </div>
+
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
