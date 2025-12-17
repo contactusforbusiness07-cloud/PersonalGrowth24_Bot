@@ -1,29 +1,52 @@
-// --- GLOBAL NAVIGATION SYSTEM ---
-function navigateTo(sectionId) {
+// --- 1. FIREBASE SETUP (Imports & Config) ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCg7hL0aFYWj7hRtP9cp9nqXYQQPzhHMMc",
+    authDomain: "fingamepro.firebaseapp.com",
+    projectId: "fingamepro",
+    storageBucket: "fingamepro.firebasestorage.app",
+    messagingSenderId: "479959446564",
+    appId: "1:479959446564:web:1d0d9890d4f5501c4594b1"
+};
+
+// Initialize Firebase & Database
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Make DB Global (Taaki dusri files isse use kar sakein)
+window.db = db;
+console.log("Firebase Connected Successfully!");
+
+// --- 2. GLOBAL NAVIGATION SYSTEM ---
+// Note: Window ke sath attach kar rahe hain taaki HTML buttons isse dhoond sakein
+
+window.navigateTo = function(sectionId) {
     console.log("Going to:", sectionId);
 
-    // 1. Hide All Main Sections (Home, Tasks, etc.)
+    // A. Hide All Main Sections
     document.querySelectorAll('.page-section').forEach(sec => {
         sec.classList.add('hidden');
         sec.classList.remove('active');
     });
 
-    // 2. Hide Profile Pages & Container
+    // B. Hide Profile Pages & Container
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
     const profileContainer = document.getElementById('profile-section-container');
     if(profileContainer) profileContainer.classList.add('hidden');
 
-    // 3. Force Close Menu
+    // C. Force Close Menu
     toggleProfileMenu(false);
 
-    // 4. Show Target Section
+    // D. Show Target Section
     const target = document.getElementById(sectionId);
     if (target) {
         target.classList.remove('hidden');
         target.classList.add('active');
     }
 
-    // 5. Update Bottom Nav Icons
+    // E. Update Bottom Nav Icons
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         const attr = item.getAttribute('onclick');
@@ -31,8 +54,8 @@ function navigateTo(sectionId) {
     });
 }
 
-// --- MENU TOGGLE CONTROL ---
-function toggleProfileMenu(forceState) {
+// --- 3. MENU TOGGLE CONTROL ---
+window.toggleProfileMenu = function(forceState) {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     if (!menu || !overlay) return;
@@ -59,9 +82,12 @@ function toggleProfileMenu(forceState) {
     }
 }
 
-// --- APP INIT ---
+// --- 4. APP INIT ---
 document.addEventListener('DOMContentLoaded', () => {
-    navigateTo('home');
+    // Default Page
+    window.navigateTo('home');
+    
+    // Telegram Setup
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
