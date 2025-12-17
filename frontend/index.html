@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/style.css">
@@ -97,60 +97,106 @@
             </div>
 
 
-            <div id="page-brand" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Brand Collab</h3></div>
-                <div class="brand-hero"><h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2><p>Promote to 50k+ Users</p></div>
-                <label class="form-label">1. Platform</label>
-                <div class="promo-grid">
-                    <label class="promo-card"><input type="radio" name="promo_type" value="Telegram"><div class="promo-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram</span></div></label>
-                    <label class="promo-card"><input type="radio" name="promo_type" value="Instagram"><div class="promo-content"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div></label>
-                    <label class="promo-card"><input type="radio" name="promo_type" value="YouTube"><div class="promo-content"><i class="fa-brands fa-youtube text-red"></i><span>YouTube</span></div></label>
+            <div id="page-refer" class="internal-page hidden" 
+                 style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
+                
+                <div style="padding: 0 20px;">
+                    <div class="page-header flex-center-start">
+                        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h2 class="neon-text" style="margin:0;">Affiliate Center</h2>
+                    </div>
+
+                    <div class="refer-hero-card">
+                        <div class="refer-stat">
+                            <span class="stat-label">Total Partners</span>
+                            <h3 id="total-referrals" class="stat-value neon-blue">0</h3>
+                        </div>
+                        <div class="vertical-divider"></div>
+                        <div class="refer-stat">
+                            <span class="stat-label">Earnings (Coins)</span>
+                            <h3 id="referral-earnings" class="stat-value neon-gold">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="copy-code-container">
+                        <label>YOUR UNIQUE ACCESS CODE</label>
+                        <div class="code-box" onclick="copyReferralCode()">
+                            <span id="my-referral-code">LOADING...</span>
+                            <i class="fa-regular fa-copy"></i>
+                        </div>
+                    </div>
+
+                    <div class="refer-tabs">
+                        <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
+                        <button class="tab-btn" onclick="switchReferTab('team')">My Team (10%)</button>
+                    </div>
+
+                    <div id="tab-milestones" class="tab-content active-tab">
+                        <div id="milestone-list" class="scrollable-list">
+                            </div>
+                    </div>
+
+                    <div id="tab-team" class="tab-content hidden">
+                        <div class="team-header">
+                            <p style="color:#aaa; font-size:12px;">Earn 10% of your friends' income forever.</p>
+                            <button class="btn-claim-all" onclick="claimAllCommissions()" style="margin-top:5px;">Claim All</button>
+                        </div>
+                        <div id="team-list" class="scrollable-list">
+                            </div>
+                    </div>
                 </div>
-                <label class="form-label">2. Budget</label>
-                <div class="budget-scroll">
-                    <div class="budget-chip" onclick="selectBudget(this, '500-1k')">₹500-1k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '1k-5k')">₹1k-5k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '5k-10k')">₹5k-10k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '10k+')">₹10k+</div>
-                </div>
-                <input type="hidden" id="selected-budget">
-                <label class="form-label">3. Message</label><textarea class="contact-input" id="brand-message" rows="3"></textarea>
-                <button class="btn-send-msg" onclick="sendBrandProposal()">Send Proposal</button>
             </div>
 
 
-            <div id="page-refer" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
-                <div class="page-header flex-center-start">
-                    <button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button>
-                    <h2 class="neon-text">Affiliate Center</h2>
-                </div>
-                <div class="refer-hero-card">
-                    <div class="refer-stat"><span class="stat-label">Total Partners</span><h3 id="total-referrals" class="stat-value neon-blue">0</h3></div>
-                    <div class="vertical-divider"></div>
-                    <div class="refer-stat"><span class="stat-label">Earnings (Coins)</span><h3 id="referral-earnings" class="stat-value neon-gold">0</h3></div>
-                </div>
-                <div class="copy-code-container">
-                    <label>YOUR UNIQUE ACCESS CODE</label>
-                    <div class="code-box" onclick="copyReferralCode()"><span id="my-referral-code">LOADING...</span><i class="fa-regular fa-copy"></i></div>
-                </div>
-                <div class="refer-tabs">
-                    <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
-                    <button class="tab-btn" onclick="switchReferTab('team')">My Team (10%)</button>
-                </div>
-                <div id="tab-milestones" class="tab-content active-tab"><div id="milestone-list" class="scrollable-list"></div></div>
-                <div id="tab-team" class="tab-content hidden">
-                    <div class="team-header"><p class="hitech-instruction">Earn 10% lifetime</p><button class="btn-claim-all" onclick="claimAllCommissions()"><i class="fa-solid fa-bolt"></i> Claim All</button></div>
-                    <div id="team-list" class="scrollable-list"></div>
+            <div id="page-brand" class="internal-page hidden" 
+                 style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
+                
+                <div style="padding: 0 20px;">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h2 class="neon-text" style="margin:0;">Brand Collab</h2>
+                    </div>
+                    
+                    <div class="brand-hero"><h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2><p>Promote to 50k+ Users</p></div>
+                    <label class="form-label">1. Platform</label>
+                    <div class="promo-grid">
+                        <label class="promo-card"><input type="radio" name="promo_type" value="Telegram"><div class="promo-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram</span></div></label>
+                        <label class="promo-card"><input type="radio" name="promo_type" value="Instagram"><div class="promo-content"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div></label>
+                        <label class="promo-card"><input type="radio" name="promo_type" value="YouTube"><div class="promo-content"><i class="fa-brands fa-youtube text-red"></i><span>YouTube</span></div></label>
+                    </div>
+                    <label class="form-label">2. Budget</label>
+                    <div class="budget-scroll">
+                        <div class="budget-chip" onclick="selectBudget(this, '500-1k')">₹500-1k</div>
+                        <div class="budget-chip" onclick="selectBudget(this, '1k-5k')">₹1k-5k</div>
+                        <div class="budget-chip" onclick="selectBudget(this, '5k-10k')">₹5k-10k</div>
+                        <div class="budget-chip" onclick="selectBudget(this, '10k+')">₹10k+</div>
+                    </div>
+                    <input type="hidden" id="selected-budget">
+                    <label class="form-label">3. Message</label><textarea class="contact-input" id="brand-message" rows="3"></textarea>
+                    <button class="btn-send-msg" onclick="sendBrandProposal()">Send Proposal</button>
                 </div>
             </div>
 
 
-            <div id="page-contact" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Support</h3></div>
-                <div class="contact-premium-card">
-                    <div class="text-center mb-4"><h4 class="text-white">Admin Support</h4><p class="text-gray-400 text-xs">Direct: @Mr_MorningStar524</p></div>
-                    <textarea class="contact-input" id="contact-message" rows="4"></textarea>
-                    <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
+            <div id="page-contact" class="internal-page hidden" 
+                 style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
+                
+                <div style="padding: 0 20px;">
+                    <div class="page-header">
+                        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h2 class="neon-text" style="margin:0;">Support</h2>
+                    </div>
+                    <div class="contact-premium-card">
+                        <div class="text-center mb-4"><h4 class="text-white">Admin Support</h4><p class="text-gray-400 text-xs">Direct: @Mr_MorningStar524</p></div>
+                        <textarea class="contact-input" id="contact-message" rows="4"></textarea>
+                        <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
+                    </div>
                 </div>
             </div>
 
@@ -186,7 +232,7 @@
                         <div class="icon-box red"><i class="fa-solid fa-play"></i></div>
                         <span>Ads</span>
                     </div>
-                    <div class="action-card" onclick="openInternalPage('refer')">
+                    <div class="action-card" onclick="openInternalPage('page-refer')">
                         <div class="icon-box green"><i class="fa-solid fa-user-plus"></i></div>
                         <span>Refer</span>
                     </div>
@@ -297,7 +343,7 @@
                     <div class="task-card">
                         <div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div>
                         <div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="openInternalPage('refer')">Start</button>
+                        <button class="btn-task-action" onclick="openInternalPage('page-refer')">Start</button>
                     </div>
                     <div class="task-card">
                         <div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
@@ -463,8 +509,9 @@
 
     <script>
       AOS.init();
+      // Simple fix if back button logic is missing in JS
+      function backToProfileMenu() { toggleProfileMenu(); }
     </script>
 
 </body>
 </html>
-
