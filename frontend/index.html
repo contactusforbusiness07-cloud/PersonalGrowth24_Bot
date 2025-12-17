@@ -7,15 +7,12 @@
     <title>FinGamePro</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
-    
     <link rel="stylesheet" href="css/leaderboard.css">
     <link rel="stylesheet" href="css/tasks.css">
     <link rel="stylesheet" href="css/games.css">
@@ -28,8 +25,6 @@
     <link rel="stylesheet" href="css/pro-contact.css">
 </head>
 
-
-</head>
 <body>
 
     <div id="app-container">
@@ -40,23 +35,127 @@
                 <span class="app-name">FinGamePro</span>
             </div>
             <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
-    
-    <div class="coin-badge" onclick="navigateTo('wallet')">
-        <i class="fa-solid fa-coins coin-glow"></i>
-        <span id="header-coin-balance">0</span>
-    </div>
-
-    <div class="menu-trigger" onclick="toggleProfileMenu()">
-        <i class="fa-solid fa-bars"></i>
-    </div>
-
-</div>
-
+                <div class="coin-badge" onclick="navigateTo('wallet')">
+                    <i class="fa-solid fa-coins coin-glow"></i>
+                    <span id="header-coin-balance">0</span>
+                </div>
+                <div class="menu-trigger" onclick="toggleProfileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
         </header>
+
 
         <main id="main-content">
             
-                        <section id="home" class="page-section active">
+            <div id="page-profile" class="internal-page hidden" 
+                 style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;"> 
+                
+                <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 0 20px;">
+                    <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h2 class="neon-text" style="margin: 0;">My Identity</h2>
+                </div>
+
+                <div class="glass-card profile-card" style="margin: 0 20px;">
+                    <div class="avatar-wrapper">
+                        <div class="neon-avatar-container">
+                            <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                        </div>
+                        <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                    </div>
+                    
+                    <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
+
+                    <div class="profile-info" style="text-align: center;">
+                        <h3 id="display-name" style="font-size: 22px; margin: 10px 0;">Loading...</h3>
+                        <span class="user-id" style="color: #a0a0a0; font-family: monospace;">
+                            ID: <span id="display-id">...</span> 
+                            <i class="fa-solid fa-circle-check" style="color: #00dcff; margin-left: 5px;"></i>
+                        </span>
+                    </div>
+
+                    <button class="btn-glow-border" onclick="openEditModal()">Edit Details</button>
+                </div>
+            </div>
+
+            <div id="edit-modal" class="modal-overlay hidden" style="z-index: 6000;">
+                <div class="modal-glass">
+                    <h3>Update Profile</h3>
+                    <div class="input-group">
+                        <label>Display Name</label>
+                        <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                        <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="page-brand" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
+                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Brand Collab</h3></div>
+                <div class="brand-hero"><h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2><p>Promote to 50k+ Users</p></div>
+                <label class="form-label">1. Platform</label>
+                <div class="promo-grid">
+                    <label class="promo-card"><input type="radio" name="promo_type" value="Telegram"><div class="promo-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram</span></div></label>
+                    <label class="promo-card"><input type="radio" name="promo_type" value="Instagram"><div class="promo-content"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div></label>
+                    <label class="promo-card"><input type="radio" name="promo_type" value="YouTube"><div class="promo-content"><i class="fa-brands fa-youtube text-red"></i><span>YouTube</span></div></label>
+                </div>
+                <label class="form-label">2. Budget</label>
+                <div class="budget-scroll">
+                    <div class="budget-chip" onclick="selectBudget(this, '500-1k')">₹500-1k</div>
+                    <div class="budget-chip" onclick="selectBudget(this, '1k-5k')">₹1k-5k</div>
+                    <div class="budget-chip" onclick="selectBudget(this, '5k-10k')">₹5k-10k</div>
+                    <div class="budget-chip" onclick="selectBudget(this, '10k+')">₹10k+</div>
+                </div>
+                <input type="hidden" id="selected-budget">
+                <label class="form-label">3. Message</label><textarea class="contact-input" id="brand-message" rows="3"></textarea>
+                <button class="btn-send-msg" onclick="sendBrandProposal()">Send Proposal</button>
+            </div>
+
+
+            <div id="page-refer" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
+                <div class="page-header flex-center-start">
+                    <button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="neon-text">Affiliate Center</h2>
+                </div>
+                <div class="refer-hero-card">
+                    <div class="refer-stat"><span class="stat-label">Total Partners</span><h3 id="total-referrals" class="stat-value neon-blue">0</h3></div>
+                    <div class="vertical-divider"></div>
+                    <div class="refer-stat"><span class="stat-label">Earnings (Coins)</span><h3 id="referral-earnings" class="stat-value neon-gold">0</h3></div>
+                </div>
+                <div class="copy-code-container">
+                    <label>YOUR UNIQUE ACCESS CODE</label>
+                    <div class="code-box" onclick="copyReferralCode()"><span id="my-referral-code">LOADING...</span><i class="fa-regular fa-copy"></i></div>
+                </div>
+                <div class="refer-tabs">
+                    <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
+                    <button class="tab-btn" onclick="switchReferTab('team')">My Team (10%)</button>
+                </div>
+                <div id="tab-milestones" class="tab-content active-tab"><div id="milestone-list" class="scrollable-list"></div></div>
+                <div id="tab-team" class="tab-content hidden">
+                    <div class="team-header"><p class="hitech-instruction">Earn 10% lifetime</p><button class="btn-claim-all" onclick="claimAllCommissions()"><i class="fa-solid fa-bolt"></i> Claim All</button></div>
+                    <div id="team-list" class="scrollable-list"></div>
+                </div>
+            </div>
+
+
+            <div id="page-contact" class="internal-page hidden" style="padding: 80px 20px 100px 20px;">
+                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Support</h3></div>
+                <div class="contact-premium-card">
+                    <div class="text-center mb-4"><h4 class="text-white">Admin Support</h4><p class="text-gray-400 text-xs">Direct: @Mr_MorningStar524</p></div>
+                    <textarea class="contact-input" id="contact-message" rows="4"></textarea>
+                    <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
+                </div>
+            </div>
+
+
+            <section id="home" class="page-section active">
                 
                 <div class="hero-card" data-aos="fade-down">
                     <div class="hero-header">
@@ -97,58 +196,36 @@
                     Smart Tools <span class="badge-viral">Viral</span>
                 </div>
                 <div class="tools-grid" data-aos="fade-up" data-aos-delay="100">
-                    
                     <div class="tool-card" onclick="openToolModal('cv')">
                         <div class="tool-icon bg-blue"><i class="fa-solid fa-file-invoice"></i></div>
-                        <div class="tool-info">
-                            <h3>CV Builder</h3>
-                            <p>AI Resume Creator</p>
-                        </div>
+                        <div class="tool-info"><h3>CV Builder</h3><p>AI Resume Creator</p></div>
                         <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
                     </div>
-
                     <div class="tool-card" onclick="openToolModal('love')">
                         <div class="tool-icon bg-pink"><i class="fa-solid fa-heart"></i></div>
-                        <div class="tool-info">
-                            <h3>Love Calc</h3>
-                            <p>AI Compatibility</p>
-                        </div>
+                        <div class="tool-info"><h3>Love Calc</h3><p>AI Compatibility</p></div>
                         <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
                     </div>
-
                     <div class="tool-card" onclick="openToolModal('marriage')">
                         <div class="tool-icon bg-gold"><i class="fa-solid fa-ring"></i></div>
-                        <div class="tool-info">
-                            <h3>Wedding Date</h3>
-                            <p>Prediction AI</p>
-                        </div>
+                        <div class="tool-info"><h3>Wedding Date</h3><p>Prediction AI</p></div>
                         <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
                     </div>
-
                     <div class="tool-card" onclick="openToolModal('career')">
                         <div class="tool-icon bg-purple"><i class="fa-solid fa-rocket"></i></div>
-                        <div class="tool-info">
-                            <h3>Career 2035</h3>
-                            <p>Future Role</p>
-                        </div>
+                        <div class="tool-info"><h3>Career 2035</h3><p>Future Role</p></div>
                         <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
                     </div>
                 </div>
 
                 <div class="offer-slider" data-aos="fade-left">
                     <div class="offer-card gradient-1">
-                        <div>
-                            <h4>Super Offer 🚀</h4>
-                            <p>Earn 500 Coins instantly!</p>
-                        </div>
+                        <div><h4>Super Offer 🚀</h4><p>Earn 500 Coins instantly!</p></div>
                         <button class="btn-sm" onclick="navigateTo('tasks')">Go</button>
                     </div>
                 </div>
 
-                <div class="motivation-strip">
-                    🎉 You can still earn <b>1200 coins</b> today!
-                </div>
-
+                <div class="motivation-strip">🎉 You can still earn <b>1200 coins</b> today!</div>
             </section>
 
             <div id="tool-modal" class="modal-overlay hidden">
@@ -157,52 +234,33 @@
                         <h3 id="tool-modal-title">Tool Name</h3>
                         <button class="close-btn" onclick="closeToolModal()"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div class="modal-body" id="tool-modal-body">
-                        </div>
+                    <div class="modal-body" id="tool-modal-body"></div>
                 </div>
             </div>
 
-            </section>
 
-                        <section id="leaderboard" class="page-section hidden">
-                
+            <section id="leaderboard" class="page-section hidden">
                 <div class="lb-header">
                     <div class="lb-title">Top Earners <i class="fa-solid fa-crown text-gold"></i></div>
                     <div class="lb-timer glass-badge">
-                        <i class="fa-solid fa-hourglass-half"></i> 
-                        Resets in: <span id="countdown-timer">00:00:00</span>
+                        <i class="fa-solid fa-hourglass-half"></i> Resets in: <span id="countdown-timer">00:00:00</span>
                     </div>
                 </div>
                 <p class="lb-subtitle">Leaderboard resets every 24 hours</p>
 
                 <div class="podium-container" data-aos="zoom-in">
-                    
                     <div class="podium-card rank-2">
-                        <div class="avatar-frame silver">
-                            <img src="https://i.pravatar.cc/150?img=12" alt="User" class="avatar-img">
-                            <div class="rank-badge-circle">2</div>
-                        </div>
-                        <div class="podium-name">Alex</div>
-                        <div class="podium-coins">85k</div>
+                        <div class="avatar-frame silver"><img src="https://i.pravatar.cc/150?img=12" alt="User" class="avatar-img"><div class="rank-badge-circle">2</div></div>
+                        <div class="podium-name">Alex</div><div class="podium-coins">85k</div>
                     </div>
-
                     <div class="podium-card rank-1">
                         <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
-                        <div class="avatar-frame gold">
-                            <img src="https://i.pravatar.cc/150?img=5" alt="User" class="avatar-img">
-                            <div class="rank-badge-circle">1</div>
-                        </div>
-                        <div class="podium-name highlight">Sarah</div>
-                        <div class="podium-coins main">92k</div>
+                        <div class="avatar-frame gold"><img src="https://i.pravatar.cc/150?img=5" alt="User" class="avatar-img"><div class="rank-badge-circle">1</div></div>
+                        <div class="podium-name highlight">Sarah</div><div class="podium-coins main">92k</div>
                     </div>
-
                     <div class="podium-card rank-3">
-                        <div class="avatar-frame bronze">
-                            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-img">
-                            <div class="rank-badge-circle">3</div>
-                        </div>
-                        <div class="podium-name">John</div>
-                        <div class="podium-coins">81k</div>
+                        <div class="avatar-frame bronze"><img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-img"><div class="rank-badge-circle">3</div></div>
+                        <div class="podium-name">John</div><div class="podium-coins">81k</div>
                     </div>
                 </div>
 
@@ -211,164 +269,75 @@
                 </div>
 
                 <div class="lb-rules-card">
-                    <div class="rule-row">
-                        <span class="rule-label gold-text"><i class="fa-solid fa-check-circle"></i> Rank 1-10:</span>
-                        <span class="rule-val">Instant Withdraw Active</span>
-                    </div>
-                    <div class="rule-row">
-                        <span class="rule-label gray-text"><i class="fa-solid fa-lock"></i> Rank 11+:</span>
-                        <span class="rule-val">Month-End Withdraw Only</span>
-                    </div>
-                    <div class="lb-footer-note">
-                        <i class="fa-solid fa-shield-halved"></i> Rankings update live. Fake coins removed.
-                    </div>
+                    <div class="rule-row"><span class="rule-label gold-text"><i class="fa-solid fa-check-circle"></i> Rank 1-10:</span><span class="rule-val">Instant Withdraw Active</span></div>
+                    <div class="rule-row"><span class="rule-label gray-text"><i class="fa-solid fa-lock"></i> Rank 11+:</span><span class="rule-val">Month-End Withdraw Only</span></div>
+                    <div class="lb-footer-note"><i class="fa-solid fa-shield-halved"></i> Rankings update live. Fake coins removed.</div>
                 </div>
-
             </section>
 
-                        <section id="tasks" class="page-section hidden">
-                
-                <div class="section-header">
-                    <h2>Task Center</h2>
-                    <p>Complete missions to earn massive coins</p>
-                </div>
 
-                <div class="task-category-title">
-                    <i class="fa-solid fa-play-circle text-red"></i> Watch & Earn
-                </div>
+            <section id="tasks" class="page-section hidden">
+                <div class="section-header"><h2>Task Center</h2><p>Complete missions to earn massive coins</p></div>
                 
+                <div class="task-category-title"><i class="fa-solid fa-play-circle text-red"></i> Watch & Earn</div>
                 <div class="video-task-card" data-aos="fade-up">
-                    <div class="video-icon">
-                        <i class="fa-brands fa-youtube"></i>
-                    </div>
+                    <div class="video-icon"><i class="fa-brands fa-youtube"></i></div>
                     <div class="video-info">
-                        <h4>Watch Premium Ad</h4>
-                        <p>Watch for 30 seconds</p>
-                        <div class="progress-bar-container hidden" id="ad-progress-container">
-                            <div class="progress-bar" id="ad-progress-bar"></div>
-                        </div>
+                        <h4>Watch Premium Ad</h4><p>Watch for 30 seconds</p>
+                        <div class="progress-bar-container hidden" id="ad-progress-container"><div class="progress-bar" id="ad-progress-bar"></div></div>
                     </div>
-                    <button class="btn-task-action" onclick="startWatchTask(this)">
-                        <i class="fa-solid fa-coins"></i> +500
-                    </button>
+                    <button class="btn-task-action" onclick="startWatchTask(this)"><i class="fa-solid fa-coins"></i> +500</button>
                 </div>
 
-                <div class="task-category-title mt-4">
-                    <i class="fa-brands fa-telegram text-blue"></i> Premium Channels
-                    <span class="badge-new">High Pay</span>
-                </div>
+                <div class="task-category-title mt-4"><i class="fa-brands fa-telegram text-blue"></i> Premium Channels <span class="badge-new">High Pay</span></div>
+                <div class="tasks-list" id="telegram-tasks-list"><div class="loading-spinner">Loading Tasks...</div></div>
 
-                <div class="tasks-list" id="telegram-tasks-list">
-                    <div class="loading-spinner">Loading Tasks...</div>
-                </div>
-
-                <div class="task-category-title mt-4">
-                    <i class="fa-solid fa-bolt text-gold"></i> Quick Actions
-                </div>
-                
+                <div class="task-category-title mt-4"><i class="fa-solid fa-bolt text-gold"></i> Quick Actions</div>
                 <div class="tasks-list">
                     <div class="task-card">
                         <div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="task-info">
-                            <h4>Refer a Friend</h4>
-                            <span class="coin-tag">+1000 Coins</span>
-                        </div>
+                        <div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div>
                         <button class="btn-task-action" onclick="openInternalPage('refer')">Start</button>
                     </div>
-                    
                     <div class="task-card">
                         <div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                        <div class="task-info">
-                            <h4>Use CV Builder</h4>
-                            <span class="coin-tag">+1000 Coins</span>
-                        </div>
+                        <div class="task-info"><h4>Use CV Builder</h4><span class="coin-tag">+1000 Coins</span></div>
                         <button class="btn-task-action" onclick="navigateTo('home')">Go</button>
                     </div>
                 </div>
 
-                <div class="trust-footer">
-                    <i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.
-                </div>
-
+                <div class="trust-footer"><i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.</div>
             </section>
 
-                        <section id="games" class="page-section hidden">
-                
+
+            <section id="games" class="page-section hidden">
                 <div class="game-header">
                     <div class="gh-title">Game Zone <i class="fa-solid fa-gamepad text-purple"></i></div>
                     <div class="gh-subtitle">Play & Earn <b>+500 Coins</b> per session!</div>
                 </div>
-
-                <div class="section-label">
-                    <i class="fa-solid fa-fire text-orange"></i> Trending Now
-                </div>
                 
+                <div class="section-label"><i class="fa-solid fa-fire text-orange"></i> Trending Now</div>
                 <div class="trending-scroll" data-aos="fade-left">
                     <div class="game-card-large" onclick="launchGame('subway', 500)">
                         <div class="trending-badge">#1 HOT</div>
                         <img src="https://img.gamedistribution.com/rvvASMiM/512x384.jpeg" alt="Subway Surfers" class="game-thumb">
-                        <div class="game-info-overlay">
-                            <h3>Subway Surfers</h3>
-                            <span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span>
-                        </div>
+                        <div class="game-info-overlay"><h3>Subway Surfers</h3><span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span></div>
                     </div>
-
                     <div class="game-card-large" onclick="launchGame('temple', 500)">
                         <div class="trending-badge viral">VIRAL</div>
                         <img src="https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api" alt="Temple Run" class="game-thumb">
-                        <div class="game-info-overlay">
-                            <h3>Temple Run 2</h3>
-                            <span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span>
-                        </div>
+                        <div class="game-info-overlay"><h3>Temple Run 2</h3><span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span></div>
                     </div>
                 </div>
 
-                <div class="section-label mt-4">
-                    <i class="fa-solid fa-layer-group text-blue"></i> Quick Play
-                </div>
-
+                <div class="section-label mt-4"><i class="fa-solid fa-layer-group text-blue"></i> Quick Play</div>
                 <div class="games-grid" data-aos="fade-up">
-                    <div class="game-card-small" onclick="launchGame('stickman', 100)">
-                        <span class="badge-tag">FUN</span>
-                        <img src="https://img.gamedistribution.com/5d2d480922834b6e9273574221c54848/512x384.jpeg" class="thumb-small">
-                        <div class="small-info">
-                            <h4>Stickman Hook</h4>
-                            <span class="coin-text">+100</span>
-                        </div>
-                    </div>
-
-                    <div class="game-card-small" onclick="launchGame('drive', 100)">
-                        <span class="badge-tag">CARS</span>
-                        <img src="https://img.gamedistribution.com/6817/512x384.jpeg" class="thumb-small">
-                        <div class="small-info">
-                            <h4>Drive Mad</h4>
-                            <span class="coin-text">+100</span>
-                        </div>
-                    </div>
-
-                    <div class="game-card-small" onclick="launchGame('moto', 100)">
-                        <span class="badge-tag">BIKE</span>
-                        <img src="https://img.gamedistribution.com/0c2b2913508a467f814d48512406606a/512x384.jpeg" class="thumb-small">
-                        <div class="small-info">
-                            <h4>Moto X3M</h4>
-                            <span class="coin-text">+100</span>
-                        </div>
-                    </div>
-
-                    <div class="game-card-small" onclick="launchGame('ludo', 100)">
-                        <span class="badge-tag">CLASSIC</span>
-                        <img src="https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg" class="thumb-small">
-                        <div class="small-info">
-                            <h4>Ludo Hero</h4>
-                            <span class="coin-text">+100</span>
-                        </div>
-                    </div>
+                    <div class="game-card-small" onclick="launchGame('stickman', 100)"><span class="badge-tag">FUN</span><img src="https://img.gamedistribution.com/5d2d480922834b6e9273574221c54848/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Stickman Hook</h4><span class="coin-text">+100</span></div></div>
+                    <div class="game-card-small" onclick="launchGame('drive', 100)"><span class="badge-tag">CARS</span><img src="https://img.gamedistribution.com/6817/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Drive Mad</h4><span class="coin-text">+100</span></div></div>
+                    <div class="game-card-small" onclick="launchGame('moto', 100)"><span class="badge-tag">BIKE</span><img src="https://img.gamedistribution.com/0c2b2913508a467f814d48512406606a/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Moto X3M</h4><span class="coin-text">+100</span></div></div>
+                    <div class="game-card-small" onclick="launchGame('ludo', 100)"><span class="badge-tag">CLASSIC</span><img src="https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg" class="thumb-small"><div class="small-info"><h4>Ludo Hero</h4><span class="coin-text">+100</span></div></div>
                 </div>
-
-                <div class="trust-footer">
-                    Playing supports our servers. Ads may appear.
-                </div>
-
+                <div class="trust-footer">Playing supports our servers. Ads may appear.</div>
             </section>
 
             <div id="game-modal" class="game-modal hidden">
@@ -376,57 +345,37 @@
                     <div class="gm-timer"><i class="fa-solid fa-clock"></i> Play for <span id="game-timer">15</span>s to earn</div>
                     <button class="gm-close" onclick="closeGame()"><i class="fa-solid fa-xmark"></i> Exit</button>
                 </div>
-                <div class="gm-iframe-container">
-                    <iframe id="game-frame" src="" frameborder="0"></iframe>
-                </div>
+                <div class="gm-iframe-container"><iframe id="game-frame" src="" frameborder="0"></iframe></div>
             </div>
 
-                        <section id="wallet" class="page-section hidden">
-                
+
+            <section id="wallet" class="page-section hidden">
                 <div class="wallet-hero">
                     <div class="wh-label">Total Balance</div>
-                    <div class="wh-balance">
-                        <i class="fa-solid fa-coins text-gold"></i>
-                        <span id="wallet-total-coins">0</span>
-                    </div>
+                    <div class="wh-balance"><i class="fa-solid fa-coins text-gold"></i><span id="wallet-total-coins">0</span></div>
                     <div class="wh-value">≈ ₹ <span id="wallet-inr-value">0.00</span> INR</div>
-                    
                     <div class="wh-deco-icon"><i class="fa-solid fa-wallet"></i></div>
                 </div>
 
                 <div class="balance-grid">
-                    <div class="bal-card green" onclick="showToast('Available for Instant Withdraw')">
-                        <div class="bc-label">Withdrawable</div>
-                        <div class="bc-val">100%</div>
-                    </div>
-                    <div class="bal-card gray" onclick="showToast('Locked for non-top 10 rankers')">
-                        <div class="bc-label">Locked</div>
-                        <div class="bc-val">0%</div>
-                    </div>
-                    <div class="bal-card blue" onclick="showToast('Eligible for Month-End Payout')">
-                        <div class="bc-label">Monthly</div>
-                        <div class="bc-val">₹0</div>
-                    </div>
+                    <div class="bal-card green" onclick="showToast('Available for Instant Withdraw')"><div class="bc-label">Withdrawable</div><div class="bc-val">100%</div></div>
+                    <div class="bal-card gray" onclick="showToast('Locked for non-top 10 rankers')"><div class="bc-label">Locked</div><div class="bc-val">0%</div></div>
+                    <div class="bal-card blue" onclick="showToast('Eligible for Month-End Payout')"><div class="bc-label">Monthly</div><div class="bc-val">₹0</div></div>
                 </div>
 
                 <div class="withdraw-panel" data-aos="fade-up">
                     <h3>Withdraw Funds</h3>
-                    
                     <div class="method-selector">
                         <div class="method-chip active" onclick="selectMethod(this, 'upi')">UPI</div>
                         <div class="method-chip" onclick="selectMethod(this, 'paytm')">Paytm</div>
                         <div class="method-chip" onclick="selectMethod(this, 'crypto')">Crypto</div>
                     </div>
-
                     <div class="input-group">
                         <span class="currency-symbol">₹</span>
                         <input type="number" id="withdraw-amount" placeholder="Enter Coins" oninput="calculateWithdrawValue(this.value)">
                     </div>
                     <div class="input-hint">Value: ₹<span id="calc-value">0.00</span></div>
-
-                    <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdraw()">
-                        Transfer Now
-                    </button>
+                    <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdraw()">Transfer Now</button>
                </div>
 
                 <div class="history-section mt-4">
@@ -434,322 +383,88 @@
                     <div class="history-list">
                         <div class="hist-item">
                             <div class="hist-icon in"><i class="fa-solid fa-arrow-down"></i></div>
-                            <div class="hist-info">
-                                <h4>Daily Bonus</h4>
-                                <p>Today, 10:00 AM</p>
-                            </div>
+                            <div class="hist-info"><h4>Daily Bonus</h4><p>Today, 10:00 AM</p></div>
                             <div class="hist-amount positive">+100</div>
                         </div>
-                        
-                        </div>
+                    </div>
                 </div>
 
-                <div class="wallet-footer">
-                    <i class="fa-solid fa-lock"></i> 256-bit Secure Payments
-                </div>
-
+                <div class="wallet-footer"><i class="fa-solid fa-lock"></i> 256-bit Secure Payments</div>
             </section>
 
-                                    <div id="profile-section-container" class="hidden">
-            <main id="main-content">
-
-<div id="page-profile" class="internal-page hidden" 
-     style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
-
-        <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <h2 class="neon-text" style="margin: 0;">My Identity</h2>
-        </div>
-
-        <div class="glass-card profile-card">
-            <div class="avatar-wrapper">
-                <div class="neon-avatar-container">
-                    <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                </div>
-                <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
-                    <i class="fa-solid fa-camera"></i>
-                </div>
-            </div>
-            
-            <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
-
-            <div class="profile-info" style="text-align: center;">
-                <h3 id="display-name" style="font-size: 22px; margin: 10px 0;">Loading...</h3>
-                <span class="user-id" style="color: #a0a0a0; font-family: monospace;">
-                    ID: <span id="display-id">...</span> 
-                    <i class="fa-solid fa-circle-check" style="color: #00dcff; margin-left: 5px;"></i>
-                </span>
-            </div>
-
-            <button class="btn-glow-border" onclick="openEditModal()">
-                Edit Details
-            </button>
-        </div>
-    </div>
-
-    <div id="edit-modal" class="modal-overlay hidden">
-        <div class="modal-glass">
-            <h3>Update Profile</h3>
-            <div class="input-group">
-                <label>Display Name</label>
-                <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
-                <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <section id="home" class="page-section active">
-        ...
-
-        
-        
-
-    <div class="glass-card profile-card">
-        <div class="avatar-wrapper">
-            <div class="neon-avatar-container">
-                <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-            </div>
-            <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
-                <i class="fa-solid fa-camera"></i>
-            </div>
-        </div>
-        
-        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
-
-        <div class="profile-info">
-            <h3 id="display-name">Loading...</h3>
-            <span class="user-id">ID: <span id="display-id">...</span> <i class="fa-solid fa-circle-check verified-icon"></i></span>
-        </div>
-
-        <button class="btn-glow-border" onclick="openEditModal()">
-            Edit Details
-        </button>
-    </div>
-</div>
-
-
-
-            <div id="page-brand" class="internal-page hidden">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Brand Collab</h3></div>
-                <div class="brand-hero"><h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2><p>Promote to 50k+ Users</p></div>
-                <label class="form-label">1. Platform</label>
-                <div class="promo-grid">
-                    <label class="promo-card"><input type="radio" name="promo_type" value="Telegram"><div class="promo-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram</span></div></label>
-                    <label class="promo-card"><input type="radio" name="promo_type" value="Instagram"><div class="promo-content"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div></label>
-                    <label class="promo-card"><input type="radio" name="promo_type" value="YouTube"><div class="promo-content"><i class="fa-brands fa-youtube text-red"></i><span>YouTube</span></div></label>
-                </div>
-                <label class="form-label">2. Budget</label>
-                <div class="budget-scroll">
-                    <div class="budget-chip" onclick="selectBudget(this, '500-1k')">₹500-1k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '1k-5k')">₹1k-5k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '5k-10k')">₹5k-10k</div>
-                    <div class="budget-chip" onclick="selectBudget(this, '10k+')">₹10k+</div>
-                </div>
-                <input type="hidden" id="selected-budget">
-                <label class="form-label">3. Message</label><textarea class="contact-input" id="brand-message" rows="3"></textarea>
-                <button class="btn-send-msg" onclick="sendBrandProposal()">Send Proposal</button>
-            </div>
-
-            <div id="page-refer" class="internal-page hidden">
-    <div class="page-header flex-center-start">
-        <button class="back-btn" onclick="backToProfileMenu()">
-            <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <h2 class="neon-text">Affiliate Center</h2>
-    </div>
-
-    <div class="refer-hero-card">
-        <div class="refer-stat">
-            <span class="stat-label">Total Partners</span>
-            <h3 id="total-referrals" class="stat-value neon-blue">0</h3>
-        </div>
-        <div class="vertical-divider"></div>
-        <div class="refer-stat">
-            <span class="stat-label">Earnings (Coins)</span>
-            <h3 id="referral-earnings" class="stat-value neon-gold">0</h3>
-        </div>
-    </div>
-
-    <div class="copy-code-container">
-        <label>YOUR UNIQUE ACCESS CODE</label>
-        <div class="code-box" onclick="copyReferralCode()">
-            <span id="my-referral-code">LOADING...</span>
-            <i class="fa-regular fa-copy"></i>
-        </div>
-    </div>
-
-    <div class="refer-tabs">
-        <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
-        <button class="tab-btn" onclick="switchReferTab('team')">My Team (10%)</button>
-    </div>
-
-    <div id="tab-milestones" class="tab-content active-tab">
-        <div id="milestone-list" class="scrollable-list">
-            </div>
-    </div>
-
-    <div id="tab-team" class="tab-content hidden">
-    <div class="team-header">
-        <p class="hitech-instruction">Earn 10% of your friends' income forever</p>
-        
-        <button class="btn-claim-all" onclick="claimAllCommissions()">
-            <i class="fa-solid fa-bolt"></i> Claim All Rewards
-        </button>
-    </div>
-    
-    <div id="team-list" class="scrollable-list">
-        </div>
-</div>
-
-
-
-
-            <div id="page-contact" class="internal-page hidden">
-                <div class="page-header"><button class="back-btn" onclick="backToProfileMenu()"><i class="fa-solid fa-arrow-left"></i></button><h3>Support</h3></div>
-                <div class="contact-premium-card">
-                    <div class="text-center mb-4"><h4 class="text-white">Admin Support</h4><p class="text-gray-400 text-xs">Direct: @Mr_MorningStar524</p></div>
-                    <textarea class="contact-input" id="contact-message" rows="4"></textarea>
-                    <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="menu-overlay" class="menu-overlay hidden" onclick="toggleProfileMenu()"></div>
-
-        
-        </main>
-
+        </main> 
         <nav class="bottom-nav glass-effect">
-            <div class="nav-item active" onclick=""navigateTo('home')">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
+            <div class="nav-item active" onclick="navigateTo('home')">
+                <i class="fa-solid fa-house"></i><span>Home</span>
             </div>
             <div class="nav-item" onclick="navigateTo('leaderboard')">
-                <i class="fa-solid fa-trophy"></i>
-                <span>Rank</span>
+                <i class="fa-solid fa-trophy"></i><span>Rank</span>
             </div>
             <div class="nav-item" onclick="navigateTo('tasks')">
-                <i class="fa-solid fa-list-check"></i>
-                <span>Tasks</span>
+                <i class="fa-solid fa-list-check"></i><span>Tasks</span>
             </div>
             <div class="nav-item" onclick="navigateTo('games')">
-                <i class="fa-solid fa-gamepad"></i>
-                <span>Games</span>
+                <i class="fa-solid fa-gamepad"></i><span>Games</span>
             </div>
             <div class="nav-item" onclick="navigateTo('wallet')">
-                <i class="fa-solid fa-wallet"></i>
-                <span>Wallet</span>
+                <i class="fa-solid fa-wallet"></i><span>Wallet</span>
             </div>
         </nav>
-        
-        
+
+    </div>  
+    <div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
+
+    <div id="side-menu" class="side-menu" style="z-index: 2147483647;">
+        <div class="menu-header">
+            <span class="text-gold">Menu</span>
+            <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
         </div>
-
-</div>  
-     <div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
-
-<div id="side-menu" class="side-menu" style="z-index: 2147483647;">
-    <div class="menu-header">
-        <span class="text-gold">Menu</span>
-        <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
+        
+        <div class="menu-list">
+            <div class="menu-item" onclick="openInternalPage('page-profile')"><div class="mi-icon"><i class="fa-solid fa-user"></i></div><span>My Profile</span></div>
+            <div class="menu-item" onclick="navigateTo('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
+            <div class="menu-item" style="opacity: 0.6;"><div class="mi-icon"><i class="fa-solid fa-id-card"></i></div><span>KYC Verification</span><span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span></div>
+            <div class="menu-item" onclick="openInternalPage('page-refer')"><div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></div>
+            <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span></div>
+            
+            <hr class="menu-divider">
+            
+            <div class="menu-item small" onclick="openInfoPage('withdraw_terms')"><div class="mi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div><span>Withdrawal Terms</span></div>
+            <div class="menu-item small" onclick="openInfoPage('terms')"><div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div><span>Terms & Conditions</span></div>
+            <div class="menu-item small" onclick="openInfoPage('privacy')"><div class="mi-icon"><i class="fa-solid fa-lock"></i></div><span>Privacy Policy</span></div>
+            <div class="menu-item small" onclick="openInfoPage('disclaimer')"><div class="mi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span>Disclaimer</span></div>
+            
+            <hr class="menu-divider">
+            
+            <div class="menu-item small" onclick="openInfoPage('faq')"><div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div><span>Help / FAQ</span></div>
+            <div class="menu-item small" onclick="openInternalPage('page-contact')"><div class="mi-icon"><i class="fa-solid fa-headset"></i></div><span>Contact Support</span></div>
+            <div class="menu-item logout" onclick="handleLogout()"><div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></div>
+        </div>
     </div>
-    
-    <div class="menu-list">
-        
-        <div class="menu-item" onclick="openInternalPage('page-profile')">
-            <div class="mi-icon"><i class="fa-solid fa-user"></i></div>
-            <span>My Profile</span>
-        </div>
-
-        <div class="menu-item" onclick="navigateTo('wallet')">
-            <div class="mi-icon"><i class="fa-solid fa-wallet"></i></div>
-            <span>Wallet & Earnings</span>
-        </div>
-
-        <div class="menu-item" style="opacity: 0.6;">
-            <div class="mi-icon"><i class="fa-solid fa-id-card"></i></div>
-            <span>KYC Verification</span>
-            <span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span>
-        </div>
-
-        <div class="menu-item" onclick="openInternalPage('page-refer')">
-            <div class="mi-icon"><i class="fa-solid fa-gift"></i></div>
-            <span>Refer & Earn</span>
-        </div>
-
-        <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')">
-            <div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div>
-            <span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span>
-        </div>
-
-        <hr class="menu-divider">
-
-        <div class="menu-item small" onclick="openInfoPage('withdraw_terms')">
-            <div class="mi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <span>Withdrawal Terms</span>
-        </div>
-        <div class="menu-item small" onclick="openInfoPage('terms')">
-            <div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div>
-            <span>Terms & Conditions</span>
-        </div>
-        <div class="menu-item small" onclick="openInfoPage('privacy')">
-            <div class="mi-icon"><i class="fa-solid fa-lock"></i></div>
-            <span>Privacy Policy</span>
-        </div>
-        <div class="menu-item small" onclick="openInfoPage('disclaimer')">
-            <div class="mi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <span>Disclaimer</span>
-        </div>
-
-        <hr class="menu-divider">
-
-        <div class="menu-item small" onclick="openInfoPage('faq')">
-            <div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div>
-            <span>Help / FAQ</span>
-        </div>
-        <div class="menu-item small" onclick="openInternalPage('page-contact')">
-            <div class="mi-icon"><i class="fa-solid fa-headset"></i></div>
-            <span>Contact Support</span>
-        </div>
-
-        <div class="menu-item logout" onclick="handleLogout()">
-            <div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-            <span>Logout</span>
-        </div>
-
-    </div>
-</div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<script src="js/main.js"></script> 
-<script src="js/pro-core.js"></script>
+    <script src="js/main.js"></script> 
+    <script src="js/pro-core.js"></script>
 
-<script src="js/home.js"></script>
-<script src="js/wallet.js"></script>
-<script src="js/tasks.js"></script>
-<script src="js/games.js"></script>
-<script src="js/leaderboard.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/wallet.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/games.js"></script>
+    <script src="js/leaderboard.js"></script>
 
-<script src="js/pro-profile.js"></script>
-<script src="js/pro-refer.js"></script>
-<script src="js/pro-brand.js"></script>
-<script src="js/pro-contact.js"></script>
-<script src="js/pro-info.js"></script>
+    <script src="js/pro-profile.js"></script>
+    <script src="js/pro-refer.js"></script>
+    <script src="js/pro-brand.js"></script>
+    <script src="js/pro-contact.js"></script>
+    <script src="js/pro-info.js"></script>
 
-<script>
-  AOS.init();
-</script>
+    <script>
+      AOS.init();
+    </script>
 
 </body>
 </html>
-       
-
 
