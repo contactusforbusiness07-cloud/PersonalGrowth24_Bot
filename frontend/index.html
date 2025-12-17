@@ -451,55 +451,60 @@
             </section>
 
                                     <div id="profile-section-container" class="hidden">
-            
-            <div id="page-profile" class="internal-page hidden" style="padding-top: 80px; padding-bottom: 100px;"> 
-    
-    <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-        <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
-            <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <h2 class="neon-text" style="margin: 0;">My Identity</h2>
-    </div>
+            <main id="main-content">
 
-    <div class="glass-card profile-card">
-        <div class="avatar-wrapper">
-            <div class="neon-avatar-container">
-                <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-            </div>
-            <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
-                <i class="fa-solid fa-camera"></i>
-            </div>
-        </div>
+    <div id="page-profile" class="internal-page hidden" style="padding-top: 80px; padding-bottom: 100px;"> 
         
-        <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
-
-        <div class="profile-info" style="text-align: center;">
-            <h3 id="display-name" style="font-size: 22px; margin: 10px 0;">Loading...</h3>
-            <span class="user-id" style="color: #a0a0a0; font-family: monospace;">
-                ID: <span id="display-id">...</span> 
-                <i class="fa-solid fa-circle-check" style="color: #00dcff; margin-left: 5px;"></i>
-            </span>
+        <div class="page-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2 class="neon-text" style="margin: 0;">My Identity</h2>
         </div>
 
-        <button class="btn-glow-border" onclick="openEditModal()">
-            Edit Details
-        </button>
+        <div class="glass-card profile-card">
+            <div class="avatar-wrapper">
+                <div class="neon-avatar-container">
+                    <img id="profile-img" src="assets/default-avatar.png" alt="Profile" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                </div>
+                <div class="edit-badge" onclick="document.getElementById('file-upload').click()">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+            </div>
+            
+            <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
+
+            <div class="profile-info" style="text-align: center;">
+                <h3 id="display-name" style="font-size: 22px; margin: 10px 0;">Loading...</h3>
+                <span class="user-id" style="color: #a0a0a0; font-family: monospace;">
+                    ID: <span id="display-id">...</span> 
+                    <i class="fa-solid fa-circle-check" style="color: #00dcff; margin-left: 5px;"></i>
+                </span>
+            </div>
+
+            <button class="btn-glow-border" onclick="openEditModal()">
+                Edit Details
+            </button>
+        </div>
     </div>
-</div>
 
-<div id="edit-modal" class="modal-overlay hidden">
-    <div class="modal-glass">
-        <h3>Update Profile</h3>
-        <div class="input-group">
-            <label>Display Name</label>
-            <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
-        </div>
-        <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
-            <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="modal-glass">
+            <h3>Update Profile</h3>
+            <div class="input-group">
+                <label>Display Name</label>
+                <input type="text" id="edit-name-input" class="premium-input" placeholder="Enter Name">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-save" onclick="saveProfileChanges()">Save Changes</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <section id="home" class="page-section active">
+        ...
+
         
         
 
