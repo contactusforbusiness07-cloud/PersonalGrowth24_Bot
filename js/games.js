@@ -1,104 +1,90 @@
-// --- GAME CONFIGURATION ---
-const gamesLib = {
-    'subway': 'https://html5.gamedistribution.com/rvvASMiM/index.html', // Subway Surfers Clone
-    'temple': 'https://html5.gamedistribution.com/6817/index.html', // Temple Run Clone
-    'stickman': 'https://html5.gamedistribution.com/5d2d480922834b6e9273574221c54848/index.html',
-    'drive': 'https://html5.gamedistribution.com/0c2b2913508a467f814d48512406606a/index.html',
-    'moto': 'https://html5.gamedistribution.com/34825/index.html',
-    'ludo': 'https://html5.gamedistribution.com/8d998127387e49c7943d630d8800994f/index.html'
+// --- GAMES CONFIG & ADSTERRA SMARTLINK ---
+
+// ✅ CLEAN NO-AD GAME LINKS (Open Source)
+const GAME_URLS = {
+    'subway': 'https://iamkun.github.io/tower_game/', 
+    'temple': 'https://hextris.github.io/hextris/',
+    '2048': 'https://gabrielecirulli.github.io/2048/',
+    'candy': 'https://mumuki.io/pacman/',
+    'fruit': 'https://nebezb.com/floppybird/',
+    'ludo': 'https://winterdust.github.io/web-t-rex/'
 };
 
+// 🔥 YOUR ADSTERRA SMARTLINK
+const ADSTERRA_DIRECT_LINK = "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a"; 
+
 let gameTimerInterval;
-let secondsPlayed = 0;
-let currentGameReward = 0;
+let timeLeft = 30;
+let currentReward = 0;
 
 // --- LAUNCH GAME ---
-function launchGame(gameId, reward) {
-    const url = gamesLib[gameId];
-    if(!url) return alert('Game loading...');
+window.launchGame = function(gameKey, reward) {
+    const url = GAME_URLS[gameKey];
+    if (!url) return;
 
-    currentGameReward = reward;
+    // 💰 Open Smartlink
+    if(ADSTERRA_DIRECT_LINK) {
+        window.open(ADSTERRA_DIRECT_LINK, '_blank');
+    }
+
+    // Show Modal
+    document.getElementById('game-modal').classList.remove('hidden');
+    document.getElementById('game-loader').style.display = 'block';
     
-    // 1. Show Loading Ad First (Simulation)
-    Swal.fire({
-        title: 'Loading Game 🎮',
-        text: 'Optimizing graphics...',
-        timer: 2000,
-        timerProgressBar: true,
-        background: '#0f172a',
-        color: '#fff',
-        showConfirmButton: false,
-        willClose: () => {
-            openGameModal(url);
-        }
-    });
-}
-
-// --- OPEN PLAYER MODAL ---
-function openGameModal(url) {
-    const modal = document.getElementById('game-modal');
+    // Load Game
     const iframe = document.getElementById('game-frame');
-    
-    // Set Game URL
     iframe.src = url;
-    modal.classList.remove('hidden');
 
     // Start Timer
-    startPlayTimer();
+    currentReward = reward;
+    timeLeft = 30;
+    document.getElementById('game-timer').innerText = timeLeft;
+    startTimer();
 }
 
-// --- TIMER LOGIC ---
-function startPlayTimer() {
-    secondsPlayed = 0;
-    const timerDisplay = document.getElementById('game-timer');
-    timerDisplay.innerText = "15"; // Reset text
-    
+// --- TIMER ---
+function startTimer() {
     clearInterval(gameTimerInterval);
-    
     gameTimerInterval = setInterval(() => {
-        secondsPlayed++;
-        let remaining = 15 - secondsPlayed;
-        
-        if(remaining > 0) {
-            timerDisplay.innerText = remaining;
-        } else {
-            timerDisplay.innerText = "✅";
-            // Timer logic ends visually, but we keep tracking time if needed
+        timeLeft--;
+        const timerDisplay = document.getElementById('game-timer');
+        if(timerDisplay) timerDisplay.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(gameTimerInterval);
+            if(timerDisplay) {
+                timerDisplay.innerHTML = "✅ CLAIM";
+                timerDisplay.style.color = "#00ff88";
+            }
         }
     }, 1000);
 }
 
-// --- CLOSE GAME & CHECK REWARD ---
-function closeGame() {
-    const modal = document.getElementById('game-modal');
-    const iframe = document.getElementById('game-frame');
-    
-    // Stop Game
-    iframe.src = ""; // Clear src to stop audio
-    modal.classList.add('hidden');
+window.onGameLoad = function() {
+    setTimeout(() => {
+        document.getElementById('game-loader').style.display = 'none';
+    }, 1500);
+}
+
+window.closeGame = function() {
+    document.getElementById('game-modal').classList.add('hidden');
+    document.getElementById('game-frame').src = "about:blank";
     clearInterval(gameTimerInterval);
 
-    // Check Verification
-    if (secondsPlayed >= 15) {
-        // Success
-        updateBalance(currentGameReward);
+    if (timeLeft <= 0) {
         Swal.fire({
+            title: 'Reward Unlocked!',
+            text: `You earned +${currentReward} Coins!`,
             icon: 'success',
-            title: `+${currentGameReward} Coins`,
-            text: 'Game Session Complete!',
-            background: '#1e293b',
-            color: '#fff',
-            confirmButtonColor: '#10b981'
+            background: '#020617', color: '#fff',
+            confirmButtonColor: '#ffd700'
         });
     } else {
-        // Failed
         Swal.fire({
-            icon: 'warning',
-            title: 'No Coins Earned',
-            text: 'You must play for at least 15 seconds to earn reward.',
-            background: '#1e293b',
-            color: '#fff',
-            confirmButtonColor: '#ef4444'
+            toast: true, position: 'top', icon: 'warning', 
+            title: `Play ${timeLeft}s more!`,
+            background: '#331100', color: '#fff', 
+            showConfirmButton: false, timer: 2000
         });
     }
 }
+
