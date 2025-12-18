@@ -8,10 +8,11 @@ window.switchReferTab = function(tabName) {
     const target = document.getElementById(`tab-${tabName}`);
     if(target) target.classList.remove('hidden');
     
-    // Button Active State
+    // Button Active State Logic
     const btns = document.querySelectorAll('.tab-btn');
-    if(tabName === 'milestones') btns[0].classList.add('active');
-    if(tabName === 'team') btns[1].classList.add('active');
+    // Simple index check based on your HTML structure
+    if(tabName === 'milestones' && btns[0]) btns[0].classList.add('active');
+    if(tabName === 'team' && btns[1]) btns[1].classList.add('active');
 }
 
 // 2. Copy Logic
@@ -26,10 +27,11 @@ window.copyReferralCode = function() {
         // Simple Alert or Toast
         const btn = document.querySelector('.code-box i');
         if(btn) {
+            const originalClass = btn.className;
             btn.className = "fa-solid fa-check";
-            setTimeout(() => btn.className = "fa-regular fa-copy", 2000);
+            setTimeout(() => btn.className = originalClass, 2000);
         }
-        // Agar SweetAlert hai to wo use karein
+        
         if(typeof Swal !== 'undefined') {
             Swal.fire({
                 toast: true, position: 'top-end', icon: 'success', 
@@ -37,7 +39,8 @@ window.copyReferralCode = function() {
                 background: '#00f260', color: '#000'
             });
         } else {
-            alert("Referral Link Copied!");
+            // Fallback
+            console.log("Copied");
         }
     });
 }
@@ -58,8 +61,7 @@ window.updateReferralUI = function(userData, teamData) {
         document.getElementById('my-referral-code').innerText = "FGP-" + userData.id;
     
     if(document.getElementById('my-referral-link')) {
-        // Link generate logic
-        const botName = "PersonalGrowth24_Bot"; // Apna Bot Username confirm karein
+        const botName = "PersonalGrowth24_Bot"; 
         document.getElementById('my-referral-link').innerText = `https://t.me/${botName}?start=ref_${userData.id}`;
     }
 
@@ -69,29 +71,47 @@ window.updateReferralUI = function(userData, teamData) {
 }
 
 // 4. Internal Render Helpers
-const REFERRAL_TARGETS = [3, 5, 10, 20, 50, 100]; 
+
+// --- UPDATED TARGETS LIST ---
+const REFERRAL_TARGETS = [
+    { target: 3, reward: 500 },
+    { target: 5, reward: 1000 },
+    { target: 10, reward: 2500 },
+    { target: 20, reward: 5000 },
+    { target: 50, reward: 15000 },
+    { target: 100, reward: 35000 },
+    { target: 500, reward: 200000 }, 
+    { target: 1000, reward: 500000 }, 
+    { target: 5000, reward: 3000000 }, 
+    { target: 10000, reward: 7000000 }
+];
 
 function renderMilestones(count) {
     const list = document.getElementById('milestone-list');
     if(!list) return;
     list.innerHTML = "";
 
-    REFERRAL_TARGETS.forEach(target => {
-        const isUnlocked = count >= target;
-        let percent = Math.min((count / target) * 100, 100);
+    REFERRAL_TARGETS.forEach(tier => {
+        const isUnlocked = count >= tier.target;
+        // Progress Calculation
+        let percent = 0;
+        if(count > 0) {
+            percent = Math.min((count / tier.target) * 100, 100);
+        }
+
         let btnHTML = isUnlocked 
-            ? `<button class="btn-claim ready">CLAIMED</button>` 
+            ? `<button class="btn-claim ready">CLAIMED</button>` // Logic for manual claim can be added later
             : `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> LOCKED</button>`;
         
         list.innerHTML += `
         <div class="milestone-card">
             <div class="milestone-header">
-                <span class="target-title">${target} Friends</span>
-                <span class="reward-badge">Bonus</span>
+                <span class="target-title">${tier.target} Friends</span>
+                <span class="reward-badge" style="color:#ffd700; background:rgba(255, 215, 0, 0.1);">+${tier.reward.toLocaleString()}</span>
             </div>
             <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
             <div style="display:flex; justify-content:space-between; font-size:12px; color:#aaa; margin-top:5px;">
-                <span>Progress: ${count}/${target}</span>
+                <span>Progress: ${count}/${tier.target}</span>
                 <span>${Math.floor(percent)}%</span>
             </div>
             <div style="margin-top:10px;">${btnHTML}</div>
