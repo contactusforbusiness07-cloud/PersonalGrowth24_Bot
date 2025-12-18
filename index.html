@@ -26,14 +26,15 @@
     <link rel="stylesheet" href="css/pro-info.css"> 
 
     <style>
-        /* Force Hide Class - Fixes Back Button Issue */
+        /* 🔥 FORCE HIDE FIX: Ye zaroori hai back button issue ke liye */
         .hidden {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
+            pointer-events: none !important;
         }
 
-        /* Hamburger Button ko sabse upar rakho taaki click ho sake */
+        /* Hamburger Button */
         .menu-trigger {
             position: relative !important;
             z-index: 9999 !important; /* Super High Priority */
@@ -41,7 +42,7 @@
             pointer-events: auto !important; /* Force Click */
         }
 
-        /* Menu Styling with Transform (Best for Mobile) */
+        /* Menu Styling */
         #side-menu {
             position: fixed !important;
             top: 0 !important;
@@ -50,16 +51,13 @@
             height: 100vh !important;
             background: #020617 !important; 
             z-index: 2147483647 !important;
-            
-            /* Logic: Menu ko 100% right shift kar do (chupa do) */
             transform: translateX(100%) !important; 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            
             box-shadow: -5px 0 25px rgba(0,0,0,0.9) !important;
             display: block !important;
         }
 
-        /* Jab Open class lage, to wapas 0 par le aao (dikhao) */
+        /* Open State */
         #side-menu.open {
             transform: translateX(0) !important;
         }
@@ -863,14 +861,20 @@
           }
       };
 
-      // Back Button Support
+      // ✅ FIXED: Back Button Logic
+      // Ye ab page ko background se hata dega aur Home show karega menu ke piche
       window.backToProfileMenu = function() {
-          window.toggleProfileMenu();
+          // 1. Pehle Menu Kholo
+          window.toggleProfileMenu(true);
+
+          // 2. Jo Page khula tha usko chhupa do (Hide Current Page)
+          document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
+
+          // 3. Background me 'Home' section dikha do (Taaki blank na lage)
+          const homeSection = document.getElementById('home');
+          if(homeSection) homeSection.classList.remove('hidden');
       };
     </script>
-
 </body>
 </html>
 
-
- 
