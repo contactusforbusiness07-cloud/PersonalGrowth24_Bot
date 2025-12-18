@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         
+        // Header Color Set
+        window.Telegram.WebApp.setHeaderColor('#020617'); 
+        
         const user = window.Telegram.WebApp.initDataUnsafe.user;
         
         // Agar Telegram User hai to Login karo
@@ -215,5 +218,31 @@ window.openInternalPage = function(pageId) {
 
     // 4. Close Menu & Overlay
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
+}
+
+// --- 7. LOGOUT FUNCTION (The Fix) ---
+window.handleLogout = function() {
+    Swal.fire({
+        title: 'Exit App?',
+        text: "Do you want to close FinGamePro?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ff4444',
+        cancelButtonColor: '#333',
+        confirmButtonText: 'Yes, Exit',
+        background: '#020617',
+        color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Close Telegram Web App
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.close();
+            } else {
+                // Browser Fallback
+                window.close();
+                window.location.href = "about:blank"; 
+            }
+        }
+    });
 }
 
