@@ -25,24 +25,35 @@
     <link rel="stylesheet" href="css/pro-contact.css">
 
     <style>
-        /* Default State: Menu Chupa hua hai */
+        /* Hamburger Button ko sabse upar rakho taaki click ho sake */
+        .menu-trigger {
+            position: relative !important;
+            z-index: 9999 !important; /* Super High Priority */
+            cursor: pointer !important;
+            pointer-events: auto !important; /* Force Click */
+        }
+
+        /* Menu Styling with Transform (Best for Mobile) */
         #side-menu {
             position: fixed !important;
             top: 0 !important;
-            right: -120%; /* Screen se bahar */
+            right: 0 !important;
             width: 280px !important;
             height: 100vh !important;
             background: #020617 !important; 
-            z-index: 2147483647 !important; /* Sabse Upar */
-            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smooth Slide */
+            z-index: 2147483647 !important;
+            
+            /* Logic: Menu ko 100% right shift kar do (chupa do) */
+            transform: translateX(100%) !important; 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            
             box-shadow: -5px 0 25px rgba(0,0,0,0.9) !important;
             display: block !important;
-            visibility: visible !important;
         }
 
-        /* Open State: Jab ye class lagegi, Menu dikhega */
+        /* Jab Open class lage, to wapas 0 par le aao (dikhao) */
         #side-menu.open {
-            right: 0 !important; /* Zabardasti Bahar Lao */
+            transform: translateX(0) !important;
         }
 
         /* Overlay Styling */
@@ -56,18 +67,19 @@
             z-index: 2147483640 !important;
             backdrop-filter: blur(4px);
             opacity: 0;
-            visibility: hidden;
+            visibility: hidden; /* Chupa hua */
             transition: opacity 0.3s ease;
+            pointer-events: none; /* Click through when hidden */
         }
 
         /* Overlay Visible State */
         #menu-overlay.visible {
             opacity: 1 !important;
             visibility: visible !important;
-            display: block !important;
+            pointer-events: auto !important; /* Block clicks when visible */
         }
     </style>
-</head>
+    </head>
 
 <body>
 
@@ -84,7 +96,7 @@
     <script>
         (function() {
             // ==========================================
-            // ⚠️ STEP: APNA TELEGRAM ID NICHE LIKHEIN
+            // ⚠️ STEP: ADMIN ID CHECK
             // ==========================================
             const adminIds = [ 1078605976 ]; 
             
@@ -122,7 +134,7 @@
                     <i class="fa-solid fa-coins coin-glow"></i>
                     <span id="header-coin-balance">0</span>
                 </div>
-                <div class="menu-trigger" onclick="toggleProfileMenu()">
+                <div id="hamburger-btn" class="menu-trigger" onclick="toggleProfileMenu()">
                     <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
@@ -594,6 +606,7 @@
     <script>
       AOS.init();
 
+      // Reliable Menu Toggle
       window.toggleProfileMenu = function(forceState) {
           const menu = document.getElementById('side-menu');
           const overlay = document.getElementById('menu-overlay');
@@ -603,18 +616,16 @@
               return;
           }
 
-          // Force Close
+          // Close
           if (forceState === false) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
-              setTimeout(() => { if(!overlay.classList.contains('visible')) overlay.style.display = 'none'; }, 300);
               return;
           }
-          // Force Open
+          // Open
           if (forceState === true) {
-              overlay.style.display = 'block';
-              setTimeout(() => overlay.classList.add('visible'), 10);
               menu.classList.add('open');
+              overlay.classList.add('visible');
               return;
           }
           
@@ -622,15 +633,13 @@
           if (menu.classList.contains('open')) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
-              setTimeout(() => { if(!overlay.classList.contains('visible')) overlay.style.display = 'none'; }, 300);
           } else {
-              overlay.style.display = 'block';
-              setTimeout(() => overlay.classList.add('visible'), 10);
               menu.classList.add('open');
+              overlay.classList.add('visible');
           }
       };
 
-      // Ensure back button also works
+      // Back Button Support
       window.backToProfileMenu = function() {
           window.toggleProfileMenu();
       };
@@ -638,6 +647,7 @@
 
 </body>
 </html>
+
 
 
 
