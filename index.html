@@ -260,26 +260,114 @@
                         <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
-                        <h2 class="neon-text" style="margin:0;">Brand Collab</h2>
+                        <h2 class="neon-text" style="margin:0;">Business Partner</h2>
                     </div>
                     
-                    <div class="brand-hero"><h2><i class="fa-solid fa-rocket"></i> Grow with Us</h2><p>Promote to 50k+ Users</p></div>
-                    <label class="form-label">1. Platform</label>
-                    <div class="promo-grid">
-                        <label class="promo-card"><input type="radio" name="promo_type" value="Telegram"><div class="promo-content"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram</span></div></label>
-                        <label class="promo-card"><input type="radio" name="promo_type" value="Instagram"><div class="promo-content"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div></label>
-                        <label class="promo-card"><input type="radio" name="promo_type" value="YouTube"><div class="promo-content"><i class="fa-brands fa-youtube text-red"></i><span>YouTube</span></div></label>
+                    <div class="brand-hero-premium">
+                        <h1>🚀 Promote to High-Engagement Audience</h1>
+                        <p>Reach 50k+ active users across App, Bot & Socials.</p>
+                        <div class="trust-badges">
+                            <span><i class="fa-solid fa-circle-check text-green"></i> Verified</span>
+                            <span><i class="fa-solid fa-shield-halved text-blue"></i> Brand-Safe</span>
+                            <span><i class="fa-solid fa-chart-line text-gold"></i> High ROI</span>
+                        </div>
                     </div>
-                    <label class="form-label">2. Budget</label>
-                    <div class="budget-scroll">
-                        <div class="budget-chip" onclick="selectBudget(this, '500-1k')">₹500-1k</div>
-                        <div class="budget-chip" onclick="selectBudget(this, '1k-5k')">₹1k-5k</div>
-                        <div class="budget-chip" onclick="selectBudget(this, '5k-10k')">₹5k-10k</div>
-                        <div class="budget-chip" onclick="selectBudget(this, '10k+')">₹10k+</div>
+
+                    <div class="stats-grid-premium">
+                        <div class="stat-box">
+                            <h3>50,000+</h3>
+                            <span>Active Users</span>
+                        </div>
+                        <div class="stat-box">
+                            <h3>1.2M+</h3>
+                            <span>Impressions</span>
+                        </div>
+                        <div class="stat-box">
+                            <h3>15%</h3>
+                            <span>Avg CTR</span>
+                        </div>
                     </div>
-                    <input type="hidden" id="selected-budget">
-                    <label class="form-label">3. Message</label><textarea class="contact-input" id="brand-message" rows="3"></textarea>
-                    <button class="btn-send-msg" onclick="sendBrandProposal()">Send Proposal</button>
+
+                    <div class="value-prop-card">
+                        <h4>Why Advertise?</h4>
+                        <ul>
+                            <li>🎯 <b>Niche Audience:</b> Students, Crypto & Tech</li>
+                            <li>⚡ <b>Fast Execution:</b> Live in 2 hours</li>
+                            <li>📊 <b>Transparent:</b> Real-time clicks data</li>
+                        </ul>
+                    </div>
+
+                    <hr class="divider-premium">
+
+                    <form id="brand-form" onsubmit="return false;">
+                        
+                        <label class="form-label-premium">1. Choose Placement 📍</label>
+                        <div class="promo-scroll-container">
+                            <div class="selection-card" onclick="selectOption('asset', 'In-App Banner', this)">
+                                <i class="fa-solid fa-pager text-purple"></i>
+                                <span>In-App Banner</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Bot Broadcast', this)">
+                                <i class="fa-solid fa-bullhorn text-gold"></i>
+                                <span>Bot Broadcast</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Task Integration', this)">
+                                <i class="fa-solid fa-list-check text-green"></i>
+                                <span>Task List</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Telegram Post', this)">
+                                <i class="fa-brands fa-telegram text-blue"></i>
+                                <span>Telegram Post</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Instagram', this)">
+                                <i class="fa-brands fa-instagram text-pink"></i>
+                                <span>Instagram</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="input-asset">
+
+                        <label class="form-label-premium">2. Ad Format 🎯</label>
+                        <div class="chips-container">
+                            <div class="chip" onclick="selectOption('format', 'Banner Image', this)">Banner Image</div>
+                            <div class="chip" onclick="selectOption('format', 'Video Ad', this)">Video Ad</div>
+                            <div class="chip" onclick="selectOption('format', 'Text + Link', this)">Text + Link</div>
+                            <div class="chip" onclick="selectOption('format', 'Native Task', this)">Native Task</div>
+                        </div>
+                        <input type="hidden" id="input-format">
+
+                        <label class="form-label-premium">3. Duration ⏱</label>
+                        <div class="chips-container">
+                            <div class="chip" onclick="selectOption('duration', '24 Hours', this)">24 Hours</div>
+                            <div class="chip" onclick="selectOption('duration', '3 Days', this)">3 Days</div>
+                            <div class="chip" onclick="selectOption('duration', '7 Days', this)">7 Days</div>
+                            <div class="chip" onclick="selectOption('duration', 'Lifetime', this)">Lifetime</div>
+                        </div>
+                        <input type="hidden" id="input-duration">
+
+                        <label class="form-label-premium">4. Budget Range 💰</label>
+                        <div class="chips-container">
+                            <div class="chip" onclick="selectOption('budget', '500-1k', this)">₹500 - 1k</div>
+                            <div class="chip" onclick="selectOption('budget', '1k-5k', this)">₹1k - 5k</div>
+                            <div class="chip" onclick="selectOption('budget', '5k-20k', this)">₹5k - 20k</div>
+                            <div class="chip" onclick="selectOption('budget', '50k+', this)">₹50k+ (Partner)</div>
+                        </div>
+                        <input type="hidden" id="input-budget">
+
+                        <label class="form-label-premium">5. Business Details 📝</label>
+                        <input type="text" id="brand-contact" class="premium-input mb-2" placeholder="Official Email or WhatsApp">
+                        <textarea id="brand-message" class="premium-input" rows="4" placeholder="Brief about your app/brand & requirements..."></textarea>
+
+                        <button class="btn-submit-proposal" onclick="sendPremiumProposal()">
+                            🚀 Send Sponsorship Proposal
+                        </button>
+                        <p class="submit-note">Review time: Within 24 Hours</p>
+
+                    </form>
+
+                    <div class="brand-footer">
+                        <p><i class="fa-solid fa-lock"></i> Secure & Confidential</p>
+                        <p>© 2025 FinGamePro Business</p>
+                    </div>
                 </div>
             </div>
 
@@ -654,4 +742,5 @@
 
 </body>
 </html>
+
 
