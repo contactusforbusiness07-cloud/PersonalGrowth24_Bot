@@ -73,10 +73,14 @@ function updateReferralUI() {
         document.getElementById('total-referrals').innerText = myReferralData.count;
         document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
         
-        // Show Code/Link
-        // Display me hum sirf code dikhayenge, copy pura link hoga
+        // Show Code
         const displayCode = myReferralData.userId.toString().replace('ref_', ''); 
         document.getElementById('my-referral-code').innerText = "FGP-" + displayCode;
+        
+        // Show Link (UPDATED LOGIC)
+        if(document.getElementById('my-referral-link')) {
+             document.getElementById('my-referral-link').innerText = myReferralData.referralLink;
+        }
     }
 
     renderMilestones();
