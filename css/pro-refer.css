@@ -140,3 +140,17 @@
     20% { left: 100%; }
     100% { left: 100%; }
 }
+
+/* --- NEW: Link Box Style --- */
+.code-box.link-style {
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.03); /* Thoda alag background */
+    border: 1px solid rgba(0, 242, 254, 0.3);
+}
+.code-box.link-style span {
+    font-size: 12px; /* Link lamba hota hai, isliye font chhota */
+    font-family: 'Inter', sans-serif;
+    word-break: break-all; /* Link tutna nahi chahiye */
+    color: #00f2fe;
+}
+
