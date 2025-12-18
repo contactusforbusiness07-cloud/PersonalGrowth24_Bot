@@ -194,10 +194,26 @@ window.navigateTo = function(sectionId) {
     });
 }
 
-// Menu Toggle (From previous fix)
+// ✅ FIXED: Menu Toggle (Updated to fix Contact Page redirect issue)
 window.openInternalPage = function(pageId) {
-    document.getElementById(pageId).classList.remove('hidden');
+    console.log("Opening Page:", pageId);
+
+    // 1. Hide ALL internal pages first (Important!)
+    // Isse ye ensure hoga ki agar Terms khula hai to wo band ho jaye
+    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
+    
+    // 2. Hide Main Sections (Home, Wallet etc)
+    document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
+
+    // 3. Show the requested page
+    const target = document.getElementById(pageId);
+    if(target) {
+        target.classList.remove('hidden');
+    } else {
+        console.error("Page not found:", pageId);
+    }
+
+    // 4. Close Menu & Overlay
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 }
-
 
