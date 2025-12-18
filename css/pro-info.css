@@ -1,0 +1,88 @@
+/* --- INFO PAGES STYLING --- */
+
+.info-body-container {
+    padding-bottom: 40px;
+}
+
+/* 1. Ad Banners Styling */
+.ad-banner-placeholder {
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(45deg, #111, #1a1a1a);
+    border: 1px dashed #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+.ad-banner-placeholder span {
+    color: #444;
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+/* 2. Text Content Styling */
+.legal-text-block {
+    color: #ccc;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+.legal-text-block h3 {
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-left: 3px solid #ffd700;
+    padding-left: 10px;
+}
+
+.legal-text-block ul {
+    padding-left: 20px;
+    margin-bottom: 15px;
+    color: #aaa;
+}
+
+.legal-text-block li {
+    margin-bottom: 8px;
+}
+
+/* 3. Crypto/Future Hint Box (The "Secret" Signal) */
+.future-roadmap-box {
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.05), rgba(0, 0, 0, 0));
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    position: relative;
+}
+.future-roadmap-box h4 {
+    margin: 0 0 5px 0;
+    color: #00f2fe;
+    font-size: 14px;
+    display: flex; align-items: center;
+}
+.future-roadmap-box h4 i { margin-right: 8px; }
+.future-roadmap-box p {
+    font-size: 11px;
+    color: #a0a0a0;
+    margin: 0;
+    font-style: italic;
+}
+
+/* 4. Footer */
+.legal-footer {
+    text-align: center;
+    border-top: 1px solid #222;
+    padding-top: 20px;
+    margin-top: 20px;
+    color: #444;
+    font-size: 10px;
+}
