@@ -1,9 +1,9 @@
 import { db } from './main.js'; // Ensure main.js exports 'db'
-import { doc, getDoc, updateDoc, increment, collection, setDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { doc, getDoc, updateDoc, increment, collection, setDoc, serverTimestamp, runTransaction, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 // --- GLOBAL VARIABLES ---
 let currentUser = null;
-const REFERRAL_REWARD_PER_USER = 100; // Ek refer ka kitna milega (Adjust karein)
+const REFERRAL_REWARD_PER_USER = 100; // Reward Amount
 
 // --- 1. INITIALIZE SYSTEM ---
 export async function initReferralSystem(user) {
@@ -13,10 +13,10 @@ export async function initReferralSystem(user) {
     console.log("🔒 Initializing Strict Referral System...");
 
     // A. Generate Link
-    const botUsername = "PersonalGrowth24_Bot"; // Apna Bot Username yahan dalein
+    const botUsername = "PersonalGrowth24_Bot"; // Apna Bot Username verify kar lein
     const inviteLink = `https://t.me/${botUsername}?start=ref_${currentUser.id}`;
     
-    // UI Update (Link & Code)
+    // UI Update (Link & Code) - Ye ab "Loading" hatakar Real Data dikhayega
     if(document.getElementById('my-referral-code')) {
         document.getElementById('my-referral-code').innerText = "FGP-" + currentUser.id;
     }
@@ -69,7 +69,12 @@ async function verifyAndRewardReferrer() {
             });
 
             console.log("✅ Referral Verified & Reward Sent!");
-            // Optional: User ko bhi kuch bonus dena hai to yahan de sakte ho
+            // Optional: User ko bhi verified hone ka confirmation toast dikhayen
+            Swal.fire({
+                toast: true, position: 'top', icon: 'success', 
+                title: 'Account Verified! Bonus Unlocked.', 
+                showConfirmButton: false, timer: 3000, background: '#00f260', color: '#000'
+            });
             
         } catch (e) {
             console.error("Referral Transaction Failed:", e);
@@ -93,49 +98,60 @@ async function loadReferralStats() {
         if(document.getElementById('referral-earnings')) {
             document.getElementById('referral-earnings').innerText = (data.totalEarnings || 0).toLocaleString();
         }
+        // Milestones Render karo
+        renderMilestones(data.referralCount || 0);
     }
-    
-    // Milestones Render karo (Based on Count)
-    renderMilestones(snap.data()?.referralCount || 0);
 }
 
-// --- 4. COPY FUNCTION ---
+// --- 4. COPY FUNCTION (Globally Attached) ---
 window.copyReferralCode = function() {
-    const link = document.getElementById('my-referral-link').innerText;
-    navigator.clipboard.writeText(link).then(() => {
-        Swal.fire({
-            toast: true, position: 'top-end', icon: 'success', 
-            title: 'Link Copied!', showConfirmButton: false, timer: 1500,
-            background: '#00f260', color: '#000'
+    const linkElement = document.getElementById('my-referral-link');
+    if(linkElement) {
+        const link = linkElement.innerText;
+        if(link.includes("Loading")) return; // Don't copy if loading
+
+        navigator.clipboard.writeText(link).then(() => {
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success', 
+                title: 'Link Copied!', showConfirmButton: false, timer: 1500,
+                background: '#00f260', color: '#000'
+            });
         });
-    });
+    }
 }
 
-// --- 5. TABS LOGIC ---
+// --- 5. TABS LOGIC (Globally Attached - Fixes Click Issue) ---
 window.switchReferTab = function(tabName) {
+    // Hide all contents
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-    event.target.classList.add('active');
+    
+    // Show selected
+    const targetContent = document.getElementById(`tab-${tabName}`);
+    if(targetContent) targetContent.classList.remove('hidden');
+    
+    // Highlight button
+    event.currentTarget.classList.add('active'); // Current clicked button
     
     if(tabName === 'team') {
         loadTeamList(); // Load team only when tab is clicked
     }
 }
 
-// --- 6. LOAD TEAM LIST (Sub-collection fetch) ---
-import { getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"; // Lazy import
-
+// --- 6. LOAD TEAM LIST ---
 async function loadTeamList() {
     const list = document.getElementById('team-list');
-    list.innerHTML = '<div class="loading-spinner">Loading Team...</div>';
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:#00f2fe;"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>';
 
     try {
         const teamRef = collection(db, "users", currentUser.id, "my_team");
         const snapshot = await getDocs(teamRef);
 
         if (snapshot.empty) {
-            list.innerHTML = `<div style="text-align:center; padding:20px; color:#555;">No friends yet.</div>`;
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:#555;">
+                <i class="fa-solid fa-users-slash" style="font-size:24px; margin-bottom:10px;"></i><br>
+                No friends yet.
+            </div>`;
             return;
         }
 
@@ -158,12 +174,12 @@ async function loadTeamList() {
 
     } catch (e) {
         console.error("Error loading team:", e);
-        list.innerHTML = "Error loading list.";
+        list.innerHTML = `<div style="text-align:center; color:red;">Error loading list</div>`;
     }
 }
 
-// --- 7. MILESTONES RENDER (Visual Only) ---
-const REFERRAL_TARGETS = [3, 5, 10, 20, 50, 100]; // Targets
+// --- 7. MILESTONES RENDER ---
+const REFERRAL_TARGETS = [3, 5, 10, 20, 50, 100, 500, 1000]; 
 
 function renderMilestones(currentCount) {
     const list = document.getElementById('milestone-list');
@@ -173,11 +189,10 @@ function renderMilestones(currentCount) {
     REFERRAL_TARGETS.forEach(target => {
         const isUnlocked = currentCount >= target;
         let percent = Math.min((currentCount / target) * 100, 100);
-        let btnClass = isUnlocked ? "btn-claim ready" : "btn-claim locked";
-        let btnText = isUnlocked ? "CLAIM BONUS" : "LOCKED";
         
-        // Agar already claimed logic lagana ho to wo database me 'claimed_milestones' array bana kar check hoga
-        // Abhi ke liye simple visual:
+        let btnHTML = isUnlocked 
+            ? `<button class="btn-claim ready">CLAIM BONUS</button>` 
+            : `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> LOCKED</button>`;
         
         list.innerHTML += `
         <div class="milestone-card">
@@ -186,8 +201,11 @@ function renderMilestones(currentCount) {
                 <span class="reward-badge">Bonus</span>
             </div>
             <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
-            <div style="font-size:12px; color:#aaa;">Progress: ${currentCount}/${target}</div>
-            <button class="${btnClass}">${btnText}</button>
+            <div style="font-size:12px; color:#aaa; display:flex; justify-content:space-between;">
+                <span>Progress: ${currentCount}/${target}</span>
+                <span>${percent.toFixed(0)}%</span>
+            </div>
+            <div style="margin-top:10px;">${btnHTML}</div>
         </div>`;
     });
 }
