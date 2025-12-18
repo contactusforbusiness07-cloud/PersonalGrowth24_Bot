@@ -380,13 +380,113 @@
                         <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
-                        <h2 class="neon-text" style="margin:0;">Support</h2>
+                        <h2 class="neon-text" style="margin:0;">Contact Support</h2>
                     </div>
-                    <div class="contact-premium-card">
-                        <div class="text-center mb-4"><h4 class="text-white">Admin Support</h4><p class="text-gray-400 text-xs">Direct: @Mr_MorningStar524</p></div>
-                        <textarea class="contact-input" id="contact-message" rows="4"></textarea>
-                        <button class="btn-send-msg" onclick="submitContactForm()">Send Message</button>
+                    <p style="color:#888; font-size:12px; margin-top:-10px; margin-bottom: 20px;">Hum aapki madad ke liye hamesha available hain.</p>
+
+                    <div class="support-grid">
+                        
+                        <div class="support-card" onclick="openSupportChat('telegram')">
+                            <div class="sc-icon bg-blue"><i class="fa-brands fa-telegram"></i></div>
+                            <div class="sc-info">
+                                <h4>Live Chat Support</h4>
+                                <p>Within 30 minutes</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        </div>
+
+                        <div class="support-card disabled" onclick="openSupportChat('whatsapp')">
+                            <div class="coming-soon-badge">Coming Soon</div>
+                            <div class="sc-icon bg-green"><i class="fa-brands fa-whatsapp"></i></div>
+                            <div class="sc-info">
+                                <h4>WhatsApp Support</h4>
+                                <p>10 AM – 8 PM</p>
+                            </div>
+                        </div>
+
+                        <div class="support-card ai-card" onclick="openSupportChat('ai')">
+                            <div class="sc-icon bg-purple"><i class="fa-solid fa-robot"></i></div>
+                            <div class="sc-info">
+                                <h4>AI Help Desk 🤖</h4>
+                                <p>Instant Answers 24/7</p>
+                            </div>
+                            <button class="btn-ask-ai">Ask AI</button>
+                        </div>
                     </div>
+
+                    <hr class="divider-premium">
+
+                    <h3 class="section-heading">📝 Submit a Request</h3>
+                    <form id="support-form" onsubmit="return false;">
+                        
+                        <div class="input-group-premium">
+                            <label>Full Name</label>
+                            <input type="text" id="sup-name" placeholder="Enter your name" class="premium-input">
+                        </div>
+
+                        <div class="row-inputs">
+                            <div class="input-group-premium">
+                                <label>Email Address</label>
+                                <input type="email" id="sup-email" placeholder="name@email.com" class="premium-input">
+                            </div>
+                            <div class="input-group-premium">
+                                <label>Mobile Number</label>
+                                <input type="tel" id="sup-mobile" placeholder="+91 XXXXX" class="premium-input">
+                            </div>
+                        </div>
+
+                        <div class="input-group-premium">
+                            <label>Issue Category</label>
+                            <div class="custom-select-wrapper">
+                                <select id="sup-category" class="premium-input">
+                                    <option value="" disabled selected>Select an issue...</option>
+                                    <option value="Payment Issue">Payment / Withdrawal Issue</option>
+                                    <option value="Account Problem">Account Login / Ban</option>
+                                    <option value="Subscription">Premium Subscription</option>
+                                    <option value="Bug Report">App Bug / Error</option>
+                                    <option value="Other">Other Inquiry</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
+                        </div>
+
+                        <div class="input-group-premium">
+                            <label>Description</label>
+                            <textarea id="sup-message" rows="4" placeholder="Please describe your problem..." class="premium-input"></textarea>
+                        </div>
+
+                        <div class="input-group-premium">
+                            <label>Upload Screenshot (Optional)</label>
+                            <div class="file-upload-box" onclick="document.getElementById('sup-file').click()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span id="file-name">Tap to upload image</span>
+                                <input type="file" id="sup-file" hidden onchange="updateFileName(this)">
+                            </div>
+                        </div>
+
+                        <button class="btn-submit-ticket" onclick="submitSupportTicket()">
+                            🔘 Submit Request
+                        </button>
+                        <p class="submit-note">Response time: 12-24 Hours</p>
+
+                    </form>
+
+                    <div class="support-footer">
+                        <div class="timings-box">
+                            <i class="fa-solid fa-clock text-gold"></i>
+                            <div>
+                                <strong>Support Hours:</strong><br>
+                                Mon – Sat: 10 AM – 8 PM<br>
+                                <span style="color:#ff4444; font-size:10px;">Sunday: Emergency Only</span>
+                            </div>
+                        </div>
+                        
+                        <div class="trust-lines">
+                            <p><i class="fa-solid fa-shield-halved text-green"></i> 100% Secure Data</p>
+                            <p><i class="fa-solid fa-headset text-blue"></i> Verified Support Team</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -742,5 +842,6 @@
 
 </body>
 </html>
+
 
 
