@@ -1,6 +1,6 @@
-// --- 1. FIREBASE SETUP (Imports & Config) ---
+// --- 1. FIREBASE IMPORTS & CONFIG ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, runTransaction, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCg7hL0aFYWj7hRtP9cp9nqXYQQPzhHMMc",
@@ -11,42 +11,182 @@ const firebaseConfig = {
     appId: "1:479959446564:web:1d0d9890d4f5501c4594b1"
 };
 
-// Initialize Firebase & Database
+// Initialize
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const db = getFirestore(app); // Exporting for other modules
+window.db = db; // Global access for debugging
 
-// Make DB Global (Taaki dusri files isse use kar sakein)
-window.db = db;
-console.log("Firebase Connected Successfully!");
+console.log("🔥 Firebase Connected & Ready!");
 
-// --- 2. GLOBAL NAVIGATION SYSTEM ---
-// Note: Window ke sath attach kar rahe hain taaki HTML buttons isse dhoond sakein
+// --- 2. STARTUP LOGIC (User Login & Verify) ---
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Initialize Telegram
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        
+        const user = window.Telegram.WebApp.initDataUnsafe.user;
+        
+        // Agar Telegram User hai to Login karo
+        if (user) {
+            await loginUser(user);
+        } else {
+            // Testing ke liye (Agar browser me khola bina Telegram ke)
+            console.log("No Telegram User. Running in Guest/Test Mode.");
+            // Uncomment below line to test with fake ID
+            // await loginUser({ id: "1078605976", first_name: "Test User", username: "tester" });
+        }
+    }
+    
+    // 2. Default Navigation
+    window.navigateTo('home');
+});
 
+// --- 3. LOGIN & DATA FETCHING ---
+async function loginUser(tgUser) {
+    console.log("👤 Logging in:", tgUser.id);
+    
+    // UI Update (Profile)
+    if(document.getElementById('display-name')) document.getElementById('display-name').innerText = tgUser.first_name;
+    if(document.getElementById('display-id')) document.getElementById('display-id').innerText = tgUser.id;
+
+    const userRef = doc(db, "users", String(tgUser.id));
+    
+    try {
+        const snap = await getDoc(userRef);
+
+        if (snap.exists()) {
+            // OLD USER: Data Load karo
+            const userData = snap.data();
+            console.log("✅ User Found:", userData);
+
+            // --- CHECK REFERRAL VERIFICATION ---
+            if (userData.referralStatus === 'pending' && userData.joined_via) {
+                console.log("⏳ Pending Referral Detected...");
+                await verifyReferral(String(tgUser.id), userData.joined_via, tgUser.first_name);
+                
+                // Verify hone ke baad naya data fresh fetch karo
+                const newSnap = await getDoc(userRef);
+                updateUIWithData(newSnap.data());
+                passDataToReferralPage(newSnap.data(), String(tgUser.id));
+            } else {
+                // Normal Load
+                updateUIWithData(userData);
+                passDataToReferralPage(userData, String(tgUser.id));
+            }
+
+        } else {
+            // NEW USER: Create Account
+            console.log("🆕 Creating New User...");
+            const newUser = {
+                id: String(tgUser.id),
+                name: tgUser.first_name,
+                username: tgUser.username || "none",
+                balance: 0,
+                referralCount: 0,
+                totalEarnings: 0,
+                referralStatus: 'none',
+                joinedAt: serverTimestamp()
+            };
+            
+            await setDoc(userRef, newUser);
+            updateUIWithData(newUser);
+            passDataToReferralPage(newUser, String(tgUser.id));
+        }
+    } catch (e) {
+        console.error("Login Error:", e);
+    }
+}
+
+// --- 4. REFERRAL VERIFICATION (The Bridge) ---
+async function verifyReferral(userId, referrerId, userName) {
+    try {
+        await runTransaction(db, async (transaction) => {
+            const refRef = doc(db, "users", referrerId);
+            const userRef = doc(db, "users", userId);
+            const teamRef = doc(db, "users", referrerId, "my_team", userId);
+
+            const rDoc = await transaction.get(refRef);
+            if (!rDoc.exists()) return; // Referrer nahi mila to ignore
+
+            // 1. Referrer ko Paisa do (100 Coins)
+            transaction.update(refRef, {
+                balance: increment(100),
+                referralCount: increment(1),
+                totalEarnings: increment(100)
+            });
+
+            // 2. Referrer ki Team list update karo
+            transaction.set(teamRef, {
+                id: userId,
+                name: userName,
+                earned_for_ref: 100,
+                joinedAt: serverTimestamp()
+            });
+
+            // 3. User ko Verified mark karo
+            transaction.update(userRef, { referralStatus: 'verified' });
+        });
+        
+        console.log("🎉 Referral Verified Successfully!");
+    } catch (e) {
+        console.error("Verification Failed:", e);
+    }
+}
+
+// --- 5. UI UPDATES & DATA PASSING ---
+function updateUIWithData(data) {
+    // Balance Update
+    if(document.getElementById('home-balance-display')) 
+        document.getElementById('home-balance-display').innerText = data.balance;
+    if(document.getElementById('header-coin-balance')) 
+        document.getElementById('header-coin-balance').innerText = data.balance;
+}
+
+async function passDataToReferralPage(userData, userId) {
+    // Team Data Fetching
+    let team = [];
+    try {
+        const teamRef = collection(db, "users", userId, "my_team");
+        const snapshot = await getDocs(teamRef);
+        snapshot.forEach(d => team.push(d.data()));
+    } catch (e) {
+        console.log("No team data yet.");
+    }
+
+    // Call Global Function in pro-refer.js
+    // Hum thoda wait karte hain taaki pro-refer.js load ho chuka ho
+    setTimeout(() => {
+        if (window.updateReferralUI) {
+            window.updateReferralUI(userData, team);
+        } else {
+            console.warn("Referral UI function not found yet.");
+        }
+    }, 500);
+}
+
+// --- 6. GLOBAL NAVIGATION SYSTEM ---
 window.navigateTo = function(sectionId) {
-    console.log("Going to:", sectionId);
-
-    // A. Hide All Main Sections
+    // Hide All Sections
     document.querySelectorAll('.page-section').forEach(sec => {
         sec.classList.add('hidden');
         sec.classList.remove('active');
     });
 
-    // B. Hide Profile Pages & Container
+    // Hide Overlay Pages
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
-    const profileContainer = document.getElementById('profile-section-container');
-    if(profileContainer) profileContainer.classList.add('hidden');
+    
+    // Close Menu
+    if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 
-    // C. Force Close Menu
-    toggleProfileMenu(false);
-
-    // D. Show Target Section
+    // Show Target
     const target = document.getElementById(sectionId);
     if (target) {
         target.classList.remove('hidden');
         target.classList.add('active');
     }
 
-    // E. Update Bottom Nav Icons
+    // Update Bottom Nav Icons
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         const attr = item.getAttribute('onclick');
@@ -54,43 +194,10 @@ window.navigateTo = function(sectionId) {
     });
 }
 
-// --- 3. MENU TOGGLE CONTROL ---
-window.toggleProfileMenu = function(forceState) {
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    if (!menu || !overlay) return;
-
-    // Force Close
-    if (forceState === false) {
-        menu.classList.remove('open');
-        overlay.classList.add('hidden');
-        return;
-    }
-    // Force Open
-    if (forceState === true) {
-        menu.classList.add('open');
-        overlay.classList.remove('hidden');
-        return;
-    }
-    // Toggle
-    if (menu.classList.contains('open')) {
-        menu.classList.remove('open');
-        overlay.classList.add('hidden');
-    } else {
-        menu.classList.add('open');
-        overlay.classList.remove('hidden');
-    }
+// Menu Toggle (From previous fix)
+window.openInternalPage = function(pageId) {
+    document.getElementById(pageId).classList.remove('hidden');
+    if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 }
 
-// --- 4. APP INIT ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Default Page
-    window.navigateTo('home');
-    
-    // Telegram Setup
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-    }
-});
 
