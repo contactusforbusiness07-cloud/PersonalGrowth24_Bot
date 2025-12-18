@@ -1,31 +1,147 @@
-/* --- BRAND PAGE STYLES --- */
+/* --- PREMIUM BRAND PAGE --- */
 
-.brand-hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border: 1px solid rgba(255, 215, 0, 0.2); padding: 25px;
-    border-radius: 16px; text-align: center; margin-bottom: 25px;
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+/* 1. Hero Section */
+.brand-hero-premium {
+    text-align: center;
+    padding: 25px 15px;
+    background: linear-gradient(180deg, rgba(255,215,0,0.05) 0%, rgba(2,6,23,0) 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 20px;
 }
-.brand-hero h2 { font-size: 22px; color: #fff; margin-bottom: 5px; }
-.brand-hero p { color: #94a3b8; font-size: 13px; }
+.brand-hero-premium h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 8px;
+    background: -webkit-linear-gradient(#fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.brand-hero-premium p { color: #888; font-size: 12px; margin-bottom: 15px; }
+.trust-badges { display: flex; justify-content: center; gap: 15px; font-size: 10px; color: #ccc; }
+.trust-badges i { margin-right: 4px; }
 
-/* Grid */
-.promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-.promo-content {
-    background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s;
+/* 2. Live Stats Grid */
+.stats-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
 }
-.promo-card input:checked + .promo-content {
-    background: rgba(255, 215, 0, 0.1); border-color: #fbbf24;
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+.stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    backdrop-filter: blur(5px);
 }
-.promo-card input:checked + .promo-content i { color: #fbbf24; }
+.stat-box h3 { margin: 0; color: #ffd700; font-size: 16px; font-family: 'Orbitron'; }
+.stat-box span { font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* Budget Chips */
-.budget-scroll { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 5px; margin-bottom: 20px; scrollbar-width: none; }
-.budget-chip {
-    white-space: nowrap; padding: 8px 16px; background: #1e293b; border-radius: 50px;
-    font-size: 11px; color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+/* 3. Value Prop */
+.value-prop-card {
+    background: #0f0f15;
+    padding: 15px;
+    border-radius: 12px;
+    border-left: 3px solid #00f2fe;
 }
-.budget-chip.active { background: #fbbf24; color: #000; font-weight: 700; border: none; }
+.value-prop-card h4 { margin: 0 0 10px 0; color: #fff; font-size: 14px; }
+.value-prop-card ul { margin: 0; padding-left: 20px; color: #aaa; font-size: 12px; }
+.value-prop-card li { margin-bottom: 5px; }
+
+.divider-premium { border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 25px 0; }
+
+/* 4. Selection Styling (Assets) */
+.form-label-premium {
+    display: block;
+    color: #00f2fe;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 20px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.promo-scroll-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+}
+.selection-card {
+    min-width: 100px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.selection-card i { font-size: 24px; margin-bottom: 8px; display: block; }
+.selection-card span { font-size: 11px; color: #ccc; }
+
+.selection-card.active {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1);
+}
+
+/* 5. Chips (Budget/Duration) */
+.chips-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.chip.active {
+    background: #ffd700;
+    color: #000;
+    font-weight: 700;
+    border-color: #ffd700;
+}
+
+/* 6. Inputs & Button */
+.premium-input {
+    width: 100%;
+    background: #0b0b10;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+}
+.premium-input:focus { border-color: #00f2fe; }
+.mb-2 { margin-bottom: 10px; }
+
+.btn-submit-proposal {
+    width: 100%;
+    margin-top: 25px;
+    padding: 16px;
+    background: linear-gradient(90deg, #ffd700, #ff8800);
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    transition: 0.3s;
+}
+.btn-submit-proposal:hover { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); transform: scale(1.02); }
+.submit-note { text-align: center; color: #555; font-size: 10px; margin-top: 10px; }
+
+.brand-footer { text-align: center; margin-top: 40px; color: #444; font-size: 10px; border-top: 1px solid #222; padding-top: 20px; }
+
