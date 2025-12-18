@@ -1,238 +1,194 @@
-/* Module: Referral System (Real Logic) */
+import { db } from './main.js'; // Ensure main.js exports 'db'
+import { doc, getDoc, updateDoc, increment, collection, setDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-const REFERRAL_TARGETS = [
-    { target: 3, reward: 500 },
-    { target: 5, reward: 1000 },
-    { target: 10, reward: 2500 },
-    { target: 20, reward: 5000 },
-    { target: 50, reward: 15000 },
-    { target: 100, reward: 35000 },
-    { target: 500, reward: 200000 }, 
-    { target: 1000, reward: 500000 }, 
-    { target: 5000, reward: 3000000 }, 
-    { target: 10000, reward: 7000000 }
-];
+// --- GLOBAL VARIABLES ---
+let currentUser = null;
+const REFERRAL_REWARD_PER_USER = 100; // Ek refer ka kitna milega (Adjust karein)
 
-// Default State (Sab Zero se shuru hoga)
-let myReferralData = {
-    userId: "GUEST",
-    referralLink: "",
-    count: 0,           // Total Verified Invites (Start = 0)
-    claimedTargets: [], // Konsa milestone le liya
-    totalEarnings: 0,   // Total Coins earned from refer
-    team: []            // List of friends
-};
+// --- 1. INITIALIZE SYSTEM ---
+export async function initReferralSystem(user) {
+    currentUser = user;
+    if (!currentUser) return;
 
-// 1. Initialize System
-function initReferralSystem() {
-    // A. User Identification (Telegram Data)
-    let tgUser = null;
-    if (window.Telegram && window.Telegram.WebApp) {
-        tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-    }
+    console.log("🔒 Initializing Strict Referral System...");
 
-    const userId = tgUser ? tgUser.id : "USER-" + Math.floor(Math.random() * 100000);
-    const userName = tgUser ? tgUser.first_name : "Guest";
-
-    // B. Link Generation (Standard Telegram Deep Link)
-    // Link aisa dikhega: https://t.me/PersonalGrowth24_Bot?start=ref_12345
-    const botUsername = "PersonalGrowth24_Bot"; 
-    const referralCode = `ref_${userId}`;
-    const fullLink = `https://t.me/${botUsername}?start=${referralCode}`;
-
-    // C. Load Data form Database (Simulation via LocalStorage for now)
-    // Real app me ye data server se aayega. Abhi hum check karenge agar saved hai to load karo, nahi to 0.
-    const savedData = JSON.parse(localStorage.getItem('realReferralData'));
+    // A. Generate Link
+    const botUsername = "PersonalGrowth24_Bot"; // Apna Bot Username yahan dalein
+    const inviteLink = `https://t.me/${botUsername}?start=ref_${currentUser.id}`;
     
-    if (savedData) {
-        myReferralData = savedData;
-        // Link update incase user changed
-        myReferralData.referralLink = fullLink; 
-        myReferralData.userId = userId;
-    } else {
-        // First Time User -> Sab kuch 0 set karo
-        myReferralData = {
-            userId: userId,
-            referralLink: fullLink,
-            count: 0, // STRICTLY 0 FOR NEW USER
-            claimedTargets: [],
-            totalEarnings: 0,
-            team: []
-        };
-        saveReferralData(); // Save fresh state
+    // UI Update (Link & Code)
+    if(document.getElementById('my-referral-code')) {
+        document.getElementById('my-referral-code').innerText = "FGP-" + currentUser.id;
+    }
+    if(document.getElementById('my-referral-link')) {
+        document.getElementById('my-referral-link').innerText = inviteLink;
     }
 
-    // D. Update UI Elements
-    updateReferralUI();
+    // B. Check & Execute Pending Referral (The Verification Step)
+    await verifyAndRewardReferrer();
+
+    // C. Load Real Data from Firebase
+    loadReferralStats();
 }
 
-// 2. UI Update Function
-function updateReferralUI() {
-    // Top Stats
-    if(document.getElementById('total-referrals')) {
-        document.getElementById('total-referrals').innerText = myReferralData.count;
-        document.getElementById('referral-earnings').innerText = myReferralData.totalEarnings.toLocaleString();
-        
-        // Show Code
-        const displayCode = myReferralData.userId.toString().replace('ref_', ''); 
-        document.getElementById('my-referral-code').innerText = "FGP-" + displayCode;
-        
-        // Show Link (UPDATED LOGIC)
-        if(document.getElementById('my-referral-link')) {
-             document.getElementById('my-referral-link').innerText = myReferralData.referralLink;
+// --- 2. VERIFICATION LOGIC (The Anti-Cheat) ---
+async function verifyAndRewardReferrer() {
+    // Check agar user ka status 'pending' hai (Jo Bot ne set kiya tha)
+    if (currentUser.referralStatus === 'pending' && currentUser.joined_via) {
+        const referrerId = currentUser.joined_via;
+        console.log(`🔍 Verifying referral from: ${referrerId}`);
+
+        const userRef = doc(db, "users", currentUser.id);
+        const referrerRef = doc(db, "users", referrerId);
+        const teamRef = doc(db, "users", referrerId, "my_team", currentUser.id);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const rDoc = await transaction.get(referrerRef);
+                if (!rDoc.exists()) throw "Referrer does not exist!";
+
+                // 1. User ka status update karo (Verified)
+                transaction.update(userRef, { 
+                    referralStatus: 'verified' 
+                });
+
+                // 2. Referrer ko Reward do
+                transaction.update(referrerRef, {
+                    balance: increment(REFERRAL_REWARD_PER_USER),
+                    referralCount: increment(1),
+                    totalEarnings: increment(REFERRAL_REWARD_PER_USER)
+                });
+
+                // 3. Referrer ki Team List me User ko add karo
+                transaction.set(teamRef, {
+                    name: currentUser.name,
+                    id: currentUser.id,
+                    joinedAt: serverTimestamp(),
+                    earned_for_ref: REFERRAL_REWARD_PER_USER
+                });
+            });
+
+            console.log("✅ Referral Verified & Reward Sent!");
+            // Optional: User ko bhi kuch bonus dena hai to yahan de sakte ho
+            
+        } catch (e) {
+            console.error("Referral Transaction Failed:", e);
         }
     }
-
-    renderMilestones();
-    renderTeamList();
 }
 
-// 3. Render Milestones (Fixed Design)
-function renderMilestones() {
-    const list = document.getElementById('milestone-list');
-    if(!list) return;
-    list.innerHTML = "";
-
-    REFERRAL_TARGETS.forEach((tier) => {
-        const isClaimed = myReferralData.claimedTargets.includes(tier.target);
-        const isUnlocked = myReferralData.count >= tier.target;
-        
-        // Progress Calculation (Max 100%)
-        let progressPercent = 0;
-        if (myReferralData.count > 0) {
-            progressPercent = Math.min((myReferralData.count / tier.target) * 100, 100);
-        }
-
-        let btnHTML = '';
-        if (isClaimed) {
-            btnHTML = `<button class="btn-claim claimed"><i class="fa-solid fa-check"></i> CLAIMED</button>`;
-        } else if (isUnlocked) {
-            btnHTML = `<button class="btn-claim ready" onclick="claimReferralReward(${tier.target}, ${tier.reward})">CLAIM ${tier.reward}</button>`;
-        } else {
-            btnHTML = `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> Locked</button>`;
-        }
-
-        const html = `
-        <div class="milestone-card">
-            <div class="milestone-header">
-                <span class="target-title">${tier.target} Friends</span>
-                <span class="reward-badge">+${tier.reward.toLocaleString()}</span>
-            </div>
-            <div class="progress-track">
-                <div class="progress-fill" style="width: ${progressPercent}%"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:12px; color:#aaa;">
-                <span>Current: ${myReferralData.count}</span>
-                <span>Target: ${tier.target}</span>
-            </div>
-            ${btnHTML}
-        </div>`;
-        list.innerHTML += html;
-    });
-}
-
-// 4. Claim Logic (Updates Wallet & UI)
-function claimReferralReward(target, amount) {
-    // 1. Add money to main wallet
-    let currentWallet = parseInt(localStorage.getItem('userBalance')) || 0;
-    localStorage.setItem('userBalance', currentWallet + amount);
-
-    // 2. Update Referral State
-    myReferralData.claimedTargets.push(target);
-    myReferralData.totalEarnings += amount; // Sirf claim karne par earnings badhegi
+// --- 3. LOAD DATA FOR UI ---
+async function loadReferralStats() {
+    // Firebase se Data Read karo (Current User ka)
+    const userRef = doc(db, "users", currentUser.id);
+    const snap = await getDoc(userRef);
     
-    saveReferralData();
-    updateReferralUI(); // Refresh UI instantly
-
-    // 3. Show Success
-    Swal.fire({
-        title: 'Reward Claimed!',
-        text: `${amount} Coins added to your wallet!`,
-        icon: 'success',
-        confirmButtonColor: '#00f260',
-        background: '#1a1a2e',
-        color: '#fff'
-    });
-}
-
-// 5. Render Team (Only shows if friends exist)
-function renderTeamList() {
-    const list = document.getElementById('team-list');
-    if(!list) return;
-
-    if (myReferralData.team.length === 0) {
-        list.innerHTML = `<div style="text-align:center; padding:20px; color:#555;">
-            <i class="fa-solid fa-users-slash" style="font-size:24px; margin-bottom:10px;"></i><br>
-            No friends joined yet.<br>Share your link to start earning!
-        </div>`;
-        return;
-    }
-
-    let html = "";
-    myReferralData.team.forEach(friend => {
-        // Commission logic (Mock: friend earned random amount for demo)
-        // Real app me ye data server se aayega
-        const commission = Math.floor(friend.earnings * 0.10); 
+    if (snap.exists()) {
+        const data = snap.data();
         
-        html += `
-        <div class="team-item">
-            <div class="team-info">
-                <h4>${friend.name}</h4>
-                <p>ID: ${friend.id}</p>
-            </div>
-            <div class="commission-box">
-                <span class="comm-amount">+${commission}</span>
-                <span class="comm-label">10% Profit</span>
-            </div>
-        </div>`;
-    });
-    list.innerHTML = html;
+        // Update Stats on Screen
+        if(document.getElementById('total-referrals')) {
+            document.getElementById('total-referrals').innerText = data.referralCount || 0;
+        }
+        if(document.getElementById('referral-earnings')) {
+            document.getElementById('referral-earnings').innerText = (data.totalEarnings || 0).toLocaleString();
+        }
+    }
+    
+    // Milestones Render karo (Based on Count)
+    renderMilestones(snap.data()?.referralCount || 0);
 }
 
-// 6. Copy Link Logic
-function copyReferralCode() {
-    // User click karega to pura link copy hoga
-    navigator.clipboard.writeText(myReferralData.referralLink).then(() => {
+// --- 4. COPY FUNCTION ---
+window.copyReferralCode = function() {
+    const link = document.getElementById('my-referral-link').innerText;
+    navigator.clipboard.writeText(link).then(() => {
         Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Referral Link Copied!',
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#00f260',
-            color: '#000'
+            toast: true, position: 'top-end', icon: 'success', 
+            title: 'Link Copied!', showConfirmButton: false, timer: 1500,
+            background: '#00f260', color: '#000'
         });
     });
 }
 
-// 7. Tabs Logic
-function switchReferTab(tabName) {
+// --- 5. TABS LOGIC ---
+window.switchReferTab = function(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(`tab-${tabName}`).classList.remove('hidden');
     event.target.classList.add('active');
+    
+    if(tabName === 'team') {
+        loadTeamList(); // Load team only when tab is clicked
+    }
 }
 
-// Helper: Save Data
-function saveReferralData() {
-    localStorage.setItem('realReferralData', JSON.stringify(myReferralData));
+// --- 6. LOAD TEAM LIST (Sub-collection fetch) ---
+import { getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"; // Lazy import
+
+async function loadTeamList() {
+    const list = document.getElementById('team-list');
+    list.innerHTML = '<div class="loading-spinner">Loading Team...</div>';
+
+    try {
+        const teamRef = collection(db, "users", currentUser.id, "my_team");
+        const snapshot = await getDocs(teamRef);
+
+        if (snapshot.empty) {
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:#555;">No friends yet.</div>`;
+            return;
+        }
+
+        let html = "";
+        snapshot.forEach(doc => {
+            const friend = doc.data();
+            html += `
+            <div class="team-item">
+                <div class="team-info">
+                    <h4>${friend.name}</h4>
+                    <p>ID: ${friend.id}</p>
+                </div>
+                <div class="commission-box">
+                    <span class="comm-amount">+${friend.earned_for_ref}</span>
+                    <span class="comm-label">Verified</span>
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html;
+
+    } catch (e) {
+        console.error("Error loading team:", e);
+        list.innerHTML = "Error loading list.";
+    }
 }
 
-// --- TESTING ONLY: Simulator (Remove in Production) ---
-// Is function ko console me run karo friends add karne ke liye: addFakeFriend()
-window.addFakeFriend = function() {
-    myReferralData.count += 1;
-    myReferralData.team.push({
-        name: "New Friend " + myReferralData.count,
-        id: Math.floor(Math.random()*900000),
-        earnings: Math.floor(Math.random()*5000)
+// --- 7. MILESTONES RENDER (Visual Only) ---
+const REFERRAL_TARGETS = [3, 5, 10, 20, 50, 100]; // Targets
+
+function renderMilestones(currentCount) {
+    const list = document.getElementById('milestone-list');
+    if(!list) return;
+    list.innerHTML = "";
+
+    REFERRAL_TARGETS.forEach(target => {
+        const isUnlocked = currentCount >= target;
+        let percent = Math.min((currentCount / target) * 100, 100);
+        let btnClass = isUnlocked ? "btn-claim ready" : "btn-claim locked";
+        let btnText = isUnlocked ? "CLAIM BONUS" : "LOCKED";
+        
+        // Agar already claimed logic lagana ho to wo database me 'claimed_milestones' array bana kar check hoga
+        // Abhi ke liye simple visual:
+        
+        list.innerHTML += `
+        <div class="milestone-card">
+            <div class="milestone-header">
+                <span class="target-title">${target} Friends</span>
+                <span class="reward-badge">Bonus</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
+            <div style="font-size:12px; color:#aaa;">Progress: ${currentCount}/${target}</div>
+            <button class="${btnClass}">${btnText}</button>
+        </div>`;
     });
-    saveReferralData();
-    updateReferralUI();
-    console.log("Friend added! Refresh UI check karo.");
 }
-
-// Auto Init
-document.addEventListener('DOMContentLoaded', initReferralSystem);
 
