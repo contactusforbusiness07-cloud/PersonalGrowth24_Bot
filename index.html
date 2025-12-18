@@ -552,10 +552,46 @@
 
     <script>
       AOS.init();
-      function backToProfileMenu() { toggleProfileMenu(); }
+
+      // Fix for menu button not working with type="module"
+      window.toggleProfileMenu = function(forceState) {
+          const menu = document.getElementById('side-menu');
+          const overlay = document.getElementById('menu-overlay');
+          
+          if (!menu || !overlay) {
+              console.error("Menu elements not found!");
+              return;
+          }
+
+          // Force Close
+          if (forceState === false) {
+              menu.classList.remove('open');
+              overlay.classList.add('hidden');
+              return;
+          }
+          // Force Open
+          if (forceState === true) {
+              menu.classList.add('open');
+              overlay.classList.remove('hidden');
+              return;
+          }
+          
+          // Toggle Open/Close
+          if (menu.classList.contains('open')) {
+              menu.classList.remove('open');
+              overlay.classList.add('hidden');
+          } else {
+              menu.classList.add('open');
+              overlay.classList.remove('hidden');
+          }
+      };
+
+      // Ensure back button also works
+      window.backToProfileMenu = function() {
+          window.toggleProfileMenu();
+      };
     </script>
 
 </body>
 </html>
-
 
