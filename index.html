@@ -25,18 +25,27 @@
     <link rel="stylesheet" href="css/pro-contact.css">
 
     <style>
+        /* Default State: Menu Chupa hua hai */
         #side-menu {
             position: fixed !important;
             top: 0 !important;
-            right: -100% !important; /* Shuru mein chupa hua */
+            right: -120%; /* Screen se bahar */
             width: 280px !important;
             height: 100vh !important;
             background: #020617 !important; 
             z-index: 2147483647 !important; /* Sabse Upar */
-            transition: right 0.3s ease-in-out !important;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.8) !important;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smooth Slide */
+            box-shadow: -5px 0 25px rgba(0,0,0,0.9) !important;
             display: block !important;
+            visibility: visible !important;
         }
+
+        /* Open State: Jab ye class lagegi, Menu dikhega */
+        #side-menu.open {
+            right: 0 !important; /* Zabardasti Bahar Lao */
+        }
+
+        /* Overlay Styling */
         #menu-overlay {
             position: fixed !important;
             top: 0; 
@@ -45,8 +54,17 @@
             height: 100vh;
             background: rgba(0, 0, 0, 0.8) !important;
             z-index: 2147483640 !important;
-            backdrop-filter: blur(5px);
-            display: none; /* JS isse handle karega */
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Overlay Visible State */
+        #menu-overlay.visible {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
         }
     </style>
 </head>
@@ -585,26 +603,42 @@
               return;
           }
 
-          // Close Logic
-          if (forceState === false || (forceState === undefined && menu.style.right === '0px')) {
-              menu.style.right = '-100%';
-              overlay.style.display = 'none';
-          } 
-          // Open Logic
-          else {
-              menu.style.right = '0px';
+          // Force Close
+          if (forceState === false) {
+              menu.classList.remove('open');
+              overlay.classList.remove('visible');
+              setTimeout(() => { if(!overlay.classList.contains('visible')) overlay.style.display = 'none'; }, 300);
+              return;
+          }
+          // Force Open
+          if (forceState === true) {
               overlay.style.display = 'block';
+              setTimeout(() => overlay.classList.add('visible'), 10);
+              menu.classList.add('open');
+              return;
+          }
+          
+          // Toggle
+          if (menu.classList.contains('open')) {
+              menu.classList.remove('open');
+              overlay.classList.remove('visible');
+              setTimeout(() => { if(!overlay.classList.contains('visible')) overlay.style.display = 'none'; }, 300);
+          } else {
+              overlay.style.display = 'block';
+              setTimeout(() => overlay.classList.add('visible'), 10);
+              menu.classList.add('open');
           }
       };
 
-      // Back Button Support
+      // Ensure back button also works
       window.backToProfileMenu = function() {
-          toggleProfileMenu();
+          window.toggleProfileMenu();
       };
     </script>
 
 </body>
 </html>
+
 
 
 
