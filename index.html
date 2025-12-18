@@ -23,7 +23,44 @@
     <link rel="stylesheet" href="css/pro-brand.css">
     <link rel="stylesheet" href="css/pro-refer.css">
     <link rel="stylesheet" href="css/pro-contact.css">
-</head>
+
+    <style>
+        /* Force Menu Styles to ensure visibility over overlay */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -100% !important; /* Start off-screen */
+            width: 280px;
+            height: 100vh;
+            background: #020617 !important; /* Dark Background */
+            z-index: 2147483647 !important; /* Max Z-Index to show above everything */
+            transition: right 0.3s ease-in-out !important;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.8);
+            padding: 20px;
+            display: block !important; /* Ensure it's not hidden */
+        }
+
+        /* Class to slide menu in */
+        .side-menu.open {
+            right: 0 !important;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7) !important;
+            z-index: 2147483640 !important; /* Just below the menu */
+            backdrop-filter: blur(3px);
+        }
+
+        .menu-overlay.hidden {
+            display: none !important;
+        }
+    </style>
+    </head>
 
 <body>
 
@@ -594,4 +631,5 @@
 
 </body>
 </html>
+
 
