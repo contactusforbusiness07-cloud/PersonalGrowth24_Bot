@@ -25,42 +25,31 @@
     <link rel="stylesheet" href="css/pro-contact.css">
 
     <style>
-        /* Force Menu Styles to ensure visibility over overlay */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            right: -100% !important; /* Start off-screen */
-            width: 280px;
-            height: 100vh;
-            background: #020617 !important; /* Dark Background */
-            z-index: 2147483647 !important; /* Max Z-Index to show above everything */
+        #side-menu {
+            position: fixed !important;
+            top: 0 !important;
+            right: -100% !important; /* Shuru mein chupa hua */
+            width: 280px !important;
+            height: 100vh !important;
+            background: #020617 !important; 
+            z-index: 2147483647 !important; /* Sabse Upar */
             transition: right 0.3s ease-in-out !important;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.8);
-            padding: 20px;
-            display: block !important; /* Ensure it's not hidden */
+            box-shadow: -5px 0 15px rgba(0,0,0,0.8) !important;
+            display: block !important;
         }
-
-        /* Class to slide menu in */
-        .side-menu.open {
-            right: 0 !important;
-        }
-
-        .menu-overlay {
-            position: fixed;
-            top: 0;
+        #menu-overlay {
+            position: fixed !important;
+            top: 0; 
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.7) !important;
-            z-index: 2147483640 !important; /* Just below the menu */
-            backdrop-filter: blur(3px);
-        }
-
-        .menu-overlay.hidden {
-            display: none !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            z-index: 2147483640 !important;
+            backdrop-filter: blur(5px);
+            display: none; /* JS isse handle karega */
         }
     </style>
-    </head>
+</head>
 
 <body>
 
@@ -78,22 +67,19 @@
         (function() {
             // ==========================================
             // ⚠️ STEP: APNA TELEGRAM ID NICHE LIKHEIN
-            // @userinfobot se ID nikalein aur yahan paste karein
             // ==========================================
-            const adminIds = [ 1078605976 ]; // Comma lagakar aur bhi IDs daal sakte hain
+            const adminIds = [ 1078605976 ]; 
             
-            // Logic to check if User is Admin
             try {
                 const tg = window.Telegram.WebApp;
                 const urlParams = new URLSearchParams(window.location.search);
-                const isAdminParam = urlParams.get('admin') === 'true'; // For Browser Testing (?admin=true)
+                const isAdminParam = urlParams.get('admin') === 'true';
 
                 let currentUserId = null;
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     currentUserId = tg.initDataUnsafe.user.id;
                 }
 
-                // Agar User Admin hai ya URL me ?admin=true hai, to Overlay hata do
                 if (adminIds.includes(currentUserId) || isAdminParam) {
                     const overlay = document.getElementById('maintenance-overlay');
                     if(overlay) overlay.style.display = 'none';
@@ -590,7 +576,6 @@
     <script>
       AOS.init();
 
-      // Fix for menu button not working with type="module"
       window.toggleProfileMenu = function(forceState) {
           const menu = document.getElementById('side-menu');
           const overlay = document.getElementById('menu-overlay');
@@ -600,36 +585,26 @@
               return;
           }
 
-          // Force Close
-          if (forceState === false) {
-              menu.classList.remove('open');
-              overlay.classList.add('hidden');
-              return;
-          }
-          // Force Open
-          if (forceState === true) {
-              menu.classList.add('open');
-              overlay.classList.remove('hidden');
-              return;
-          }
-          
-          // Toggle Open/Close
-          if (menu.classList.contains('open')) {
-              menu.classList.remove('open');
-              overlay.classList.add('hidden');
-          } else {
-              menu.classList.add('open');
-              overlay.classList.remove('hidden');
+          // Close Logic
+          if (forceState === false || (forceState === undefined && menu.style.right === '0px')) {
+              menu.style.right = '-100%';
+              overlay.style.display = 'none';
+          } 
+          // Open Logic
+          else {
+              menu.style.right = '0px';
+              overlay.style.display = 'block';
           }
       };
 
-      // Ensure back button also works
+      // Back Button Support
       window.backToProfileMenu = function() {
-          window.toggleProfileMenu();
+          toggleProfileMenu();
       };
     </script>
 
 </body>
 </html>
+
 
 
