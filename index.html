@@ -27,14 +27,48 @@
 
 <body>
 
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #0f172a; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; font-family: sans-serif;">
+    <div id="maintenance-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #0f172a; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; font-family: sans-serif;">
         <i class="fa-solid fa-person-digging" style="font-size: 50px; color: #ffd700; margin-bottom: 20px;"></i>
         <h1 style="margin: 0; font-size: 24px;">Under Maintenance</h1>
         <p style="color: #94a3b8; margin-top: 10px; padding: 0 20px;">
             FinGamePro is currently being updated.<br>
             We will be back soon! 🚀
         </p>
+        <div style="margin-top: 30px; opacity: 0.3; font-size: 10px;">Admin Access Protected</div>
     </div>
+
+    <script>
+        (function() {
+            // ==========================================
+            // ⚠️ STEP: APNA TELEGRAM ID NICHE LIKHEIN
+            // @userinfobot se ID nikalein aur yahan paste karein
+            // ==========================================
+            const adminIds = [ 1078605976 ]; // Comma lagakar aur bhi IDs daal sakte hain
+            
+            // Logic to check if User is Admin
+            try {
+                const tg = window.Telegram.WebApp;
+                const urlParams = new URLSearchParams(window.location.search);
+                const isAdminParam = urlParams.get('admin') === 'true'; // For Browser Testing (?admin=true)
+
+                let currentUserId = null;
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    currentUserId = tg.initDataUnsafe.user.id;
+                }
+
+                // Agar User Admin hai ya URL me ?admin=true hai, to Overlay hata do
+                if (adminIds.includes(currentUserId) || isAdminParam) {
+                    const overlay = document.getElementById('maintenance-overlay');
+                    if(overlay) overlay.style.display = 'none';
+                    console.log("Admin Access Granted 🔓");
+                } else {
+                    console.log("Access Denied: Maintenance Mode 🔒");
+                }
+            } catch (e) {
+                console.error("Admin Check Error:", e);
+            }
+        })();
+    </script>
     <div id="app-container">
         
         <header class="app-header glass-effect">
@@ -523,4 +557,5 @@
 
 </body>
 </html>
+
 
