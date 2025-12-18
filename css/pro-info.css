@@ -1,88 +1,100 @@
-/* --- INFO PAGES STYLING --- */
+/* --- INFO PAGES STYLING (Professional & Spaced) --- */
 
 .info-body-container {
-    padding-bottom: 40px;
+    padding-bottom: 60px; /* Space for footer */
 }
 
-/* 1. Ad Banners Styling */
-.ad-banner-placeholder {
-    width: 100%;
-    height: 60px;
-    background: linear-gradient(45deg, #111, #1a1a1a);
-    border: 1px dashed #333;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
+/* 1. High-Tech Crypto Roadmap Box (Top Feature) */
+.hitech-roadmap-box {
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(2, 6, 23, 0.8));
+    border: 1px solid #00f2fe;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0 30px 0; /* Gap niche */
     position: relative;
     overflow: hidden;
-}
-.ad-banner-placeholder span {
-    color: #444;
-    font-size: 10px;
-    letter-spacing: 2px;
-    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
 }
 
-/* 2. Text Content Styling */
+/* Neon Glow Animation */
+.hitech-roadmap-box::before {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.2), transparent);
+    animation: holograph 3s infinite;
+}
+@keyframes holograph { 0% { left: -100%; } 50% { left: 100%; } 100% { left: 100%; } }
+
+.hitech-roadmap-box h4 {
+    margin: 0 0 8px 0;
+    color: #00f2fe;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    text-shadow: 0 0 5px #00f2fe;
+}
+.hitech-roadmap-box p {
+    font-size: 12px;
+    color: #e0e0e0;
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* 2. Ad Banners */
+.ad-banner-placeholder {
+    width: 100%; height: 70px;
+    background: #111;
+    border: 1px dashed #444;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 25px 0; /* Gap upar aur niche */
+}
+.ad-banner-placeholder span { color: #555; font-size: 10px; letter-spacing: 2px; font-weight: bold; }
+
+/* 3. Professional Typography (No Chipka Text) */
 .legal-text-block {
     color: #ccc;
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.7;
-    text-align: justify;
+    font-size: 14px; /* Thoda bada font readability ke liye */
+    line-height: 1.8; /* Line height badhaya taaki lines chipke nahi */
+    text-align: left;
 }
 
+/* Headings with clear separation */
 .legal-text-block h3 {
     color: #fff;
     font-family: 'Orbitron', sans-serif;
-    font-size: 15px;
-    margin-top: 25px;
-    margin-bottom: 10px;
-    border-left: 3px solid #ffd700;
-    padding-left: 10px;
+    font-size: 16px;
+    margin-top: 35px; /* Bada gap heading ke upar */
+    margin-bottom: 15px; /* Gap heading ke niche */
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2); /* Gold underline */
 }
 
+/* Paragraph spacing */
+.legal-text-block p {
+    margin-bottom: 20px; /* Paragraphs ke beech gap */
+}
+
+/* List spacing */
 .legal-text-block ul {
     padding-left: 20px;
-    margin-bottom: 15px;
-    color: #aaa;
+    margin-bottom: 25px;
+    color: #bbb;
 }
-
 .legal-text-block li {
-    margin-bottom: 8px;
+    margin-bottom: 12px; /* List items ke beech gap */
 }
 
-/* 3. Crypto/Future Hint Box (The "Secret" Signal) */
-.future-roadmap-box {
-    background: linear-gradient(135deg, rgba(0, 242, 254, 0.05), rgba(0, 0, 0, 0));
-    border: 1px solid rgba(0, 242, 254, 0.3);
-    border-radius: 12px;
-    padding: 15px;
-    margin: 20px 0;
-    position: relative;
-}
-.future-roadmap-box h4 {
-    margin: 0 0 5px 0;
-    color: #00f2fe;
-    font-size: 14px;
-    display: flex; align-items: center;
-}
-.future-roadmap-box h4 i { margin-right: 8px; }
-.future-roadmap-box p {
-    font-size: 11px;
-    color: #a0a0a0;
-    margin: 0;
-    font-style: italic;
-}
-
-/* 4. Footer */
+/* Footer */
 .legal-footer {
     text-align: center;
     border-top: 1px solid #222;
     padding-top: 20px;
-    margin-top: 20px;
-    color: #444;
-    font-size: 10px;
+    margin-top: 40px;
+    color: #555;
+    font-size: 11px;
 }
+
