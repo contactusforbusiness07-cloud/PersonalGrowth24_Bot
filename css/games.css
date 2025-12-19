@@ -1,8 +1,8 @@
 /* =========================================
-   HI-TECH PRO GAME ARENA (FINAL v2)
+   COMPACT HI-TECH ARENA (FIT TO SCREEN)
    ========================================= */
 
-/* 1. SCREEN LOCK & DEEP BACKGROUND */
+/* 1. SCREEN LOCK */
 body, html {
     overflow: hidden;
     height: 100%;
@@ -18,104 +18,101 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* High-End Gradient: Deep Blue to Black */
+    /* Space distribution: Space between elements to fit screen */
+    justify-content: space-between; 
     background: radial-gradient(circle at 50% 30%, #1e293b 0%, #020617 80%);
-    padding-bottom: 90px;
+    padding-bottom: 90px; /* Space for Bottom Nav */
+    padding-top: 10px;
     position: relative;
 }
 
-/* 2. TOP NATIVE AD SPACE */
+/* 2. COMPACT AD SPACE */
 .native-ad-placeholder {
-    width: 92%;
-    height: 60px;
+    width: 90%;
+    height: 45px; /* Reduced Height */
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    margin-top: 15px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     backdrop-filter: blur(5px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
-/* 3. HEADER (Perfect Center, No Icon) */
+/* 3. COMPACT HEADER */
 .game-header {
     width: 100%;
     display: flex;
-    justify-content: center; /* Center align */
+    justify-content: center;
     align-items: center;
-    padding: 15px 0;
+    padding: 5px 0; /* Reduced Padding */
     position: relative;
-    margin-bottom: 5px;
 }
 
 .user-rank-badge {
     background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
-    border: 1px solid rgba(255, 215, 0, 0.4); /* Gold Border */
-    padding: 8px 30px;
-    border-radius: 30px;
-    font-size: 1rem;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    padding: 5px 20px; /* Smaller Badge */
+    border-radius: 25px;
+    font-size: 0.9rem;
     color: #ffd700;
     font-weight: 700;
-    letter-spacing: 1.5px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15); /* Soft Gold Glow */
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
     display: flex;
     align-items: center;
-    gap: 10px;
-    text-transform: uppercase;
+    gap: 8px;
 }
 
-/* 4. BALANCE DISPLAY */
+/* 4. COMPACT BALANCE */
 .big-gold-text {
-    font-size: 3.5rem;
+    font-size: 2.8rem; /* Smaller Font */
     font-weight: 800;
     color: #fff;
-    /* Multi-layer shadow for glowing effect */
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 165, 0, 0.4);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
     font-family: 'Orbitron', sans-serif;
     margin: 0;
-    letter-spacing: 2px;
+    line-height: 1;
 }
 
-/* 5. THE ARENA (High Tech Circle) */
+/* 5. THE ARENA (Smaller & Rotating) */
 .tap-arena {
-    flex-grow: 1;
+    flex-grow: 0; /* Don't expand unnecessarily */
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     position: relative;
     perspective: 1000px;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 
-/* Neon Glow Ring */
+/* 🔥 ROTATING GLOW RING */
 .coin-glow-ring {
     position: absolute;
-    width: 310px;
-    height: 310px;
+    width: 240px; /* Smaller Ring */
+    height: 240px;
     border-radius: 50%;
-    border: 2px dashed rgba(0, 220, 255, 0.2); /* Cyan Tech look */
-    box-shadow: 0 0 50px rgba(0, 220, 255, 0.05);
-    animation: spinTech 20s linear infinite;
+    border: 2px dashed rgba(0, 220, 255, 0.4); /* Brighter Cyan */
+    box-shadow: 0 0 30px rgba(0, 220, 255, 0.15);
+    /* Animation Active: 8 seconds per rotation */
+    animation: spinTech 8s linear infinite; 
     pointer-events: none;
 }
 
 .coin-container {
-    width: 280px;
-    height: 280px;
+    width: 210px; /* Smaller Coin */
+    height: 210px;
     border-radius: 50%;
     position: relative;
     z-index: 10;
     cursor: pointer;
-    /* Deep 3D Shadow creates separation from background */
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(255, 255, 255, 0.1); 
-    transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(255, 255, 255, 0.1); 
+    transition: transform 0.05s;
     overflow: hidden;
-    border: 5px solid rgba(255, 215, 0, 0.6); /* Gold Rim */
+    border: 4px solid rgba(255, 215, 0, 0.6);
 }
 
 .main-coin {
@@ -123,52 +120,47 @@ body, html {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
-    display: block;
 }
 
 .coin-container:active {
     transform: scale(0.95);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    border-color: #fff; /* Flash white on tap */
+    border-color: #fff;
 }
 
+/* Animation Keyframes */
 @keyframes spinTech {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* 6. ENERGY PANEL (Floating & Glass) */
+/* 6. COMPACT ENERGY PANEL */
 .energy-control-panel {
-    width: 92%;
-    background: rgba(15, 23, 42, 0.7); /* See-through glass */
+    width: 90%;
+    background: rgba(15, 23, 42, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 20px;
-    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    padding: 15px; /* Reduced Padding */
+    backdrop-filter: blur(10px);
     z-index: 20;
-    margin-bottom: 90px; /* Bottom Nav se upar */
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
-    
-    /* 🔥 GAP FIX: Coin se dur karne ke liye margin-top */
-    margin-top: 25px; 
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    /* Margin removed to let flexbox handle spacing */
 }
 
 .energy-info {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     color: #94a3b8;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .energy-bar-bg {
     width: 100%;
-    height: 16px;
+    height: 12px; /* Thinner Bar */
     background: rgba(0, 0, 0, 0.6);
-    border-radius: 10px;
+    border-radius: 6px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -176,57 +168,43 @@ body, html {
 .energy-fill {
     height: 100%;
     background: linear-gradient(90deg, #F59E0B, #FFD700);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
     width: 100%;
     transition: width 0.3s ease;
 }
 
-/* Refill Button (Adsterra Style) */
 .btn-boost {
     width: 100%;
-    margin-top: 20px;
-    padding: 14px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb); /* Trust Blue */
+    margin-top: 12px;
+    padding: 10px; /* Smaller Button */
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     border: none;
-    border-radius: 14px;
+    border-radius: 10px;
     color: white;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 5px 20px rgba(37, 99, 235, 0.4);
-    transition: transform 0.2s;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     cursor: pointer;
     text-transform: uppercase;
 }
 
-.btn-boost:active {
-    transform: scale(0.97);
-}
-
-.btn-boost.disabled {
-    background: #334155;
-    color: #64748b;
-    box-shadow: none;
-}
-
-/* Floating Click Text */
 .float-text {
     position: absolute;
-    font-size: 2.8rem;
-    font-weight: 900;
+    font-size: 2rem;
+    font-weight: 800;
     color: #fff;
     pointer-events: none;
     animation: floatUp 0.6s ease-out forwards;
     z-index: 100;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
 }
 
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-150px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.2); }
 }
 
