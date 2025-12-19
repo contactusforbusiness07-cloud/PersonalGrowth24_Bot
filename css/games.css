@@ -1,38 +1,76 @@
 /* =========================================
-   HI-TECH GAME ARENA THEME
+   HI-TECH GAME ARENA THEME (FIXED SCREEN VERSION)
    ========================================= */
 
-/* Prevent Screen Dragging/Bouncing on Mobile */
-body, html {
-    overscroll-behavior: none;
-    touch-action: pan-y; /* Allow vertical scroll only where needed */
-}
-
-#game-section {
+/* 1. Container to FIX the screen and prevent scrolling */
+#games.full-height-fixed {
+    height: calc(100vh - 65px); /* Adjust 65px based on your bottom nav height */
+    overflow: hidden !important; /* STRICLY NO SCROLLING */
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 80vh;
-    padding-bottom: 100px;
-    background: radial-gradient(circle at center, #1a1f35 0%, #020617 70%);
-    user-select: none; /* Text selection band */
+    justify-content: flex-start; /* Start stacking from top */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: radial-gradient(circle at center, #1a1f35 0%, #020617 80%);
+    user-select: none;
     -webkit-user-select: none;
+    position: relative; /* Ensure it stays within main-content */
 }
 
-/* 1. Header Stats */
-.game-header {
+/* Prevent any pull-to-refresh or bounce effects */
+body, html {
+    overscroll-behavior: none;
+    touch-action: none;
+    overflow: hidden; /* Global lock for game page */
+}
+
+/* =========================================
+   NEW: Native Banner Ad Styles
+   ========================================= */
+.native-ad-container {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
+    justify-content: center;
     margin-bottom: 10px;
+    margin-top: 5px;
+    z-index: 100;
+}
+
+.native-ad-placeholder {
+    width: 92%; /* Fits nicely */
+    height: 60px; /* Standard native ad height */
+    background: rgba(255, 255, 255, 0.03); /* Very subtle glass */
+    border: 1px solid rgba(255, 215, 0, 0.1); /* Gold hint border */
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #475569; /* Subtle text color so it's not distracting */
+    font-size: 0.9rem;
+    /* In reality, your ad network script will replace the content of this div */
+}
+
+
+/* =========================================
+   Existing Styles Modified for Fixed Layout
+   ========================================= */
+
+/* Header Stats (Bronze Rank) */
+.game-header-fixed {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* Align left */
+    padding: 5px 25px;
+    margin-bottom: 5px;
 }
 
 .user-rank-badge {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 8px 15px;
+    padding: 6px 15px;
     border-radius: 20px;
     font-size: 0.9rem;
     color: #cbd5e1;
@@ -42,70 +80,68 @@ body, html {
     backdrop-filter: blur(5px);
 }
 
-.live-balance {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .big-gold-text {
-    font-size: 2.2rem;
+    font-size: 3rem; /* Slightly bigger for focus */
     font-weight: 800;
     color: #FFD700;
-    text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    font-family: 'Orbitron', sans-serif; /* Hi-Tech Font */
-    letter-spacing: 1px;
+    text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+    letter-spacing: 2px;
+    font-family: 'Orbitron', sans-serif;
 }
 
-/* 2. The Arena (Coin) */
-.tap-arena {
+/* The Arena (Fixed Size for new Image) */
+.tap-arena-fixed {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 320px;
+    flex-grow: 1; /* Takes available vertical space */
     width: 100%;
-    margin: 10px 0;
+    max-height: 350px; /* Limit height on big screens */
     perspective: 1000px;
-    touch-action: manipulation; /* Improves tap response */
+    touch-action: manipulation;
+    margin-bottom: 20px;
 }
 
 /* Outer Glow Ring */
 .coin-glow-ring {
     position: absolute;
-    width: 280px;
-    height: 280px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
     background: transparent;
-    border: 2px dashed rgba(255, 215, 0, 0.1);
-    animation: spinSlow 20s linear infinite;
+    border: 2px dashed rgba(255, 215, 0, 0.15);
+    animation: spinSlow 25s linear infinite;
     pointer-events: none;
 }
 
-.coin-container {
+.coin-container-fixed {
     position: relative;
-    width: 260px;
-    height: 260px;
+    width: 240px; /* Fixed size for the coin */
+    height: 240px;
     cursor: pointer;
     border-radius: 50%;
-    transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 0 80px rgba(255, 215, 0, 0.15); 
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.2); 
     z-index: 10;
+    /* Ensure the container is a perfect circle for the image */
+    overflow: hidden; 
+    border: 4px solid rgba(255, 215, 0, 0.3);
 }
 
-.main-coin {
+/* NEW COIN IMAGE STYLE */
+.main-coin-new {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Ensures the image fills the circle perfectly */
     border-radius: 50%;
-    border: 5px solid rgba(255, 215, 0, 0.4);
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
-    pointer-events: none; /* Image drag band */
+    pointer-events: none;
+    display: block; /* Removes tiny bottom space */
 }
 
 /* Tap Animation */
-.coin-container:active {
-    transform: scale(0.92);
+.coin-container-fixed:active {
+    transform: scale(0.94);
 }
 
 @keyframes spinSlow {
@@ -113,21 +149,21 @@ body, html {
     to { transform: rotate(360deg); }
 }
 
-/* 3. Energy & Boost System */
-.energy-control-panel {
-    width: 90%;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+/* Energy Panel (Fixed near bottom) */
+.energy-control-panel-fixed {
+    width: 92%;
+    background: rgba(15, 23, 42, 0.6); /* More transparent */
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-    padding: 15px;
-    margin-top: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px; /* Space from bottom nav */
     backdrop-filter: blur(10px);
 }
 
 .energy-info {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 0.9rem;
     color: #94a3b8;
     font-weight: 600;
@@ -135,145 +171,41 @@ body, html {
 
 .energy-bar-bg {
     width: 100%;
-    height: 14px;
-    background: rgba(0, 0, 0, 0.5);
+    height: 12px; /* Slightly sleeker */
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 10px;
     overflow: hidden;
-    position: relative;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .energy-fill {
     height: 100%;
-    background: linear-gradient(90deg, #FFD700, #FFA500);
-    box-shadow: 0 0 15px #FFD700;
+    background: linear-gradient(90deg, #FFD700, #f59e0b);
+    box-shadow: 0 0 10px #FFD700;
     width: 100%;
     transition: width 0.3s ease;
+    border-radius: 10px;
 }
 
-/* Boost Button */
-.boost-trigger {
-    margin-top: 15px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.btn-boost {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    color: white;
-    font-size: 0.8rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    transition: transform 0.2s;
-}
-
-.btn-boost:active {
-    transform: scale(0.95);
-}
-
-.btn-boost.disabled {
-    background: #334155;
-    color: #94a3b8;
-    box-shadow: none;
-    pointer-events: none;
-}
-
-/* 4. Clean "More Games" Section (Horizontal Scroll) */
-.clean-games-section {
-    width: 100%;
-    margin-top: 30px;
-    padding-left: 20px;
-}
-
-.section-label {
-    font-size: 1.1rem;
-    color: #fff;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.horizontal-scroll-snap {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding-bottom: 20px;
-    padding-right: 20px;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
-}
-
-.horizontal-scroll-snap::-webkit-scrollbar {
-    display: none; /* Hide scrollbar Chrome */
-}
-
-.glass-game-card {
-    min-width: 140px;
-    height: 180px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.glass-game-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-}
-
-.glass-game-card:active img {
-    opacity: 1;
-}
-
-.game-card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    padding: 10px;
-    color: white;
-}
-
-.game-card-overlay h4 {
-    font-size: 0.8rem;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.coin-pill {
-    font-size: 0.7rem;
-    color: #FFD700;
-    margin-top: 2px;
-}
-
-/* Floating Effects */
+/* Floating Text (Tap Effect) */
 .float-text {
     position: absolute;
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 900;
     color: #fff;
     pointer-events: none;
     animation: floatUp 0.8s ease-out forwards;
     z-index: 9999;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    font-family: 'Orbitron', sans-serif;
 }
 
 @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-120px) scale(1.5); }
+    0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-150px) scale(1.2) rotate(10deg); }
 }
+
+/* Utility classes */
+.text-gold { color: #FFD700; }
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
 
