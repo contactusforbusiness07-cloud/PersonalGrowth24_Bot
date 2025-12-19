@@ -1,6 +1,7 @@
-// --- 1. FIREBASE IMPORTS & CONFIG ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, runTransaction, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+// --- 1. FIREBASE IMPORTS & CONFIG (Fixed Version 10.13.1) ---
+// ⚠️ CHANGED: 12.7.0 -> 10.13.1 to fix loading error
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, runTransaction, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCg7hL0aFYWj7hRtP9cp9nqXYQQPzhHMMc",
@@ -42,10 +43,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Uncomment below line to test with fake ID
             // await loginUser({ id: "1078605976", first_name: "Test User", username: "tester" });
         }
+    } else {
+        console.log("Telegram WebApp not detected");
     }
     
     // 2. Default Navigation
-    window.navigateTo('home');
+    if(window.navigateTo) window.navigateTo('home');
 });
 
 // --- 3. LOGIN & DATA FETCHING ---
@@ -178,7 +181,6 @@ async function passDataToReferralPage(userData, userId) {
     }
 
     // Call Global Function in pro-refer.js
-    // Hum thoda wait karte hain taaki pro-refer.js load ho chuka ho
     setTimeout(() => {
         if (window.updateReferralUI) {
             window.updateReferralUI(userData, team);
