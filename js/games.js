@@ -7,7 +7,7 @@ const ADSTERRA_DIRECT_LINK = "https://www.google.com"; // Replace with your actu
 
 let energy = 1000;
 const MAX_ENERGY = 1000;
-const ENERGY_REGEN_RATE = 1; 
+const ENERGY_REGEN_RATE = 2; 
 const TAP_VALUE = 1;
 const SYNC_INTERVAL = 60000;
 const MIN_TAPS_TO_SYNC = 50; 
