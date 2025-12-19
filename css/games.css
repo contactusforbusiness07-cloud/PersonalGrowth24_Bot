@@ -1,84 +1,103 @@
-/* --- GAME PAGE & AD STYLING --- */
+/* --- TAP TO EARN GAME STYLING --- */
 
-/* 1. Header */
-.game-header { text-align: center; margin-bottom: 20px; }
-.gh-title { font-family: 'Orbitron'; font-size: 22px; color: #fff; }
-.gh-subtitle { color: #aaa; font-size: 11px; margin-top: 5px; }
-.gh-subtitle b { color: #ffd700; }
-
-/* 2. Trending Scroll */
-.trending-scroll {
-    display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;
-    scrollbar-width: none;
-}
-.trending-scroll::-webkit-scrollbar { display: none; }
-
-.game-card-large {
-    min-width: 260px; height: 160px;
-    border-radius: 16px; overflow: hidden;
-    position: relative; cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-.game-thumb { width: 100%; height: 100%; object-fit: cover; }
-.game-info-overlay {
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    background: linear-gradient(0deg, rgba(0,0,0,0.9), transparent);
-    padding: 15px 10px 10px;
-    display: flex; justify-content: space-between; align-items: flex-end;
-}
-.game-info-overlay h3 { margin: 0; color: #fff; font-size: 14px; }
-.reward-pill { background: #ffd700; color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-.trending-badge {
-    position: absolute; top: 10px; left: 10px;
-    background: #ff0000; color: #fff; font-size: 9px; padding: 3px 8px; border-radius: 4px; font-weight: bold;
+/* 1. Layout */
+#games {
+    background: radial-gradient(circle at center, #1a237e 0%, #000000 100%);
+    padding: 10px;
+    text-align: center;
+    position: relative;
 }
 
-/* 3. Grid Games */
-.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-.game-card-small {
-    background: #111; border-radius: 12px; overflow: hidden;
-    position: relative; cursor: pointer; border: 1px solid #222;
-}
-.thumb-small { width: 100%; height: 100px; object-fit: cover; }
-.small-info { padding: 8px; text-align: center; }
-.small-info h4 { margin: 0; font-size: 12px; color: #eee; }
-.badge-tag {
-    position: absolute; top: 5px; right: 5px;
-    background: rgba(0,0,0,0.7); color: #fff;
-    font-size: 8px; padding: 2px 5px; border-radius: 3px;
-}
-
-/* 4. GAME MODAL & ADS */
-.game-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-    background: #000; z-index: 10000;
-    display: flex; flex-direction: column;
-}
-.game-modal.hidden { display: none !important; }
-
-.gm-header {
-    height: 50px; background: #111;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 15px; border-bottom: 1px solid #333;
-}
-.gm-timer { color: #ffd700; font-family: 'Orbitron'; font-size: 12px; }
-.gm-close {
-    background: #ff4444; color: white; border: none;
-    padding: 5px 12px; border-radius: 20px; font-size: 12px; cursor: pointer;
-}
-
-.gm-iframe-container { flex: 1; position: relative; width: 100%; }
-#game-frame { width: 100%; height: 100%; border: none; }
-#game-loader {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff; font-size: 14px;
-}
-
-/* Ad Slots */
-.ad-slot-game-top, .ad-slot-game-bottom {
-    width: 100%; background: #000;
+/* 2. Ad Banners */
+.ad-banner-small, .ad-banner-medium {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 5px;
     display: flex; justify-content: center; align-items: center;
+    width: 100%;
+}
+
+/* 3. Stats Bar */
+.clicker-stats-container {
+    display: flex; justify-content: space-between;
+    margin: 15px 0;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.stat-item { display: flex; flex-direction: column; }
+.stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
+.stat-val { font-size: 14px; font-weight: bold; font-family: 'Orbitron'; }
+.text-green { color: #00ff88; }
+.text-blue { color: #00f2fe; }
+.text-gold { color: #ffd700; }
+
+/* 4. The Big Coin (Clicker) */
+.clicker-arena {
+    flex: 1;
+    display: flex; justify-content: center; align-items: center;
+    position: relative;
+    margin: 20px 0;
+}
+
+.clickable-coin {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
     z-index: 10;
+    position: relative;
+    border: 5px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+}
+.clickable-coin img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+/* Click Animation */
+.clickable-coin:active { transform: scale(0.95); }
+
+/* Glow Effect Behind Coin */
+.coin-glow-effect {
+    position: absolute; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
+    z-index: 1;
+    animation: pulseGlow 3s infinite ease-in-out;
+}
+@keyframes pulseGlow { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+
+/* 5. Energy Bar */
+.energy-container {
+    width: 100%; max-width: 320px; margin: 0 auto 15px auto;
+}
+.energy-info {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #fff; margin-bottom: 5px; font-weight: bold;
+}
+.text-yellow { color: #ffcc00; }
+
+.progress-bar-bg {
+    width: 100%; height: 12px;
+    background: #333; border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffcc00, #ff8800);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+/* 6. Floating Numbers Animation */
+.floating-text {
+    position: absolute;
+    color: #fff; font-size: 24px; font-weight: bold;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 20;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
 }
 
