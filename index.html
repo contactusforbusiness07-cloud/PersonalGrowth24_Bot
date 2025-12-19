@@ -672,49 +672,67 @@
                 <div class="trust-footer"><i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.</div>
             </section>
 
-
             <section id="games" class="page-section hidden">
                 <div class="native-ad-placeholder">
                     <span><i class="fa-solid fa-ad"></i> Sponsored Ad Space</span>
                 </div>
 
-                <div class="game-header">
-                    <div class="user-rank-badge">
+                <div class="game-header" style="justify-content: center; margin-bottom: 15px;">
+                    <div class="user-rank-badge" style="margin: 0 auto; transform: scale(1.1); box-shadow: 0 0 20px rgba(255,215,0,0.2);">
                         <span class="rank-icon">🏆</span>
                         <span id="rank-name">Bronze</span>
                     </div>
-                    <div class="live-balance">
-                        <i class="fa-solid fa-wallet text-gold"></i>
-                    </div>
                 </div>
                 
-                <div style="text-align: center; z-index: 10;">
-                    <span id="display-balance" class="big-gold-text">0</span>
+                <div style="text-align: center; z-index: 10; position: relative;">
+                    <div style="font-size: 10px; color: #64748b; letter-spacing: 2px; margin-bottom: 5px; font-family: 'Orbitron', sans-serif;">CURRENT BALANCE</div>
+                    <span id="display-balance" class="big-gold-text" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);">0</span>
                 </div>
             
-                <div class="tap-arena">
+                <div class="tap-arena" style="margin-top: 30px; margin-bottom: 40px; position: relative;">
                     <div id="click-effects-layer"></div>
                     
-                    <div class="coin-glow-ring" style="position: absolute; width: 280px; height: 280px; border: 1px dashed rgba(255,215,0,0.2); border-radius: 50%; animation: spinSlow 10s linear infinite;"></div>
+                    <div class="coin-glow-ring" style="position: absolute; width: 300px; height: 300px; border: 2px dashed rgba(0, 220, 255, 0.15); border-radius: 50%; animation: spinSlow 15s linear infinite;"></div>
+                    <div class="coin-glow-ring" style="position: absolute; width: 270px; height: 270px; border: 1px solid rgba(255, 215, 0, 0.1); border-left-color: transparent; border-right-color: transparent; border-radius: 50%; animation: spinSlow 8s reverse infinite;"></div>
             
-                    <div class="coin-container">
+                    <div class="coin-container" style="filter: drop-shadow(0 0 30px rgba(255,215,0,0.3));">
                         <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
                     </div>
                 </div>
             
-                <div class="energy-control-panel">
-                    <div class="energy-info">
-                        <span><i class="fa-solid fa-bolt text-gold"></i> Energy</span>
-                        <span id="energy-text">1000 / 1000</span>
+                <div class="energy-control-panel glass-effect" style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.3);">
+                    
+                    <div class="energy-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 14px; font-weight: 600; color: #94a3b8;"><i class="fa-solid fa-bolt text-gold"></i> Turbo Energy</span>
+                        <span id="energy-text" style="font-family: 'Orbitron', sans-serif; color: white;">1000 / 1000</span>
                     </div>
-                    <div class="energy-bar-bg">
-                        <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
+
+                    <div class="energy-bar-bg" style="background: #334155; height: 8px; border-radius: 10px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+                        <div id="energy-fill" class="energy-fill" style="width: 100%; background: linear-gradient(90deg, #eab308, #22c55e); height: 100%; box-shadow: 0 0 10px #eab308;"></div>
                     </div>
                     
-                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
-                        <i class="fa-solid fa-rocket"></i> 
-                        <span id="refill-label">Full Tank (3 Left)</span>
-                    </button>
+                    <div style="margin-top: 25px;">
+                        <button id="btn-refill" class="btn-boost" onclick="handleRefill()" style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; padding: 14px; border-radius: 12px; color: white; font-weight: bold; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: transform 0.1s;">
+                            <i class="fa-solid fa-clapperboard"></i> 
+                            <span id="refill-label">Watch Ad to Refill (3 Left)</span>
+                        </button>
+                        <p style="text-align: center; font-size: 10px; color: #475569; margin-top: 8px;">
+                            <i class="fa-solid fa-shield-alt"></i> Sponsored by Adsterra
+                        </p>
+                    </div>
+                </div>
+
+                <div id="cheat-warning-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <div style="background: #1e293b; border: 1px solid #ef4444; padding: 30px 20px; border-radius: 20px; text-align: center; width: 100%; max-width: 320px; box-shadow: 0 0 50px rgba(239, 68, 68, 0.2);">
+                        <div style="width: 60px; height: 60px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                            <i class="fa-solid fa-hand-paper" style="font-size: 30px; color: #ef4444;"></i>
+                        </div>
+                        <h3 style="color: white; margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif;">System Alert</h3>
+                        <p style="color: #cbd5e1; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">
+                            Unusual tapping behavior detected. Please stop using auto-clickers to avoid a permanent account ban.
+                        </p>
+                        <button onclick="document.getElementById('cheat-warning-modal').classList.add('hidden')" style="background: #ef4444; color: white; border: none; padding: 12px 0; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer;">I Understand</button>
+                    </div>
                 </div>
             </section>
 
