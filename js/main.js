@@ -16,6 +16,9 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app); // Exporting for other modules
 window.db = db; // Global access for debugging
 
+// 🔥 GLOBAL STATE FOR GAME ENGINE (Important for games.js)
+window.currentUser = null; 
+
 console.log("🔥 Firebase Connected & Ready!");
 
 // --- 2. STARTUP LOGIC (User Login & Verify) ---
@@ -63,6 +66,13 @@ async function loginUser(tgUser) {
             const userData = snap.data();
             console.log("✅ User Found:", userData);
 
+            // 🔥 SET GLOBAL STATE & START GAME ENGINE
+            window.currentUser = userData;
+            if (typeof window.initGame === "function") {
+                window.initGame(); 
+                console.log("🚀 Game Engine Started");
+            }
+
             // --- CHECK REFERRAL VERIFICATION ---
             if (userData.referralStatus === 'pending' && userData.joined_via) {
                 console.log("⏳ Pending Referral Detected...");
@@ -70,6 +80,7 @@ async function loginUser(tgUser) {
                 
                 // Verify hone ke baad naya data fresh fetch karo
                 const newSnap = await getDoc(userRef);
+                window.currentUser = newSnap.data(); // Update Global State again
                 updateUIWithData(newSnap.data());
                 passDataToReferralPage(newSnap.data(), String(tgUser.id));
             } else {
@@ -88,11 +99,20 @@ async function loginUser(tgUser) {
                 balance: 0,
                 referralCount: 0,
                 totalEarnings: 0,
+                energy: 1000, // Default Energy
                 referralStatus: 'none',
                 joinedAt: serverTimestamp()
             };
             
             await setDoc(userRef, newUser);
+            
+            // 🔥 SET GLOBAL STATE & START GAME ENGINE
+            window.currentUser = newUser;
+            if (typeof window.initGame === "function") {
+                window.initGame(); 
+                console.log("🚀 Game Engine Started (New User)");
+            }
+
             updateUIWithData(newUser);
             passDataToReferralPage(newUser, String(tgUser.id));
         }
@@ -141,9 +161,9 @@ async function verifyReferral(userId, referrerId, userName) {
 function updateUIWithData(data) {
     // Balance Update
     if(document.getElementById('home-balance-display')) 
-        document.getElementById('home-balance-display').innerText = data.balance;
+        document.getElementById('home-balance-display').innerText = Math.floor(data.balance);
     if(document.getElementById('header-coin-balance')) 
-        document.getElementById('header-coin-balance').innerText = data.balance;
+        document.getElementById('header-coin-balance').innerText = Math.floor(data.balance);
 }
 
 async function passDataToReferralPage(userData, userId) {
@@ -168,7 +188,24 @@ async function passDataToReferralPage(userData, userId) {
     }, 500);
 }
 
-// --- 6. GLOBAL NAVIGATION SYSTEM ---
+// --- 6. GAME & DATA SAVING HELPER (Required for games.js) ---
+window.saveUserData = async function(uid, dataToUpdate) {
+    if(!uid) return;
+    try {
+        const userRef = doc(db, "users", uid);
+        await updateDoc(userRef, dataToUpdate);
+        
+        // Update Local State Global
+        if(window.currentUser) {
+            Object.assign(window.currentUser, dataToUpdate);
+        }
+        // console.log("💾 Progress Saved to Firebase");
+    } catch(e) {
+        console.error("Save Error:", e);
+    }
+};
+
+// --- 7. GLOBAL NAVIGATION SYSTEM ---
 window.navigateTo = function(sectionId) {
     // Hide All Sections
     document.querySelectorAll('.page-section').forEach(sec => {
@@ -220,7 +257,7 @@ window.openInternalPage = function(pageId) {
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 }
 
-// --- 7. LOGOUT FUNCTION (The Fix) ---
+// --- 8. LOGOUT FUNCTION (The Fix) ---
 window.handleLogout = function() {
     // 1. Force Close Menu First (Important Fix)
     if(window.toggleProfileMenu) {
