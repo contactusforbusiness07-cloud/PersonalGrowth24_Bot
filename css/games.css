@@ -1,103 +1,102 @@
-/* --- TAP TO EARN GAME STYLING --- */
+/* Game Header */
+.game-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
 
-/* 1. Layout */
-#games {
-    background: radial-gradient(circle at center, #1a237e 0%, #000000 100%);
-    padding: 10px;
-    text-align: center;
+.big-gold-text {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    font-family: 'Segoe UI', sans-serif; /* Use your main font */
+}
+
+/* The Coin Arena */
+.tap-arena {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+    perspective: 1000px; /* For 3D tilt effect */
 }
 
-/* 2. Ad Banners */
-.ad-banner-small, .ad-banner-medium {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    padding: 5px;
-    display: flex; justify-content: center; align-items: center;
-    width: 100%;
-}
-
-/* 3. Stats Bar */
-.clicker-stats-container {
-    display: flex; justify-content: space-between;
-    margin: 15px 0;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 10px; border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.stat-item { display: flex; flex-direction: column; }
-.stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
-.stat-val { font-size: 14px; font-weight: bold; font-family: 'Orbitron'; }
-.text-green { color: #00ff88; }
-.text-blue { color: #00f2fe; }
-.text-gold { color: #ffd700; }
-
-/* 4. The Big Coin (Clicker) */
-.clicker-arena {
-    flex: 1;
-    display: flex; justify-content: center; align-items: center;
+.coin-container {
     position: relative;
-    margin: 20px 0;
-}
-
-.clickable-coin {
-    width: 240px; height: 240px;
-    border-radius: 50%;
+    width: 280px;
+    height: 280px;
     cursor: pointer;
-    transition: transform 0.1s;
-    z-index: 10;
-    position: relative;
-    border: 5px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+    border-radius: 50%;
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Soft glow behind the coin */
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.15); 
 }
-.clickable-coin img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-/* Click Animation */
-.clickable-coin:active { transform: scale(0.95); }
-
-/* Glow Effect Behind Coin */
-.coin-glow-effect {
-    position: absolute; width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
-    z-index: 1;
-    animation: pulseGlow 3s infinite ease-in-out;
-}
-@keyframes pulseGlow { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
-
-/* 5. Energy Bar */
-.energy-container {
-    width: 100%; max-width: 320px; margin: 0 auto 15px auto;
-}
-.energy-info {
-    display: flex; justify-content: space-between;
-    font-size: 12px; color: #fff; margin-bottom: 5px; font-weight: bold;
-}
-.text-yellow { color: #ffcc00; }
-
-.progress-bar-bg {
-    width: 100%; height: 12px;
-    background: #333; border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #444;
-}
-.progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ffcc00, #ff8800);
+.main-coin {
     width: 100%;
-    transition: width 0.3s ease;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 215, 0, 0.3);
+    /* Important: Prevent dragging the image on mobile */
+    user-select: none; 
+    -webkit-user-drag: none;
+    pointer-events: none; /* Events captured by container */
 }
 
-/* 6. Floating Numbers Animation */
-.floating-text {
+/* Interaction Effects */
+.coin-container:active {
+    transform: scale(0.95); /* Satisfying shrink on tap */
+}
+
+/* Floating Numbers (+1) */
+.float-text {
     position: absolute;
-    color: #fff; font-size: 24px; font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
     pointer-events: none;
     animation: floatUp 1s ease-out forwards;
-    z-index: 20;
-    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    z-index: 10;
 }
+
 @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+}
+
+/* Energy Bar */
+.energy-container {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.energy-info {
+    display: flex;
+    justify-content: space-between;
+    color: #ccc;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.energy-bar-bg {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    box-shadow: 0 0 10px #FFD700;
+    transition: width 0.2s ease-out;
 }
 
