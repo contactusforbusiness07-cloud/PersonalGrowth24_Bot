@@ -1,193 +1,162 @@
 /* =========================================
-   HI-TECH GAME ARENA THEME (FIXED SCREEN VERSION)
+   LOCKED HI-TECH GAME ARENA
    ========================================= */
 
-/* 1. Container to FIX the screen and prevent scrolling */
-#games.full-height-fixed {
-    height: calc(100vh - 65px); /* Adjust 65px based on your bottom nav height */
-    overflow: hidden !important; /* STRICLY NO SCROLLING */
+/* 1. LOCK SCREEN (No Scroll) */
+body, html {
+    overflow: hidden; /* Page scroll band */
+    height: 100%;
+    width: 100%;
+    position: fixed; /* Screen ko hilne se rokega */
+    touch-action: none; /* Dragging disable */
+}
+
+#game-section {
+    height: 100vh; /* Pura screen cover karega */
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Start stacking from top */
-    padding-top: 10px;
-    padding-bottom: 10px;
     background: radial-gradient(circle at center, #1a1f35 0%, #020617 80%);
-    user-select: none;
-    -webkit-user-select: none;
-    position: relative; /* Ensure it stays within main-content */
+    padding-bottom: 80px; /* Bottom Nav ke liye jagah */
+    overflow: hidden; /* Internal scroll bhi band */
+    position: relative;
 }
 
-/* Prevent any pull-to-refresh or bounce effects */
-body, html {
-    overscroll-behavior: none;
-    touch-action: none;
-    overflow: hidden; /* Global lock for game page */
-}
-
-/* =========================================
-   NEW: Native Banner Ad Styles
-   ========================================= */
-.native-ad-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 5px;
-    z-index: 100;
-}
-
+/* 2. NATIVE AD SPACE (Above Rank) */
 .native-ad-placeholder {
-    width: 92%; /* Fits nicely */
-    height: 60px; /* Standard native ad height */
-    background: rgba(255, 255, 255, 0.03); /* Very subtle glass */
-    border: 1px solid rgba(255, 215, 0, 0.1); /* Gold hint border */
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
+    width: 90%;
+    height: 50px; /* Ad height fix */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    margin-top: 15px; /* Top se thoda niche */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    color: #475569; /* Subtle text color so it's not distracting */
-    font-size: 0.9rem;
-    /* In reality, your ad network script will replace the content of this div */
+    color: #64748b;
+    font-size: 0.75rem;
+    backdrop-filter: blur(5px);
 }
 
-
-/* =========================================
-   Existing Styles Modified for Fixed Layout
-   ========================================= */
-
-/* Header Stats (Bronze Rank) */
-.game-header-fixed {
+/* 3. HEADER (Rank & Balance) */
+.game-header {
     width: 100%;
     display: flex;
-    justify-content: flex-start; /* Align left */
-    padding: 5px 25px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px;
     margin-bottom: 5px;
+    z-index: 10;
 }
 
 .user-rank-badge {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 6px 15px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #cbd5e1;
     display: flex;
     align-items: center;
     gap: 8px;
-    backdrop-filter: blur(5px);
 }
 
 .big-gold-text {
-    font-size: 3rem; /* Slightly bigger for focus */
+    font-size: 2.5rem;
     font-weight: 800;
     color: #FFD700;
-    text-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
     font-family: 'Orbitron', sans-serif;
+    margin: 5px 0;
 }
 
-/* The Arena (Fixed Size for new Image) */
-.tap-arena-fixed {
-    position: relative;
+/* 4. THE COIN (Circle Crop Fix) */
+.tap-arena {
+    flex-grow: 1; /* Bachi hui jagah lega */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-grow: 1; /* Takes available vertical space */
     width: 100%;
-    max-height: 350px; /* Limit height on big screens */
+    position: relative;
     perspective: 1000px;
-    touch-action: manipulation;
-    margin-bottom: 20px;
 }
 
-/* Outer Glow Ring */
-.coin-glow-ring {
-    position: absolute;
+.coin-container {
     width: 260px;
     height: 260px;
-    border-radius: 50%;
-    background: transparent;
-    border: 2px dashed rgba(255, 215, 0, 0.15);
-    animation: spinSlow 25s linear infinite;
-    pointer-events: none;
-}
-
-.coin-container-fixed {
+    border-radius: 50%; /* Perfect Circle */
     position: relative;
-    width: 240px; /* Fixed size for the coin */
-    height: 240px;
+    z-index: 5;
     cursor: pointer;
-    border-radius: 50%;
-    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 0 60px rgba(255, 215, 0, 0.2); 
-    z-index: 10;
-    /* Ensure the container is a perfect circle for the image */
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.1);
+    transition: transform 0.1s;
+    /* Image ko circle ke andar rakhega */
     overflow: hidden; 
-    border: 4px solid rgba(255, 215, 0, 0.3);
+    border: 4px solid rgba(255, 215, 0, 0.2);
 }
 
-/* NEW COIN IMAGE STYLE */
-.main-coin-new {
+.main-coin {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image fills the circle perfectly */
-    border-radius: 50%;
+    object-fit: cover; /* Image ko stretch hone se bachayega */
     pointer-events: none;
-    display: block; /* Removes tiny bottom space */
+    display: block;
 }
 
-/* Tap Animation */
-.coin-container-fixed:active {
-    transform: scale(0.94);
-}
-
-@keyframes spinSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Energy Panel (Fixed near bottom) */
-.energy-control-panel-fixed {
-    width: 92%;
-    background: rgba(15, 23, 42, 0.6); /* More transparent */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 15px 20px;
-    margin-bottom: 20px; /* Space from bottom nav */
+/* 5. ENERGY PANEL (Bottom Fixed) */
+.energy-control-panel {
+    width: 90%;
+    background: rgba(15, 23, 42, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    padding-bottom: 30px;
     backdrop-filter: blur(10px);
+    z-index: 20;
+    margin-bottom: 60px; /* Nav bar se upar */
 }
 
 .energy-info {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 0.9rem;
     color: #94a3b8;
-    font-weight: 600;
+    font-size: 0.9rem;
 }
 
 .energy-bar-bg {
     width: 100%;
-    height: 12px; /* Slightly sleeker */
-    background: rgba(0, 0, 0, 0.4);
+    height: 12px;
+    background: rgba(0,0,0,0.6);
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .energy-fill {
     height: 100%;
-    background: linear-gradient(90deg, #FFD700, #f59e0b);
+    background: linear-gradient(90deg, #FFD700, #FFA500);
     box-shadow: 0 0 10px #FFD700;
-    width: 100%;
-    transition: width 0.3s ease;
-    border-radius: 10px;
+    transition: width 0.2s ease;
 }
 
-/* Floating Text (Tap Effect) */
+.btn-boost {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* Floating Numbers */
 .float-text {
     position: absolute;
     font-size: 2.5rem;
@@ -195,17 +164,12 @@ body, html {
     color: #fff;
     pointer-events: none;
     animation: floatUp 0.8s ease-out forwards;
-    z-index: 9999;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-    font-family: 'Orbitron', sans-serif;
+    z-index: 100;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-    100% { opacity: 0; transform: translateY(-150px) scale(1.2) rotate(10deg); }
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-150px) scale(1.2); }
 }
-
-/* Utility classes */
-.text-gold { color: #FFD700; }
-.font-orbitron { font-family: 'Orbitron', sans-serif; }
 
