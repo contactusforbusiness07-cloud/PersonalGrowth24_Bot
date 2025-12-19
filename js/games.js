@@ -1,6 +1,9 @@
 /* =========================================
-   CORE GAMEPLAY & REFILL LOGIC
+   PRO GAMEPLAY + ANTI-CHEAT + ADSTERRA
    ========================================= */
+
+// 🔥 UPDATE THIS WITH YOUR ADSTERRA DIRECT LINK
+const ADSTERRA_DIRECT_LINK = "https://www.google.com"; // Replace with your actual Direct Link (e.g., https://bit.ly/...)
 
 let energy = 1000;
 const MAX_ENERGY = 1000;
@@ -13,11 +16,11 @@ const MIN_TAPS_TO_SYNC = 50;
 const MAX_FREE_REFILLS = 3;
 const MAX_AD_REFILLS = 15;
 
-// State Variables
+// Anti-Cheat Variables
 let tapTimes = [];
 let isBanned = false;
+let warningCount = 0;
 let unsavedTaps = 0;
-let lastSyncTime = Date.now();
 
 // DOM Elements
 const balanceEl = document.getElementById('display-balance');
@@ -29,12 +32,11 @@ const refillLabel = document.getElementById('refill-label');
 
 // 1. Initialization
 function initGame() {
+    checkDailyReset();
+    
     // Load Local Data
     const localBalance = localStorage.getItem('local_balance');
     const localEnergy = localStorage.getItem('local_energy');
-    
-    // Load Refill Data (Reset if new day)
-    checkDailyReset();
 
     if (localBalance && currentUser) {
         if(parseInt(localBalance) > currentUser.balance) currentUser.balance = parseInt(localBalance);
@@ -49,19 +51,17 @@ function initGame() {
     setInterval(regenEnergy, 1000);
     setInterval(saveProgress, SYNC_INTERVAL);
 
-    // Visibility Save
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === 'hidden') saveProgress(true);
     });
 }
 
-// 2. Refill Logic (3 Free + 15 Ads)
+// 2. Refill Logic (Adsterra Integration)
 function checkDailyReset() {
     const lastDate = localStorage.getItem('refill_date');
     const today = new Date().toDateString();
 
     if (lastDate !== today) {
-        // New Day! Reset Counts
         localStorage.setItem('refill_date', today);
         localStorage.setItem('free_refills_used', 0);
         localStorage.setItem('ad_refills_used', 0);
@@ -74,29 +74,42 @@ window.handleRefill = function() {
     let adUsed = parseInt(localStorage.getItem('ad_refills_used') || 0);
 
     if (freeUsed < MAX_FREE_REFILLS) {
-        // Use Free Refill
-        energy = MAX_ENERGY;
-        localStorage.setItem('free_refills_used', freeUsed + 1);
-        showWarning("⚡ Energy Refilled (Free)!");
+        // Free Boost
+        performRefill('free', freeUsed);
     } 
     else if (adUsed < MAX_AD_REFILLS) {
-        // Use Ad Refill
-        // Yahan Adsterra/Google Ad show karne ka code aayega.
-        // Abhi ke liye direct refill kar rahe hain simulation ke liye.
-        console.log("Show Ad Here..."); 
-        
-        // Ad Success hone ke baad:
-        energy = MAX_ENERGY;
-        localStorage.setItem('ad_refills_used', adUsed + 1);
-        showWarning("⚡ Energy Refilled (Ad Watched)!");
+        // 💰 ADSTERRA DIRECT LINK LOGIC
+        if(ADSTERRA_DIRECT_LINK) {
+            window.open(ADSTERRA_DIRECT_LINK, '_blank'); // Open Ad
+            
+            // Fake Verify (Give reward after 5 seconds)
+            refillBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying Ad...';
+            setTimeout(() => {
+                performRefill('ad', adUsed);
+            }, 5000); // 5 sec delay to simulate watching
+        } else {
+            showWarning("Ad Link not configured!");
+        }
     } 
     else {
         showWarning("🚫 Daily limit reached! Come back tomorrow.");
     }
+}
 
+function performRefill(type, currentCount) {
+    energy = MAX_ENERGY;
     updateUI();
+    
+    if(type === 'free') {
+        localStorage.setItem('free_refills_used', currentCount + 1);
+        showToast("⚡ Full Energy Restored (Free)");
+    } else {
+        localStorage.setItem('ad_refills_used', currentCount + 1);
+        showToast("💰 Energy Restored (Ad Bonus)");
+    }
+    
     updateRefillUI();
-    saveProgress(true); // Save usage to DB
+    saveProgress(true);
 }
 
 function updateRefillUI() {
@@ -108,20 +121,20 @@ function updateRefillUI() {
     if (freeUsed < MAX_FREE_REFILLS) {
         refillLabel.innerText = `Free Boost (${MAX_FREE_REFILLS - freeUsed} Left)`;
         refillBtn.classList.remove('disabled');
+        refillBtn.style.background = "linear-gradient(135deg, #3b82f6, #2563eb)";
     } 
     else if (adUsed < MAX_AD_REFILLS) {
-        refillLabel.innerText = `Watch Ad (${MAX_AD_REFILLS - adUsed} Left)`;
+        refillLabel.innerText = `Watch Ad to Refill (${MAX_AD_REFILLS - adUsed} Left)`;
         refillBtn.classList.remove('disabled');
-        // Change button color for Ad
-        refillBtn.style.background = "linear-gradient(135deg, #a855f7, #9333ea)";
+        refillBtn.style.background = "linear-gradient(135deg, #a855f7, #9333ea)"; // Purple for Ads
     } 
     else {
-        refillLabel.innerText = "Limit Reached";
+        refillLabel.innerText = "Daily Limit Reached";
         refillBtn.classList.add('disabled');
     }
 }
 
-// 3. The Tap Event
+// 3. The Tap Event (With Anti-Cheat)
 if (coinBtn) {
     coinBtn.addEventListener('pointerdown', handleTap); 
 }
@@ -129,22 +142,31 @@ if (coinBtn) {
 function handleTap(e) {
     if (isBanned) return showWarning("Account Restricted.");
     if (energy < TAP_VALUE) {
-        // Haptic Error
         if (window.Telegram?.WebApp?.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
         }
         return; 
     }
 
-    // Security & Logic
+    // 🛡️ ANTI-CHEAT LOGIC 🛡️
     const now = Date.now();
     tapTimes.push(now);
-    if (tapTimes.length > 10) tapTimes.shift();
-    if (tapTimes.length >= 10 && (now - tapTimes[0] < 400)) {
-        detectBot("Speed Hacking");
-        return;
+    
+    // Clean old taps (> 1 sec ago)
+    tapTimes = tapTimes.filter(t => now - t < 1000);
+
+    // Limit: 15 Taps per second (Human Limit ~8-10)
+    if (tapTimes.length > 15) {
+        warningCount++;
+        if(warningCount > 3) {
+            detectBot("CPS Limit Exceeded");
+            return;
+        }
+        showWarning("⚠️ Too Fast! Slow down.");
+        return; // Skip this tap
     }
 
+    // Logic
     energy -= TAP_VALUE;
     if (!currentUser.balance) currentUser.balance = 0;
     currentUser.balance += TAP_VALUE;
@@ -156,11 +178,11 @@ function handleTap(e) {
     updateUI();
     spawnFloatingText(e.clientX, e.clientY);
     
-    // Tilt
+    // Tilt Effect
     const rect = coinBtn.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    coinBtn.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg) scale(0.95)`;
+    coinBtn.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg) scale(0.96)`;
     setTimeout(() => {
         coinBtn.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
     }, 100);
@@ -180,7 +202,7 @@ function spawnFloatingText(x, y) {
     floatEl.style.top = `${y}px`;
     const layer = document.getElementById('click-effects-layer');
     if(layer) layer.appendChild(floatEl);
-    setTimeout(() => floatEl.remove(), 1000);
+    setTimeout(() => floatEl.remove(), 600);
 }
 
 function updateUI() {
@@ -203,23 +225,26 @@ function regenEnergy() {
     }
 }
 
-// 5. Saving
+// 5. Saving & Warnings
 function detectBot(reason) {
     isBanned = true;
-    showWarning("⚠️ Bot detected. Stop.");
+    showWarning("🚫 Cheat Detected! Account Flagged.");
+    // Optional: Send to Firebase
 }
 
 function showWarning(msg) {
-    if(window.Telegram?.WebApp?.showPopup) {
-        window.Telegram.WebApp.showPopup({ title: 'Game Info', message: msg });
-    } else {
-        // Fallback custom toast instead of ugly alert
-        const toast = document.createElement('div');
-        toast.style.cssText = "position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:#fff; padding:10px 20px; border-radius:20px; z-index:10000; font-size:12px;";
-        toast.innerText = msg;
-        document.body.appendChild(toast);
-        setTimeout(()=>toast.remove(), 2000);
-    }
+    // Custom Toast
+    showToast(msg);
+}
+
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.style.cssText = "position:fixed; top:100px; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.9); color:#fff; padding:10px 20px; border-radius:12px; z-index:10000; font-size:14px; font-weight:bold; box-shadow: 0 5px 15px rgba(0,0,0,0.5);";
+    if(msg.includes("Restored")) toast.style.background = "rgba(0,200,0,0.9)"; // Green for success
+    
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(), 2500);
 }
 
 async function saveProgress(force = false) {
@@ -234,9 +259,7 @@ async function saveProgress(force = false) {
                 lastActive: new Date()
             });
             unsavedTaps = 0; 
-            lastSyncTime = Date.now();
         }
     } catch (e) { console.error("Save failed", e); }
 }
-
 
