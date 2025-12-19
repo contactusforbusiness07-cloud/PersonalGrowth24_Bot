@@ -3,7 +3,7 @@
 <head>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FinGamePro</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="css/pro-info.css"> 
 
     <style>
-        /* 🔥 FORCE HIDE FIX: Ye zaroori hai back button issue ke liye */
+        /* 🔥 FORCE HIDE FIX */
         .hidden {
             display: none !important;
             visibility: hidden !important;
@@ -674,60 +674,48 @@
 
 
             <section id="games" class="page-section hidden">
+                <div class="native-ad-placeholder">
+                    <span><i class="fa-solid fa-ad"></i> Sponsored Ad Space</span>
+                </div>
+
                 <div class="game-header">
                     <div class="user-rank-badge">
                         <span class="rank-icon">🏆</span>
                         <span id="rank-name">Bronze</span>
                     </div>
                     <div class="live-balance">
-                        <span class="coin-icon">💰</span>
-                        <span id="display-balance" class="big-gold-text">0</span>
+                        <i class="fa-solid fa-wallet text-gold"></i>
                     </div>
+                </div>
+                
+                <div style="text-align: center; z-index: 10;">
+                    <span id="display-balance" class="big-gold-text">0</span>
                 </div>
             
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
                     
+                    <div class="coin-glow-ring" style="position: absolute; width: 280px; height: 280px; border: 1px dashed rgba(255,215,0,0.2); border-radius: 50%; animation: spinSlow 10s linear infinite;"></div>
+            
                     <div class="coin-container">
-                        <div class="coin-glow"></div>
-                        <img src="assets/coin_main.jpg" alt="Tap Coin" id="tap-coin" class="main-coin">
+                        <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
                     </div>
                 </div>
             
-                <div class="energy-container">
+                <div class="energy-control-panel">
                     <div class="energy-info">
-                        <span class="energy-icon">⚡</span>
+                        <span><i class="fa-solid fa-bolt text-gold"></i> Energy</span>
                         <span id="energy-text">1000 / 1000</span>
                     </div>
                     <div class="energy-bar-bg">
                         <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
                     </div>
+                    
+                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
+                        <i class="fa-solid fa-rocket"></i> 
+                        <span id="refill-label">Full Tank (3 Left)</span>
+                    </button>
                 </div>
-
-                <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-                    <div class="section-label"><i class="fa-solid fa-fire text-orange"></i> More Games</div>
-                    <div class="trending-scroll" data-aos="fade-left">
-                        <div class="game-card-large" onclick="launchGame('subway', 500)">
-                            <div class="trending-badge">#1 HOT</div>
-                            <img src="https://img.gamedistribution.com/rvvASMiM/512x384.jpeg" alt="Subway Surfers" class="game-thumb">
-                            <div class="game-info-overlay"><h3>Subway Surfers</h3><span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span></div>
-                        </div>
-                        <div class="game-card-large" onclick="launchGame('temple', 500)">
-                            <div class="trending-badge viral">VIRAL</div>
-                            <img src="https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api" alt="Temple Run" class="game-thumb">
-                            <div class="game-info-overlay"><h3>Temple Run 2</h3><span class="reward-pill"><i class="fa-solid fa-coins"></i> +500</span></div>
-                        </div>
-                    </div>
-
-                    <div class="section-label mt-4"><i class="fa-solid fa-layer-group text-blue"></i> Quick Play</div>
-                    <div class="games-grid" data-aos="fade-up">
-                        <div class="game-card-small" onclick="launchGame('stickman', 100)"><span class="badge-tag">FUN</span><img src="https://img.gamedistribution.com/5d2d480922834b6e9273574221c54848/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Stickman Hook</h4><span class="coin-text">+100</span></div></div>
-                        <div class="game-card-small" onclick="launchGame('drive', 100)"><span class="badge-tag">CARS</span><img src="https://img.gamedistribution.com/6817/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Drive Mad</h4><span class="coin-text">+100</span></div></div>
-                        <div class="game-card-small" onclick="launchGame('moto', 100)"><span class="badge-tag">BIKE</span><img src="https://img.gamedistribution.com/0c2b2913508a467f814d48512406606a/512x384.jpeg" class="thumb-small"><div class="small-info"><h4>Moto X3M</h4><span class="coin-text">+100</span></div></div>
-                        <div class="game-card-small" onclick="launchGame('ludo', 100)"><span class="badge-tag">CLASSIC</span><img src="https://img.freepik.com/free-vector/ludo-game-background-with-dice_23-2147903848.jpg" class="thumb-small"><div class="small-info"><h4>Ludo Hero</h4><span class="coin-text">+100</span></div></div>
-                    </div>
-                </div>
-                <div class="trust-footer">Playing supports our servers. Ads may appear.</div>
             </section>
 
             <div id="game-modal" class="game-modal hidden">
