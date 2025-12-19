@@ -639,67 +639,38 @@
             </section>
 
 
-            <section id="tasks" class="page-section hidden">
-                <div class="section-header"><h2>Task Center</h2><p>Complete missions to earn massive coins</p></div>
+            <section id="games" class="page-section hidden full-height-fixed">
                 
-                <div class="task-category-title"><i class="fa-solid fa-play-circle text-red"></i> Watch & Earn</div>
-                <div class="video-task-card" data-aos="fade-up">
-                    <div class="video-icon"><i class="fa-brands fa-youtube"></i></div>
-                    <div class="video-info">
-                        <h4>Watch Premium Ad</h4><p>Watch for 30 seconds</p>
-                        <div class="progress-bar-container hidden" id="ad-progress-container"><div class="progress-bar" id="ad-progress-bar"></div></div>
-                    </div>
-                    <button class="btn-task-action" onclick="startWatchTask(this)"><i class="fa-solid fa-coins"></i> +500</button>
-                </div>
-
-                <div class="task-category-title mt-4"><i class="fa-brands fa-telegram text-blue"></i> Premium Channels <span class="badge-new">High Pay</span></div>
-                <div class="tasks-list" id="telegram-tasks-list"><div class="loading-spinner">Loading Tasks...</div></div>
-
-                <div class="task-category-title mt-4"><i class="fa-solid fa-bolt text-gold"></i> Quick Actions</div>
-                <div class="tasks-list">
-                    <div class="task-card">
-                        <div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="openInternalPage('page-refer')">Start</button>
-                    </div>
-                    <div class="task-card">
-                        <div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                        <div class="task-info"><h4>Use CV Builder</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="navigateTo('home')">Go</button>
+                <div class="native-ad-container">
+                    <div class="native-ad-placeholder">
+                        <i class="fa-solid fa-rectangle-ad"></i>
+                        <span>Sponsored Ad Space</span>
                     </div>
                 </div>
 
-                <div class="trust-footer"><i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.</div>
-            </section>
-
-
-            <section id="games" class="page-section hidden">
-                <div class="game-header">
+                <div class="game-header-fixed">
                     <div class="user-rank-badge">
                         <span class="rank-icon">🏆</span>
                         <span id="rank-name">Bronze</span>
                     </div>
-                    <div class="live-balance">
-                        <i class="fa-solid fa-bolt text-gold" style="font-size: 1.5rem;"></i> 
-                        </div>
                 </div>
                 
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <span class="text-gray-400" style="font-size: 0.9rem;">Balance</span><br>
-                    <span id="display-balance" class="big-gold-text">0</span>
+                <div style="text-align: center; margin-bottom: 20px; margin-top: 5px;">
+                    <span class="text-gray-400" style="font-size: 0.9rem; letter-spacing: 1px;">CURRENT BALANCE</span><br>
+                    <span id="display-balance" class="big-gold-text font-orbitron">0</span>
                 </div>
-            
-                <div class="tap-arena">
+
+                <div class="tap-arena-fixed">
                     <div id="click-effects-layer"></div>
                     
                     <div class="coin-glow-ring"></div>
-            
-                    <div class="coin-container">
-                        <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
+
+                    <div class="coin-container-fixed">
+                        <img src="assets/gold_coin_new.png" alt="Tap Coin" id="tap-coin" class="main-coin-new">
                     </div>
                 </div>
-            
-                <div class="energy-control-panel">
+
+                <div class="energy-control-panel-fixed">
                     <div class="energy-info">
                         <span><i class="fa-solid fa-bolt text-gold"></i> Energy</span>
                         <span id="energy-text">1000 / 1000</span>
@@ -707,53 +678,23 @@
                     <div class="energy-bar-bg">
                         <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
                     </div>
-                    
-                    <div class="boost-trigger">
-                        <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
-                            <i class="fa-solid fa-rocket"></i> 
-                            <span id="refill-label">Full Tank (3 Left)</span>
-                        </button>
-                    </div>
                 </div>
-            
-                <div class="clean-games-section">
-                    <div class="section-label">
-                        <i class="fa-solid fa-fire text-orange"></i> Trending Games
-                    </div>
-                    
-                    <div class="horizontal-scroll-snap">
-                        <div class="glass-game-card" onclick="launchGame('subway', 500)">
-                            <img src="https://img.gamedistribution.com/rvvASMiM/512x384.jpeg" alt="Subway">
-                            <div class="game-card-overlay">
-                                <h4>Subway Surf</h4>
-                                <div class="coin-pill">+500 Coins</div>
-                            </div>
-                        </div>
-                        <div class="glass-game-card" onclick="launchGame('temple', 500)">
-                            <img src="https://tse3.mm.bing.net/th?id=OIP.Fk7mJ8vD6P1v7y_X_q_u_AHaHa&pid=Api" alt="Temple">
-                            <div class="game-card-overlay">
-                                <h4>Temple Run</h4>
-                                <div class="coin-pill">+500 Coins</div>
-                            </div>
-                        </div>
-                         <div class="glass-game-card" onclick="launchGame('racing', 200)">
-                            <img src="https://img.gamedistribution.com/6817/512x384.jpeg" alt="Racing">
-                            <div class="game-card-overlay">
-                                <h4>Mad Racing</h4>
-                                <div class="coin-pill">+200 Coins</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="height: 100px;"></div> </section>
+            </section>
 
-            <div id="game-modal" class="game-modal hidden">
-                <div class="gm-header">
-                    <div class="gm-timer"><i class="fa-solid fa-clock"></i> Play for <span id="game-timer">15</span>s to earn</div>
-                    <button class="gm-close" onclick="closeGame()"><i class="fa-solid fa-xmark"></i> Exit</button>
+
+            <div id="ad-verification-modal" class="modal-overlay hidden" style="z-index: 9000;">
+                <div class="modal-glass" style="text-align: center;">
+                    <div class="spinner-box" style="margin-bottom: 20px;">
+                        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 40px; color: #FFD700;"></i>
+                    </div>
+                    <h3 class="neon-text">Verifying Ad...</h3>
+                    <p style="color: #94a3b8; font-size: 14px; margin: 10px 0;">
+                        Please keep the ad open for <span id="ad-timer" style="color: #fff; font-weight: bold;">15</span> seconds to receive your reward.
+                    </p>
+                    <button id="btn-claim-ad-reward" class="btn-boost hidden" onclick="claimAdReward()" style="width: 100%; justify-content: center; margin-top: 15px;">
+                        <i class="fa-solid fa-check"></i> Claim Energy
+                    </button>
                 </div>
-                <div class="gm-iframe-container"><iframe id="game-frame" src="" frameborder="0"></iframe></div>
             </div>
 
 
@@ -922,5 +863,6 @@
     </script>
 </body>
 </html>
+
 
 
