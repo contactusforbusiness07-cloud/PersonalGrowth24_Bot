@@ -740,64 +740,54 @@
 
 
             <section id="wallet" class="page-section hidden">
-                
-                <div class="wallet-hero-reward">
-                    <div class="wh-title">Game Reward Wallet</div>
-                    <div class="wh-coin-display">
-                        <i class="fa-solid fa-coins"></i>
-                        <span id="wallet-coins-display">0</span>
+                <div class="wallet-meta-header">
+                    <div class="wm-title">
+                        <i class="fa-solid fa-vault text-cyan"></i> 
+                        <span>GAME REWARD WALLET</span>
                     </div>
-                    <p class="wh-subtext">Lifetime Valid • Non-Expiring</p>
-                </div>
-
-                <div id="rank-status-container">
-                    <div class="rank-status-card locked">
-                        <div class="rs-info">
-                            <h4>Current Rank: #<span id="user-rank-display">--</span></h4>
-                            <p>Top 10 players unlock cash withdrawals.</p>
-                        </div>
-                        <div class="rs-badge">Storage Mode</div>
+                    <div class="wm-network">
+                        <span class="pulse-dot"></span> In-App Network
                     </div>
                 </div>
-
-                <div id="withdrawal-view" class="hidden">
-                    <div class="withdraw-section">
-                        <div class="conversion-rule">
-                            <i class="fa-solid fa-lightbulb"></i> Rule: 100,000 Coins = ₹1.00
-                        </div>
-                        
-                        <div class="withdraw-input-group">
-                            <input type="number" id="withdraw-inr" placeholder="Enter Amount (₹)" oninput="calculateCoinCost(this.value)">
-                        </div>
-                        <div class="withdraw-hint">
-                            Cost: <span id="coin-cost-display" style="color: #fff; font-weight: bold;">0</span> Coins
-                        </div>
-
-                        <button class="btn-cashout" onclick="handleWithdraw()">
-                            Withdraw Cash
-                        </button>
+            
+                <div class="wallet-hero-meta">
+                    <div class="holo-glow"></div>
+                    <div class="balance-label">TOTAL ASSETS</div>
+                    <div class="balance-meta-row">
+                        <img src="assets/coin_main.jpg" class="coin-3d-icon">
+                        <span id="wallet-coins" class="glitch-number">0</span>
+                    </div>
+                    <div class="balance-sub-info">
+                        <span><i class="fa-solid fa-infinity"></i> Non-Expiring</span>
+                        <span class="divider">|</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> Safe Storage</span>
                     </div>
                 </div>
-
-                <div id="storage-view" class="hidden">
-                    <div class="future-rewards-card">
-                        <div class="fr-icon"><i class="fa-solid fa-gift"></i></div>
-                        <h3 class="fr-title">Upcoming Rewards</h3>
-                        <p class="fr-desc">
-                            Your coins are safe! Keep grinding to reach the Top 10 for cash outs, or save them for exclusive events, merchandise, and platform benefits coming soon.
-                        </p>
+            
+                <div class="rank-status-card" id="rank-card-container">
+                    </div>
+            
+                <div id="action-zone">
+                    </div>
+            
+                <div class="future-rewards-panel">
+                    <div class="fr-header">
+                        <i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY
+                    </div>
+                    <div class="fr-content">
+                        <p>Your coins are accumulating for future platform events.</p>
+                        <div class="tags-row">
+                            <span class="tag-meta">Loyalty Points</span>
+                            <span class="tag-meta">Special Events</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="history-section">
-                    <div class="section-header">
-                        <span>ACTIVITY LOG</span>
-                        <i class="fa-solid fa-history"></i>
-                    </div>
-                    <div id="wallet-history-list">
+            
+                <div class="meta-history">
+                    <div class="mh-header">ACTIVITY LOG <i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div id="wallet-history-list" class="mh-list">
                         </div>
                 </div>
-
             </section>
 
         </main> 
@@ -870,5 +860,4 @@
     </script>
 </body>
 </html>
-
 
