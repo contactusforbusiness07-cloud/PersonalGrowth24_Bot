@@ -1,84 +1,218 @@
-/* --- HERO CARD --- */
-.wallet-hero {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+/* =========================================
+   HI-TECH WALLET PRO (FINAL)
+   ========================================= */
+
+#wallet {
+    min-height: 100vh;
+    padding-bottom: 100px;
+    background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+    position: relative;
+}
+
+/* 🛡️ 1. SECURITY PIN OVERLAY */
+#wallet-lock-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(2, 6, 23, 0.98);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(20px);
+}
+
+.pin-dots {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.dot {
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    transition: background 0.2s;
+}
+
+.dot.filled { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.num-btn {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.num-btn:active { background: #3b82f6; }
+
+/* 2. HEADER & TOGGLES */
+.wallet-header-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+
+.balance-toggle {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 3. HERO CARD (Multi-Balance) */
+.wallet-hero-pro {
+    width: 92%;
+    margin: 0 auto;
+    background: linear-gradient(160deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+/* Glass Shine */
+.wallet-hero-pro::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.main-balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.balance-group h4 { margin: 0; color: #94a3b8; font-size: 0.8rem; letter-spacing: 1px; }
+.balance-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.currency-badge {
+    background: #22c55e;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    vertical-align: super;
+}
+
+/* Sub Balances */
+.sub-balances {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+}
+
+.sb-item { display: flex; flex-direction: column; }
+.sb-label { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; display:flex; align-items:center; gap:5px; }
+.sb-val { font-size: 1rem; color: #fff; font-weight: 600; font-family: 'Inter', sans-serif; }
+.text-gold { color: #fbbf24 !important; }
+.text-red { color: #ef4444 !important; }
+
+/* 4. WITHDRAW PROGRESS */
+.withdraw-progress-card {
+    width: 92%;
+    margin: 20px auto;
+    background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 20px; padding: 25px; text-align: center;
-    position: relative; overflow: hidden; margin-bottom: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-radius: 16px;
+    padding: 15px;
 }
-.wh-label { font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
-.wh-balance { font-size: 38px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.text-gold { color: var(--gold); }
-.wh-value { font-size: 14px; color: #64748b; margin-top: 5px; }
-.wh-deco-icon { position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(255,255,255,0.03); transform: rotate(15deg); }
 
-/* --- BALANCE BREAKDOWN --- */
-.balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-.bal-card {
-    background: var(--glass-bg); border-radius: 12px; padding: 10px; text-align: center;
-    border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+.wp-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1; margin-bottom: 8px; }
+.progress-track {
+    width: 100%; height: 8px; background: #334155; border-radius: 4px; overflow: hidden;
 }
-.bc-label { font-size: 10px; color: #94a3b8; margin-bottom: 4px; }
-.bc-val { font-size: 14px; font-weight: 700; color: #fff; }
-
-.bal-card.green { border-left: 3px solid var(--green); }
-.bal-card.gray { border-left: 3px solid #64748b; }
-.bal-card.blue { border-left: 3px solid #3b82f6; }
-
-/* --- WITHDRAW PANEL --- */
-.withdraw-panel {
-    background: #111827; border-radius: 20px; padding: 20px;
-    border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;
+.progress-fill {
+    height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px #3b82f6;
 }
-.withdraw-panel h3 { font-size: 16px; margin-bottom: 15px; color: #fff; }
 
-/* Method Selector */
-.method-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-.method-chip {
-    padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500;
-    background: #1e293b; color: #94a3b8; cursor: pointer; border: 1px solid transparent;
-    transition: all 0.2s;
+/* 5. CHARTS (CSS Only Bars) */
+.chart-section {
+    width: 92%; margin: 20px auto;
 }
-.method-chip.active { background: rgba(16, 185, 129, 0.1); color: var(--green); border-color: var(--green); }
+.chart-container {
+    display: flex; align-items: flex-end; justify-content: space-around;
+    height: 100px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.chart-bar-group {
+    display: flex; flex-direction: column; align-items: center; gap: 5px; width: 15%;
+}
+.chart-bar {
+    width: 100%;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 4px 4px 0 0;
+    transition: height 1s ease;
+    position: relative;
+}
+.chart-bar.highlight { background: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+.chart-label { font-size: 0.6rem; color: #64748b; }
 
-/* Input Group */
-.input-group {
-    background: #020617; border: 1px solid #334155; border-radius: 12px;
-    padding: 12px; display: flex; align-items: center; gap: 10px;
+/* 6. HISTORY TIMELINE */
+.timeline-filters {
+    display: flex; gap: 10px; width: 92%; margin: 0 auto 15px auto; overflow-x: auto;
 }
-.currency-symbol { font-size: 18px; color: #94a3b8; font-weight: 600; }
-.input-group input {
-    background: transparent; border: none; color: #fff; font-size: 16px; font-weight: 500;
-    width: 100%; outline: none;
+.tf-chip {
+    padding: 6px 14px; background: rgba(255,255,255,0.05); border-radius: 20px;
+    font-size: 0.75rem; color: #94a3b8; white-space: nowrap; border: 1px solid transparent;
 }
-.input-hint { font-size: 11px; color: #64748b; margin-top: 6px; text-align: right; }
+.tf-chip.active { background: #3b82f6; color: white; border-color: #60a5fa; }
 
-/* Action Button */
-.btn-withdraw {
-    background: #3b82f6; color: #fff; width: 100%; padding: 14px; border: none;
-    border-radius: 12px; font-weight: 600; font-size: 14px; margin-top: 15px;
-    cursor: pointer; transition: background 0.2s;
+.transaction-list {
+    width: 92%; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;
 }
-.btn-withdraw:hover { background: #2563eb; }
-
-/* --- HISTORY LIST --- */
-.history-section h3 { font-size: 15px; margin-bottom: 12px; color: #e2e8f0; }
-.hist-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+.tx-card {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(30, 41, 59, 0.4); padding: 12px; border-radius: 12px;
+    border-left: 3px solid transparent;
 }
-.hist-icon {
-    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    font-size: 14px; margin-right: 12px;
+.tx-card.credit { border-left-color: #22c55e; }
+.tx-card.debit { border-left-color: #ef4444; }
+.tx-card.pending { border-left-color: #fbbf24; }
+
+.tx-left { display: flex; gap: 12px; align-items: center; }
+.tx-icon {
+    width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05);
+    display: flex; justify-content: center; align-items: center; font-size: 0.9rem;
 }
-.hist-icon.in { background: rgba(16, 185, 129, 0.1); color: var(--green); }
-.hist-icon.out { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+.tx-details h4 { margin: 0; font-size: 0.9rem; color: #f1f5f9; }
+.tx-details span { font-size: 0.7rem; color: #64748b; }
+.tx-amount { font-family: 'Orbitron', sans-serif; font-weight: bold; }
 
-.hist-info h4 { font-size: 13px; margin-bottom: 2px; }
-.hist-info p { font-size: 11px; color: #64748b; }
-.hist-amount { font-size: 13px; font-weight: 600; }
-.hist-amount.positive { color: var(--green); }
-.hist-amount.negative { color: var(--red); }
+/* BLUR SENSITIVE DATA */
+.blur-balance { filter: blur(8px); transition: filter 0.3s; }
 
-/* --- FOOTER --- */
-.wallet-footer { text-align: center; font-size: 10px; color: #475569; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
