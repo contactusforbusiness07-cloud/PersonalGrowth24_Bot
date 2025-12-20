@@ -1,10 +1,10 @@
 /* =========================================
-   ULTRA COMPACT GAME ARENA (FIXED SCREEN)
+   PERFECT FIT ARENA (SPACED OUT)
    ========================================= */
 
-/* 1. LOCK SCREEN & BACKGROUND */
+/* 1. LOCK SCREEN */
 body, html {
-    overflow: hidden; /* Scroll bilkul band */
+    overflow: hidden;
     height: 100%;
     width: 100%;
     position: fixed;
@@ -13,58 +13,60 @@ body, html {
 }
 
 #games {
-    /* 100dvh mobile browser bars ko handle karta hai */
-    height: 100dvh; 
+    height: 100dvh; /* Mobile Browser Full Height */
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Space Between: Cheezon ko barabar failega taaki screen bhari lage */
-    justify-content: space-between; 
     background: radial-gradient(circle at 50% 30%, #1e293b 0%, #020617 80%);
-    padding-top: 10px;
-    padding-bottom: 90px; /* Bottom Nav ke liye jagah */
+    
+    /* 🔥 LAYOUT FIXES */
+    padding-top: 15px;      /* Upar se thoda saas lene ki jagah */
+    padding-bottom: 95px;   /* Bottom Nav se thoda upar */
+    gap: 15px;              /* Har cheez ke beech thoda gap */
     box-sizing: border-box;
 }
 
-/* 2. AD SPACE (Small) */
+/* 2. AD SPACE */
 .native-ad-placeholder {
     width: 90%;
-    height: 45px; /* Height kam ki */
-    min-height: 45px;
+    height: 50px;
+    min-height: 50px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     backdrop-filter: blur(5px);
+    flex-shrink: 0; /* Shrink nahi hoga */
 }
 
-/* 3. HEADER (Compact) */
+/* 3. HEADER */
 .game-header {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0;
-    margin-bottom: 5px;
+    flex-shrink: 0;
 }
 
 .user-rank-badge {
     background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
     border: 1px solid rgba(255, 215, 0, 0.4);
-    padding: 4px 20px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    padding: 6px 25px;
+    border-radius: 30px;
+    font-size: 0.9rem;
     color: #ffd700;
     font-weight: 700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
 }
 
-/* 4. BALANCE (Smaller Text) */
+/* 4. BALANCE */
 .balance-container {
     text-align: center;
     flex-shrink: 0;
@@ -72,54 +74,54 @@ body, html {
 
 .current-mining-label {
     color: #94a3b8;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 2px;
 }
 
 .big-gold-text {
-    font-size: 2.5rem; /* Font size kam kiya */
+    font-size: 3rem;
     font-weight: 800;
     color: #fff;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
     font-family: 'Orbitron', sans-serif;
     line-height: 1;
     margin: 0;
 }
 
-/* 5. THE ARENA (Coin Size Reduced for Fit) */
+/* 5. THE ARENA (Coin) */
 .tap-arena {
-    flex-grow: 1; 
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     position: relative;
-    max-height: 280px; /* Height limit lagayi */
+    /* Isse bada nahi hoga taaki overlap na ho */
+    height: 280px; 
+    flex-shrink: 0;
 }
 
-/* 🔥 ANIMATED RING (Tez Ghumega) */
+/* Glow Ring (Size same as before) */
 .coin-glow-ring {
     position: absolute;
-    width: 240px; /* Size chhota kiya */
-    height: 240px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
-    border: 2px dashed rgba(0, 220, 255, 0.4);
-    box-shadow: 0 0 30px rgba(0, 220, 255, 0.15);
-    animation: spinTech 8s linear infinite; /* Animation ON */
+    border: 2px dashed rgba(0, 220, 255, 0.3);
+    box-shadow: 0 0 40px rgba(0, 220, 255, 0.15);
+    animation: spinTech 10s linear infinite; 
     pointer-events: none;
-    will-change: transform;
 }
 
 .coin-container {
-    width: 210px; /* Coin size chhota kiya */
-    height: 210px;
+    width: 230px;
+    height: 230px;
     border-radius: 50%;
     position: relative;
     z-index: 10;
     cursor: pointer;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     transition: transform 0.05s;
     overflow: hidden;
     border: 4px solid rgba(255, 215, 0, 0.5);
@@ -137,32 +139,35 @@ body, html {
     border-color: #fff;
 }
 
-/* Animation Definition */
 @keyframes spinTech {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* 6. ENERGY PANEL (Compact) */
+/* 6. ENERGY PANEL (Pushed to Bottom) */
 .energy-control-panel {
     width: 92%;
     background: rgba(15, 23, 42, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 12px;
+    border-radius: 20px;
+    padding: 15px;
     backdrop-filter: blur(10px);
     z-index: 20;
     flex-shrink: 0;
     box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    
+    /* 🔥 MAGIC FIX: Ye panel ko sabse neeche dhakel dega */
+    margin-top: auto; 
 }
 
 .energy-info {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     color: #94a3b8;
     font-weight: 700;
     font-size: 0.75rem;
+    text-transform: uppercase;
 }
 
 .energy-bar-bg {
@@ -182,28 +187,28 @@ body, html {
 
 .btn-boost {
     width: 100%;
-    margin-top: 10px;
-    padding: 10px;
+    margin-top: 12px;
+    padding: 12px;
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
     cursor: pointer;
     text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
-/* Security Badge */
 .security-badge {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    font-size: 0.6rem;
+    margin-top: 10px;
+    font-size: 0.65rem;
     color: #64748b;
 }
 
@@ -212,17 +217,16 @@ body, html {
 /* Float Animation */
 .float-text {
     position: absolute;
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: 2.5rem;
+    font-weight: 900;
     color: #fff;
     pointer-events: none;
     animation: floatUp 0.6s ease-out forwards;
     z-index: 100;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.2); }
 }
-
