@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="css/tasks.css">
     <link rel="stylesheet" href="css/games.css">
     <link rel="stylesheet" href="css/wallet.css">
-
     <link rel="stylesheet" href="css/pro-core.css">
     <link rel="stylesheet" href="css/pro-profile.css">
     <link rel="stylesheet" href="css/pro-brand.css">
@@ -34,69 +33,74 @@
             pointer-events: none !important;
         }
 
-        /* Hamburger Button */
-        .menu-trigger {
-            position: relative !important;
-            z-index: 9999 !important; /* Super High Priority */
-            cursor: pointer !important;
-            pointer-events: auto !important; /* Force Click */
-        }
-
-        /* Menu Styling */
+        /* 🔥 CRITICAL MENU FIXES */
         #side-menu {
             position: fixed !important;
-            top: 0 !important;
-            right: 0 !important;
-            width: 280px !important;
-            height: 100vh !important;
-            background: #020617 !important; 
+            top: 0 !important; right: 0 !important;
+            width: 280px !important; height: 100vh !important;
+            background: #020617 !important;
             z-index: 2147483647 !important;
-            transform: translateX(100%) !important; 
+            transform: translateX(100%) !important; /* Default Closed */
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             box-shadow: -5px 0 25px rgba(0,0,0,0.9) !important;
-            display: block !important;
+            display: flex !important; flex-direction: column !important;
+        }
+        #side-menu.open { transform: translateX(0) !important; }
+        
+        .menu-overlay {
+            position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100vh !important;
+            background: rgba(0,0,0,0.8) !important; z-index: 2147483640 !important;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: all 0.3s ease; backdrop-filter: blur(4px);
+        }
+        .menu-overlay.visible { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+
+        /* Hamburger Button */
+        .menu-trigger {
+            position: relative !important; z-index: 9999 !important; cursor: pointer !important; pointer-events: auto !important;
         }
 
-        /* Open State */
-        #side-menu.open {
-            transform: translateX(0) !important;
-        }
-
-        /* Overlay Styling */
-        #menu-overlay {
-            position: fixed !important;
-            top: 0; 
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.8) !important;
-            z-index: 2147483640 !important;
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            visibility: hidden; /* Chupa hua */
-            transition: opacity 0.3s ease;
-            pointer-events: none; /* Click through when hidden */
-        }
-
-        /* Overlay Visible State */
-        #menu-overlay.visible {
-            opacity: 1 !important;
-            visibility: visible !important;
-            pointer-events: auto !important; /* Block clicks when visible */
-        }
-
-        /* --- ADDED FOR HI-TECH LOOK --- */
-        .neon-text-gold {
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
-        }
-        .glass-panel-tech {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(10px);
+        /* --- WALLET ENHANCEMENTS (Metaverse Look) --- */
+        .text-cyan { color: #06b6d4; text-shadow: 0 0 10px rgba(6, 182, 212, 0.6); }
+        .text-purple { color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
+        .pulse-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; margin-right: 5px; }
+        
+        .wallet-input-group {
+            background: rgba(15, 23, 42, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .wallet-input-field {
+            width: 100%; background: transparent; border: none;
+            color: white; font-size: 1.5rem; font-family: 'Orbitron', sans-serif;
+            outline: none; margin-top: 5px;
+        }
+        .conversion-rate-text { font-size: 0.7rem; color: #64748b; margin-top: 5px; }
+        
+        .btn-withdraw-action {
+            width: 100%; padding: 16px; margin-top: 15px;
+            border-radius: 12px; font-weight: 800; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; cursor: pointer; border: none;
+            transition: all 0.2s;
+        }
+        .btn-withdraw-action.active {
+            background: linear-gradient(90deg, #22c55e, #10b981); color: #020617;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+        .btn-withdraw-action.disabled {
+            background: #334155; color: #94a3b8; cursor: not-allowed;
+            border: 1px solid #475569;
+        }
+        
+        .neon-text-gold { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); }
+        .glass-panel-tech {
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
     </style>
-    </head>
+</head>
 
 <body>
 
@@ -139,6 +143,7 @@
             }
         })();
     </script>
+
     <div id="app-container">
         
         <header class="app-header glass-effect">
@@ -147,11 +152,11 @@
                 <span class="app-name">FinGamePro</span>
             </div>
             <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
-                <div class="coin-badge" onclick="navigateTo('wallet')">
+                <div class="coin-badge" onclick="window.updateWalletAndShow()">
                     <i class="fa-solid fa-coins coin-glow"></i>
                     <span id="header-coin-balance">0</span>
                 </div>
-                <div id="hamburger-btn" class="menu-trigger" onclick="toggleProfileMenu()">
+                <div id="hamburger-btn" class="menu-trigger" onclick="window.toggleMenu()">
                     <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
@@ -179,7 +184,6 @@
                             <i class="fa-solid fa-camera"></i>
                         </div>
                     </div>
-                    
                     <input type="file" id="file-upload" accept="image/*" hidden onchange="handleImageUpload(event)">
 
                     <div class="profile-info" style="text-align: center;">
@@ -207,7 +211,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div id="page-refer" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
@@ -238,14 +241,13 @@
                             <span id="my-referral-code">LOADING...</span>
                             <i class="fa-regular fa-copy"></i>
                         </div>
-
                         <div style="height: 15px;"></div>
                         <label>YOUR REFERRAL LINK</label>
                         <div class="code-box link-style" onclick="copyReferralCode()">
                             <span id="my-referral-link">Generating Link...</span>
                             <i class="fa-solid fa-share-nodes"></i>
                         </div>
-                        </div>
+                    </div>
 
                     <div class="refer-tabs">
                         <button class="tab-btn active" onclick="switchReferTab('milestones')">Milestones</button>
@@ -253,8 +255,7 @@
                     </div>
 
                     <div id="tab-milestones" class="tab-content active-tab">
-                        <div id="milestone-list" class="scrollable-list">
-                            </div>
+                        <div id="milestone-list" class="scrollable-list"></div>
                     </div>
 
                     <div id="tab-team" class="tab-content hidden">
@@ -262,12 +263,10 @@
                             <p style="color:#aaa; font-size:12px;">Earn 10% of your friends' income forever.</p>
                             <button class="btn-claim-all" onclick="claimAllCommissions()" style="margin-top:5px;">Claim All</button>
                         </div>
-                        <div id="team-list" class="scrollable-list">
-                            </div>
+                        <div id="team-list" class="scrollable-list"></div>
                     </div>
                 </div>
             </div>
-
 
             <div id="page-brand" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
@@ -291,18 +290,9 @@
                     </div>
 
                     <div class="stats-grid-premium">
-                        <div class="stat-box">
-                            <h3>50,000+</h3>
-                            <span>Active Users</span>
-                        </div>
-                        <div class="stat-box">
-                            <h3>1.2M+</h3>
-                            <span>Impressions</span>
-                        </div>
-                        <div class="stat-box">
-                            <h3>15%</h3>
-                            <span>Avg CTR</span>
-                        </div>
+                        <div class="stat-box"><h3>50,000+</h3><span>Active Users</span></div>
+                        <div class="stat-box"><h3>1.2M+</h3><span>Impressions</span></div>
+                        <div class="stat-box"><h3>15%</h3><span>Avg CTR</span></div>
                     </div>
 
                     <div class="value-prop-card">
@@ -313,33 +303,16 @@
                             <li>📊 <b>Transparent:</b> Real-time clicks data</li>
                         </ul>
                     </div>
-
                     <hr class="divider-premium">
 
                     <form id="brand-form" onsubmit="return false;">
-                        
                         <label class="form-label-premium">1. Choose Placement 📍</label>
                         <div class="promo-scroll-container">
-                            <div class="selection-card" onclick="selectOption('asset', 'In-App Banner', this)">
-                                <i class="fa-solid fa-pager text-purple"></i>
-                                <span>In-App Banner</span>
-                            </div>
-                            <div class="selection-card" onclick="selectOption('asset', 'Bot Broadcast', this)">
-                                <i class="fa-solid fa-bullhorn text-gold"></i>
-                                <span>Bot Broadcast</span>
-                            </div>
-                            <div class="selection-card" onclick="selectOption('asset', 'Task Integration', this)">
-                                <i class="fa-solid fa-list-check text-green"></i>
-                                <span>Task List</span>
-                            </div>
-                            <div class="selection-card" onclick="selectOption('asset', 'Telegram Post', this)">
-                                <i class="fa-brands fa-telegram text-blue"></i>
-                                <span>Telegram Post</span>
-                            </div>
-                            <div class="selection-card" onclick="selectOption('asset', 'Instagram', this)">
-                                <i class="fa-brands fa-instagram text-pink"></i>
-                                <span>Instagram</span>
-                            </div>
+                            <div class="selection-card" onclick="selectOption('asset', 'In-App Banner', this)"><i class="fa-solid fa-pager text-purple"></i><span>In-App Banner</span></div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Bot Broadcast', this)"><i class="fa-solid fa-bullhorn text-gold"></i><span>Bot Broadcast</span></div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Task Integration', this)"><i class="fa-solid fa-list-check text-green"></i><span>Task List</span></div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Telegram Post', this)"><i class="fa-brands fa-telegram text-blue"></i><span>Telegram Post</span></div>
+                            <div class="selection-card" onclick="selectOption('asset', 'Instagram', this)"><i class="fa-brands fa-instagram text-pink"></i><span>Instagram</span></div>
                         </div>
                         <input type="hidden" id="input-asset">
 
@@ -374,11 +347,8 @@
                         <input type="text" id="brand-contact" class="premium-input mb-2" placeholder="Official Email or WhatsApp">
                         <textarea id="brand-message" class="premium-input" rows="4" placeholder="Brief about your app/brand & requirements..."></textarea>
 
-                        <button class="btn-submit-proposal" onclick="sendPremiumProposal()">
-                            🚀 Send Sponsorship Proposal
-                        </button>
+                        <button class="btn-submit-proposal" onclick="sendPremiumProposal()">🚀 Send Sponsorship Proposal</button>
                         <p class="submit-note">Review time: Within 24 Hours</p>
-
                     </form>
 
                     <div class="brand-footer">
@@ -387,7 +357,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div id="page-contact" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
@@ -402,56 +371,31 @@
                     <p style="color:#888; font-size:12px; margin-top:-10px; margin-bottom: 20px;">Hum aapki madad ke liye hamesha available hain.</p>
 
                     <div class="support-grid">
-                        
                         <div class="support-card" onclick="openSupportChat('telegram')">
                             <div class="sc-icon bg-blue"><i class="fa-brands fa-telegram"></i></div>
-                            <div class="sc-info">
-                                <h4>Live Chat Support</h4>
-                                <p>Within 30 minutes</p>
-                            </div>
+                            <div class="sc-info"><h4>Live Chat Support</h4><p>Within 30 minutes</p></div>
                             <i class="fa-solid fa-chevron-right arrow-icon"></i>
                         </div>
-
                         <div class="support-card disabled" onclick="openSupportChat('whatsapp')">
                             <div class="coming-soon-badge">Coming Soon</div>
                             <div class="sc-icon bg-green"><i class="fa-brands fa-whatsapp"></i></div>
-                            <div class="sc-info">
-                                <h4>WhatsApp Support</h4>
-                                <p>10 AM – 8 PM</p>
-                            </div>
+                            <div class="sc-info"><h4>WhatsApp Support</h4><p>10 AM – 8 PM</p></div>
                         </div>
-
                         <div class="support-card ai-card" onclick="openSupportChat('ai')">
                             <div class="sc-icon bg-purple"><i class="fa-solid fa-robot"></i></div>
-                            <div class="sc-info">
-                                <h4>AI Help Desk 🤖</h4>
-                                <p>Instant Answers 24/7</p>
-                            </div>
+                            <div class="sc-info"><h4>AI Help Desk 🤖</h4><p>Instant Answers 24/7</p></div>
                             <button class="btn-ask-ai">Ask AI</button>
                         </div>
                     </div>
-
                     <hr class="divider-premium">
 
                     <h3 class="section-heading">📝 Submit a Request</h3>
                     <form id="support-form" onsubmit="return false;">
-                        
-                        <div class="input-group-premium">
-                            <label>Full Name</label>
-                            <input type="text" id="sup-name" placeholder="Enter your name" class="premium-input">
-                        </div>
-
+                        <div class="input-group-premium"><label>Full Name</label><input type="text" id="sup-name" placeholder="Enter your name" class="premium-input"></div>
                         <div class="row-inputs">
-                            <div class="input-group-premium">
-                                <label>Email Address</label>
-                                <input type="email" id="sup-email" placeholder="name@email.com" class="premium-input">
-                            </div>
-                            <div class="input-group-premium">
-                                <label>Mobile Number</label>
-                                <input type="tel" id="sup-mobile" placeholder="+91 XXXXX" class="premium-input">
-                            </div>
+                            <div class="input-group-premium"><label>Email Address</label><input type="email" id="sup-email" placeholder="name@email.com" class="premium-input"></div>
+                            <div class="input-group-premium"><label>Mobile Number</label><input type="tel" id="sup-mobile" placeholder="+91 XXXXX" class="premium-input"></div>
                         </div>
-
                         <div class="input-group-premium">
                             <label>Issue Category</label>
                             <div class="custom-select-wrapper">
@@ -466,51 +410,29 @@
                                 <i class="fa-solid fa-chevron-down select-arrow"></i>
                             </div>
                         </div>
-
-                        <div class="input-group-premium">
-                            <label>Description</label>
-                            <textarea id="sup-message" rows="4" placeholder="Please describe your problem..." class="premium-input"></textarea>
-                        </div>
-
+                        <div class="input-group-premium"><label>Description</label><textarea id="sup-message" rows="4" placeholder="Please describe your problem..." class="premium-input"></textarea></div>
                         <div class="input-group-premium">
                             <label>Upload Screenshot (Optional)</label>
                             <div class="file-upload-box" onclick="document.getElementById('sup-file').click()">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span id="file-name">Tap to upload image</span>
-                                <input type="file" id="sup-file" hidden onchange="updateFileName(this)">
+                                <i class="fa-solid fa-cloud-arrow-up"></i><span id="file-name">Tap to upload image</span><input type="file" id="sup-file" hidden onchange="updateFileName(this)">
                             </div>
                         </div>
-
-                        <button class="btn-submit-ticket" onclick="submitSupportTicket()">
-                            🔘 Submit Request
-                        </button>
+                        <button class="btn-submit-ticket" onclick="submitSupportTicket()">🔘 Submit Request</button>
                         <p class="submit-note">Response time: 12-24 Hours</p>
-
                     </form>
 
                     <div class="support-footer">
                         <div class="timings-box">
                             <i class="fa-solid fa-clock text-gold"></i>
-                            <div>
-                                <strong>Support Hours:</strong><br>
-                                Mon – Sat: 10 AM – 8 PM<br>
-                                <span style="color:#ff4444; font-size:10px;">Sunday: Emergency Only</span>
-                            </div>
+                            <div><strong>Support Hours:</strong><br>Mon – Sat: 10 AM – 8 PM<br><span style="color:#ff4444; font-size:10px;">Sunday: Emergency Only</span></div>
                         </div>
-                        
-                        <div class="trust-lines">
-                            <p><i class="fa-solid fa-shield-halved text-green"></i> 100% Secure Data</p>
-                            <p><i class="fa-solid fa-headset text-blue"></i> Verified Support Team</p>
-                        </div>
+                        <div class="trust-lines"><p><i class="fa-solid fa-shield-halved text-green"></i> 100% Secure Data</p><p><i class="fa-solid fa-headset text-blue"></i> Verified Support Team</p></div>
                     </div>
-
                 </div>
             </div>
 
-
             <div id="page-info" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 50px;">
-                
                 <div style="padding: 0 20px;">
                     <div class="page-header">
                         <button class="back-btn" onclick="backToProfileMenu()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-right: 15px;">
@@ -518,78 +440,33 @@
                         </button>
                         <h2 id="info-title" class="neon-text" style="margin:0;">Information</h2>
                     </div>
-
-                    <div id="info-content" class="info-body-container">
-                        </div>
-
-                    <div class="legal-footer">
-                        <p>© 2025 FinGamePro Inc. All Rights Reserved.</p>
-                    </div>
+                    <div id="info-content" class="info-body-container"></div>
+                    <div class="legal-footer"><p>© 2025 FinGamePro Inc. All Rights Reserved.</p></div>
                 </div>
             </div>
 
-
             <section id="home" class="page-section active">
-                
                 <div class="hero-card" data-aos="fade-down">
-                    <div class="hero-header">
-                        <span class="hero-title">Total Balance</span>
-                        <div class="wallet-icon-3d"><i class="fa-solid fa-wallet"></i></div>
-                    </div>
-                    <div class="hero-balance">
-                        <i class="fa-solid fa-coins"></i>
-                        <span id="home-balance-display">0</span>
-                    </div>
+                    <div class="hero-header"><span class="hero-title">Total Balance</span><div class="wallet-icon-3d"><i class="fa-solid fa-wallet"></i></div></div>
+                    <div class="hero-balance"><i class="fa-solid fa-coins"></i><span id="home-balance-display">0</span></div>
                     <div class="hero-subtext">≈ ₹ 0.00 INR</div>
-                    <button class="withdraw-btn-main" onclick="navigateTo('wallet')">
-                        Withdraw Funds <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                    <button class="withdraw-btn-main" onclick="window.updateWalletAndShow()">Withdraw Funds <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
 
                 <div class="section-title">Quick Earn</div>
                 <div class="action-grid" data-aos="fade-up">
-                    <div class="action-card" onclick="navigateTo('tasks')">
-                        <div class="icon-box blue"><i class="fa-solid fa-list-check"></i></div>
-                        <span>Tasks</span>
-                    </div>
-                    <div class="action-card" onclick="navigateTo('games')">
-                        <div class="icon-box purple"><i class="fa-solid fa-gamepad"></i></div>
-                        <span>Games</span>
-                    </div>
-                    <div class="action-card" onclick="navigateTo('tasks')">
-                        <div class="icon-box red"><i class="fa-solid fa-play"></i></div>
-                        <span>Ads</span>
-                    </div>
-                    <div class="action-card" onclick="openInternalPage('page-refer')">
-                        <div class="icon-box green"><i class="fa-solid fa-user-plus"></i></div>
-                        <span>Refer</span>
-                    </div>
+                    <div class="action-card" onclick="navigateTo('tasks')"><div class="icon-box blue"><i class="fa-solid fa-list-check"></i></div><span>Tasks</span></div>
+                    <div class="action-card" onclick="navigateTo('games')"><div class="icon-box purple"><i class="fa-solid fa-gamepad"></i></div><span>Games</span></div>
+                    <div class="action-card" onclick="navigateTo('tasks')"><div class="icon-box red"><i class="fa-solid fa-play"></i></div><span>Ads</span></div>
+                    <div class="action-card" onclick="openInternalPage('page-refer')"><div class="icon-box green"><i class="fa-solid fa-user-plus"></i></div><span>Refer</span></div>
                 </div>
 
-                <div class="section-title">
-                    Smart Tools <span class="badge-viral">Viral</span>
-                </div>
+                <div class="section-title">Smart Tools <span class="badge-viral">Viral</span></div>
                 <div class="tools-grid" data-aos="fade-up" data-aos-delay="100">
-                    <div class="tool-card" onclick="openToolModal('cv')">
-                        <div class="tool-icon bg-blue"><i class="fa-solid fa-file-invoice"></i></div>
-                        <div class="tool-info"><h3>CV Builder</h3><p>AI Resume Creator</p></div>
-                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
-                    </div>
-                    <div class="tool-card" onclick="openToolModal('love')">
-                        <div class="tool-icon bg-pink"><i class="fa-solid fa-heart"></i></div>
-                        <div class="tool-info"><h3>Love Calc</h3><p>AI Compatibility</p></div>
-                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
-                    </div>
-                    <div class="tool-card" onclick="openToolModal('marriage')">
-                        <div class="tool-icon bg-gold"><i class="fa-solid fa-ring"></i></div>
-                        <div class="tool-info"><h3>Wedding Date</h3><p>Prediction AI</p></div>
-                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
-                    </div>
-                    <div class="tool-card" onclick="openToolModal('career')">
-                        <div class="tool-icon bg-purple"><i class="fa-solid fa-rocket"></i></div>
-                        <div class="tool-info"><h3>Career 2035</h3><p>Future Role</p></div>
-                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i></div>
-                    </div>
+                    <div class="tool-card" onclick="openToolModal('cv')"><div class="tool-icon bg-blue"><i class="fa-solid fa-file-invoice"></i></div><div class="tool-info"><h3>CV Builder</h3><p>AI Resume Creator</p></div><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
+                    <div class="tool-card" onclick="openToolModal('love')"><div class="tool-icon bg-pink"><i class="fa-solid fa-heart"></i></div><div class="tool-info"><h3>Love Calc</h3><p>AI Compatibility</p></div><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
+                    <div class="tool-card" onclick="openToolModal('marriage')"><div class="tool-icon bg-gold"><i class="fa-solid fa-ring"></i></div><div class="tool-info"><h3>Wedding Date</h3><p>Prediction AI</p></div><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
+                    <div class="tool-card" onclick="openToolModal('career')"><div class="tool-icon bg-purple"><i class="fa-solid fa-rocket"></i></div><div class="tool-info"><h3>Career 2035</h3><p>Future Role</p></div><div class="lock-overlay"><i class="fa-solid fa-lock"></i></div></div>
                 </div>
 
                 <div class="offer-slider" data-aos="fade-left">
@@ -598,7 +475,6 @@
                         <button class="btn-sm" onclick="navigateTo('tasks')">Go</button>
                     </div>
                 </div>
-
                 <div class="motivation-strip">🎉 You can still earn <b>1200 coins</b> today!</div>
             </section>
 
@@ -612,30 +488,17 @@
                 </div>
             </div>
 
-
             <section id="leaderboard" class="page-section hidden">
                 <div class="lb-header">
                     <div class="lb-title">Top Earners <i class="fa-solid fa-crown text-gold"></i></div>
-                    <div class="lb-timer glass-badge">
-                        <i class="fa-solid fa-hourglass-half"></i> Resets in: <span id="countdown-timer">00:00:00</span>
-                    </div>
+                    <div class="lb-timer glass-badge"><i class="fa-solid fa-hourglass-half"></i> Resets in: <span id="countdown-timer">00:00:00</span></div>
                 </div>
                 <p class="lb-subtitle">Leaderboard resets every 24 hours</p>
 
                 <div class="podium-container" data-aos="zoom-in">
-                    <div class="podium-card rank-2">
-                        <div class="avatar-frame silver"><img src="https://i.pravatar.cc/150?img=12" alt="User" class="avatar-img"><div class="rank-badge-circle">2</div></div>
-                        <div class="podium-name">Alex</div><div class="podium-coins">85k</div>
-                    </div>
-                    <div class="podium-card rank-1">
-                        <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
-                        <div class="avatar-frame gold"><img src="https://i.pravatar.cc/150?img=5" alt="User" class="avatar-img"><div class="rank-badge-circle">1</div></div>
-                        <div class="podium-name highlight">Sarah</div><div class="podium-coins main">92k</div>
-                    </div>
-                    <div class="podium-card rank-3">
-                        <div class="avatar-frame bronze"><img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-img"><div class="rank-badge-circle">3</div></div>
-                        <div class="podium-name">John</div><div class="podium-coins">81k</div>
-                    </div>
+                    <div class="podium-card rank-2"><div class="avatar-frame silver"><img src="https://i.pravatar.cc/150?img=12" alt="User" class="avatar-img"><div class="rank-badge-circle">2</div></div><div class="podium-name">Alex</div><div class="podium-coins">85k</div></div>
+                    <div class="podium-card rank-1"><div class="crown-icon"><i class="fa-solid fa-crown"></i></div><div class="avatar-frame gold"><img src="https://i.pravatar.cc/150?img=5" alt="User" class="avatar-img"><div class="rank-badge-circle">1</div></div><div class="podium-name highlight">Sarah</div><div class="podium-coins main">92k</div></div>
+                    <div class="podium-card rank-3"><div class="avatar-frame bronze"><img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-img"><div class="rank-badge-circle">3</div></div><div class="podium-name">John</div><div class="podium-coins">81k</div></div>
                 </div>
 
                 <div class="leaderboard-list" id="lb-list-container" data-aos="fade-up">
@@ -648,7 +511,6 @@
                     <div class="lb-footer-note"><i class="fa-solid fa-shield-halved"></i> Rankings update live. Fake coins removed.</div>
                 </div>
             </section>
-
 
             <section id="tasks" class="page-section hidden">
                 <div class="section-header"><h2>Task Center</h2><p>Complete missions to earn massive coins</p></div>
@@ -668,65 +530,22 @@
 
                 <div class="task-category-title mt-4"><i class="fa-solid fa-bolt text-gold"></i> Quick Actions</div>
                 <div class="tasks-list">
-                    <div class="task-card">
-                        <div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="openInternalPage('page-refer')">Start</button>
-                    </div>
-                    <div class="task-card">
-                        <div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                        <div class="task-info"><h4>Use CV Builder</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="navigateTo('home')">Go</button>
-                    </div>
+                    <div class="task-card"><div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div><div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div><button class="btn-task-action" onclick="openInternalPage('page-refer')">Start</button></div>
+                    <div class="task-card"><div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="task-info"><h4>Use CV Builder</h4><span class="coin-tag">+1000 Coins</span></div><button class="btn-task-action" onclick="navigateTo('home')">Go</button></div>
                 </div>
-
                 <div class="trust-footer"><i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.</div>
             </section>
 
             <section id="games" class="page-section hidden">
-                <div class="native-ad-placeholder">
-                    <span><i class="fa-solid fa-ad"></i> Sponsored Ad Space</span>
-                </div>
-
-                <div class="game-header">
-                    <div class="user-rank-badge">
-                        <span class="rank-icon">🏆</span>
-                        <span id="rank-name">Bronze</span>
-                    </div>
-                </div>
-                
-                <div class="balance-container">
-                    <div class="current-mining-label">Current Mining</div>
-                    <div id="display-balance" class="big-gold-text neon-text-gold">0</div>
-                </div>
-
-                <div class="tap-arena">
-                    <div id="click-effects-layer"></div>
-                    <div class="coin-glow-ring"></div>
-                    
-                    <div class="coin-container">
-                        <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
-                    </div>
-                </div>
-
+                <div class="native-ad-placeholder"><span><i class="fa-solid fa-ad"></i> Sponsored Ad Space</span></div>
+                <div class="game-header"><div class="user-rank-badge"><span class="rank-icon">🏆</span><span id="rank-name">Bronze</span></div></div>
+                <div class="balance-container"><div class="current-mining-label">Current Mining</div><div id="display-balance" class="big-gold-text neon-text-gold">0</div></div>
+                <div class="tap-arena"><div id="click-effects-layer"></div><div class="coin-glow-ring"></div><div class="coin-container"><img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin"></div></div>
                 <div class="energy-control-panel">
-                    <div class="energy-info">
-                        <span><i class="fa-solid fa-bolt text-gold"></i> Turbo Energy</span>
-                        <span id="energy-text">1000 / 1000</span>
-                    </div>
-                    <div class="energy-bar-bg">
-                        <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
-                    </div>
-                    
-                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
-                        <i class="fa-solid fa-play"></i> 
-                        <span id="refill-label">Free Boost (3 Left)</span>
-                    </button>
-
-                    <div class="security-badge">
-                        <span><i class="fa-solid fa-lock"></i> Adsterra Secured</span>
-                        <span class="text-green"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Active</span>
-                    </div>
+                    <div class="energy-info"><span><i class="fa-solid fa-bolt text-gold"></i> Turbo Energy</span><span id="energy-text">1000 / 1000</span></div>
+                    <div class="energy-bar-bg"><div id="energy-fill" class="energy-fill" style="width: 100%;"></div></div>
+                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()"><i class="fa-solid fa-play"></i> <span id="refill-label">Free Boost</span></button>
+                    <div class="security-badge"><span><i class="fa-solid fa-lock"></i> Adsterra Secured</span><span class="text-green"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Active</span></div>
                 </div>
             </section>
 
@@ -738,16 +557,10 @@
                 <div class="gm-iframe-container"><iframe id="game-frame" src="" frameborder="0"></iframe></div>
             </div>
 
-
             <section id="wallet" class="page-section hidden">
                 <div class="wallet-meta-header">
-                    <div class="wm-title">
-                        <i class="fa-solid fa-vault text-cyan"></i> 
-                        <span>GAME REWARD WALLET</span>
-                    </div>
-                    <div class="wm-network">
-                        <span class="pulse-dot"></span> In-App Network
-                    </div>
+                    <div class="wm-title"><i class="fa-solid fa-vault text-cyan"></i> <span>GAME REWARD WALLET</span></div>
+                    <div class="wm-network"><span class="pulse-dot"></span> In-App Network</div>
                 </div>
             
                 <div class="wallet-hero-meta">
@@ -767,60 +580,63 @@
                 <div class="rank-status-card" id="rank-card-container">
                     </div>
             
-                <div id="action-zone">
+                <div id="calculator-zone">
+                    <div class="wallet-input-group">
+                        <label style="font-size: 0.75rem; color: #94a3b8;">WITHDRAWAL SIMULATOR</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-coins text-gold"></i>
+                            <input type="number" id="calc-input" class="wallet-input-field" placeholder="Enter Coins" oninput="window.calculateRealMoney(this.value)">
+                        </div>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between;">
+                            <span class="conversion-rate-text">Rate: 100k Coins = ₹1.00</span>
+                            <span id="calc-result" style="color: #4ade80; font-weight: bold; font-family: 'Orbitron';">₹0.00</span>
+                        </div>
                     </div>
+
+                    <button id="btn-main-withdraw" class="btn-withdraw-action disabled" onclick="window.tryWithdraw()">
+                        <i class="fa-solid fa-lock"></i> Locked (Rank 11+)
+                    </button>
+                    
+                    <p id="withdraw-note" style="text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 10px;">
+                        Only Top 10 Ranks can proceed to payment gateway.
+                    </p>
+                </div>
             
-                <div class="future-rewards-panel">
-                    <div class="fr-header">
-                        <i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY
-                    </div>
+                <div class="future-rewards-panel" style="margin-top: 25px;">
+                    <div class="fr-header"><i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY</div>
                     <div class="fr-content">
-                        <p>Your coins are accumulating for future platform events.</p>
+                        <p>Your coins are safe! Even if you are not in Top 10, your balance is stored securely for future events and rewards.</p>
                         <div class="tags-row">
                             <span class="tag-meta">Loyalty Points</span>
                             <span class="tag-meta">Special Events</span>
                         </div>
                     </div>
                 </div>
-            
-                <div class="meta-history">
-                    <div class="mh-header">ACTIVITY LOG <i class="fa-solid fa-clock-rotate-left"></i></div>
-                    <div id="wallet-history-list" class="mh-list">
-                        </div>
-                </div>
             </section>
 
         </main> 
+
         <nav class="bottom-nav glass-effect">
-            <div class="nav-item active" onclick="navigateTo('home')">
-                <i class="fa-solid fa-house"></i><span>Home</span>
-            </div>
-            <div class="nav-item" onclick="navigateTo('leaderboard')">
-                <i class="fa-solid fa-trophy"></i><span>Rank</span>
-            </div>
-            <div class="nav-item" onclick="navigateTo('tasks')">
-                <i class="fa-solid fa-list-check"></i><span>Tasks</span>
-            </div>
-            <div class="nav-item" onclick="navigateTo('games')">
-                <i class="fa-solid fa-gamepad"></i><span>Games</span>
-            </div>
-            <div class="nav-item" onclick="navigateTo('wallet')">
-                <i class="fa-solid fa-wallet"></i><span>Wallet</span>
-            </div>
+            <div class="nav-item active" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
+            <div class="nav-item" onclick="navigateTo('leaderboard')"><i class="fa-solid fa-trophy"></i><span>Rank</span></div>
+            <div class="nav-item" onclick="navigateTo('tasks')"><i class="fa-solid fa-list-check"></i><span>Tasks</span></div>
+            <div class="nav-item" onclick="navigateTo('games')"><i class="fa-solid fa-gamepad"></i><span>Games</span></div>
+            <div class="nav-item" onclick="window.updateWalletAndShow()"><i class="fa-solid fa-wallet"></i><span>Wallet</span></div>
         </nav>
 
     </div>  
-    <div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="toggleProfileMenu()"></div>
+
+    <div id="menu-overlay" class="menu-overlay hidden" style="z-index: 2147483640;" onclick="window.toggleMenu()"></div>
 
     <div id="side-menu" class="side-menu" style="z-index: 2147483647;">
         <div class="menu-header">
             <span class="text-gold">Menu</span>
-            <i class="fa-solid fa-xmark close-menu" onclick="toggleProfileMenu()"></i>
+            <i class="fa-solid fa-xmark close-menu" onclick="window.toggleMenu()"></i>
         </div>
         
         <div class="menu-list">
             <div class="menu-item" onclick="openInternalPage('page-profile')"><div class="mi-icon"><i class="fa-solid fa-user"></i></div><span>My Profile</span></div>
-            <div class="menu-item" onclick="navigateTo('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
+            <div class="menu-item" onclick="window.updateWalletAndShow(); window.toggleMenu();"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
             <div class="menu-item" style="opacity: 0.6;"><div class="mi-icon"><i class="fa-solid fa-id-card"></i></div><span>KYC Verification</span><span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span></div>
             <div class="menu-item" onclick="openInternalPage('page-refer')"><div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></div>
             <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span>Brand</span></div>
@@ -829,9 +645,7 @@
             <div class="menu-item small" onclick="openInfoPage('terms')"><div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div><span>Terms & Conditions</span></div>
             <div class="menu-item small" onclick="openInfoPage('privacy')"><div class="mi-icon"><i class="fa-solid fa-lock"></i></div><span>Privacy Policy</span></div>
             <div class="menu-item small" onclick="openInfoPage('disclaimer')"><div class="mi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span>Disclaimer</span></div>
-            
             <hr class="menu-divider">
-            
             <div class="menu-item small" onclick="openInfoPage('faq')"><div class="mi-icon"><i class="fa-solid fa-circle-question"></i></div><span>Help / FAQ</span></div>
             <div class="menu-item small" onclick="openInternalPage('page-contact')"><div class="mi-icon"><i class="fa-solid fa-headset"></i></div><span>Contact Support</span></div>
             <div class="menu-item logout" onclick="handleLogout()"><div class="mi-icon"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></div>
@@ -840,9 +654,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script type="module" src="js/main.js"></script> 
-    
     <script src="js/pro-core.js"></script>
     <script src="js/home.js"></script>
     <script src="js/wallet.js"></script>
@@ -856,7 +668,51 @@
     <script src="js/pro-info.js"></script>
 
     <script>
-      AOS.init();
+        AOS.init();
+
+        // ✅ FIXED MENU LOGIC (Robust)
+        window.toggleMenu = function() {
+            const menu = document.getElementById('side-menu');
+            const overlay = document.getElementById('menu-overlay');
+            if (menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                overlay.classList.remove('visible');
+            } else {
+                menu.classList.add('open');
+                overlay.classList.add('visible');
+            }
+        };
+
+        // ✅ GLOBAL NAVIGATION WITH WALLET SYNC
+        window.navigateTo = function(sectionId) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.remove('hidden');
+            
+            // Highlight nav 
+            // In a real app, you might want to add 'active' class to the button here
+        };
+
+        // ✅ SPECIAL WALLET OPENER (Syncs Coins)
+        window.updateWalletAndShow = function() {
+            window.navigateTo('wallet');
+            // Back to profile menu sometimes hides main content, ensure it's visible
+            document.getElementById('main-content').style.display = 'block'; 
+            
+            if(typeof updateWalletUI === 'function') {
+                updateWalletUI(); // Calls the function in wallet.js
+            } else {
+                console.warn("wallet.js not loaded yet or updateWalletUI missing");
+            }
+        };
+
+        // Profile Menu Back Function Fix
+        window.backToProfileMenu = function() {
+             window.toggleMenu(); // Re-open menu
+             document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
+        };
     </script>
 </body>
 </html>
