@@ -684,75 +684,49 @@
             </section>
 
             <section id="games" class="page-section hidden">
-                
                 <div class="native-ad-placeholder">
                     <span><i class="fa-solid fa-ad"></i> Sponsored Ad Space</span>
                 </div>
 
-                <div class="game-header" style="justify-content: center; position: relative; margin-bottom: 25px;">
-                    <div class="user-rank-badge" style="margin: 0; box-shadow: 0 0 20px rgba(205, 127, 50, 0.4); border: 1px solid rgba(255,255,255,0.2);">
+                <div class="game-header">
+                    <div class="user-rank-badge">
                         <span class="rank-icon">🏆</span>
                         <span id="rank-name">Bronze</span>
                     </div>
                 </div>
                 
-                <div style="text-align: center; z-index: 10; position: relative; margin-bottom: 20px;">
-                    <div style="font-size: 11px; color: #94a3b8; letter-spacing: 3px; font-family: 'Orbitron', sans-serif; opacity: 0.8;">CURRENT MINING</div>
-                    <span id="display-balance" class="big-gold-text neon-text-gold" style="font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 700;">0</span>
+                <div class="balance-container">
+                    <div class="current-mining-label">Current Mining</div>
+                    <div id="display-balance" class="big-gold-text">0</div>
                 </div>
-            
-                <div class="tap-arena" style="margin-top: 10px; margin-bottom: 60px; position: relative;">
+
+                <div class="tap-arena">
                     <div id="click-effects-layer"></div>
-                    
-                    <div class="coin-glow-ring" style="position: absolute; width: 320px; height: 320px; border: 1px dashed rgba(0, 220, 255, 0.3); border-radius: 50%; animation: spinSlow 20s linear infinite;"></div>
-                    <div class="coin-glow-ring" style="position: absolute; width: 290px; height: 290px; border: 2px solid rgba(255, 215, 0, 0.2); border-left-color: transparent; border-right-color: transparent; border-radius: 50%; animation: spinSlow 10s reverse infinite;"></div>
-            
-                    <div class="coin-container" style="filter: drop-shadow(0 0 40px rgba(255,215,0,0.4)); transition: transform 0.1s;">
-                        <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin" style="border-radius: 50%;">
-                    </div>
-                </div>
-            
-                <div class="energy-control-panel glass-panel-tech" style="padding: 20px; border-radius: 20px;">
-                    
-                    <div class="energy-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 14px; font-weight: 600; color: #cbd5e1; display:flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-bolt text-gold" style="filter: drop-shadow(0 0 5px gold);"></i> Energy
-                        </span>
-                        <span id="energy-text" style="font-family: 'Orbitron', sans-serif; color: white; letter-spacing: 1px;">1000 / 1000</span>
-                    </div>
-
-                    <div class="energy-bar-bg" style="background: rgba(0,0,0,0.4); height: 10px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                        <div id="energy-fill" class="energy-fill" style="width: 100%; background: linear-gradient(90deg, #facc15, #fbbf24); height: 100%; box-shadow: 0 0 15px #facc15;"></div>
-                    </div>
-                    
-                    <div style="margin-top: 25px;">
-                        <button id="btn-refill" class="btn-boost" onclick="handleRefill()" 
-                                style="width: 100%; background: linear-gradient(135deg, #4f46e5, #3b82f6); border: none; padding: 16px; border-radius: 12px; color: white; font-weight: bold; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="fa-solid fa-circle-play" style="font-size: 18px;"></i> 
-                            <span id="refill-label">Watch Ad to Refill (3 Left)</span>
-                        </button>
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                            <span style="font-size: 10px; color: #64748b;"><i class="fa-solid fa-ad"></i> Adsterra Secured</span>
-                            <span style="font-size: 10px; color: #00ff88; text-shadow: 0 0 5px rgba(0,255,136,0.5);"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Active</span>
-                        </div>
+                    <div class="coin-glow-ring"></div>
+                    <div class="coin-container">
+                        <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
                     </div>
                 </div>
 
-                <div id="cheat-warning-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px);">
-                    <div style="background: rgba(30, 41, 59, 0.9); border: 1px solid #ef4444; padding: 30px 25px; border-radius: 24px; text-align: center; width: 100%; max-width: 320px; box-shadow: 0 0 60px rgba(239, 68, 68, 0.4);">
-                        <div style="width: 70px; height: 70px; background: rgba(239, 68, 68, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; border: 1px solid rgba(239, 68, 68, 0.3);">
-                            <i class="fa-solid fa-hand" style="font-size: 32px; color: #ef4444;"></i>
-                        </div>
-                        <h3 style="color: white; margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; letter-spacing: 1px;">SUSPICIOUS ACTIVITY</h3>
-                        <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-                            Our <b>Anti-Cheat AI</b> detected an auto-clicker. <br>
-                            <span style="color: #ef4444; font-weight: bold;">Warning 1/3:</span> Continue this and your account will be permanently banned.
-                        </p>
-                        <button onclick="document.getElementById('cheat-warning-modal').classList.add('hidden')" style="background: #ef4444; color: white; border: none; padding: 14px 0; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 20px rgba(239, 68, 68, 0.3);">I Understand</button>
+                <div class="energy-control-panel">
+                    <div class="energy-info">
+                        <span><i class="fa-solid fa-bolt text-gold"></i> Turbo Energy</span>
+                        <span id="energy-text">1000 / 1000</span>
+                    </div>
+                    <div class="energy-bar-bg">
+                        <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
+                    </div>
+                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
+                        <i class="fa-solid fa-rocket"></i> 
+                        <span id="refill-label">Full Tank (3 Left)</span>
+                    </button>
+                    <div class="security-badge">
+                        <span><i class="fa-solid fa-lock"></i> Adsterra Secured</span>
+                        <span class="text-green"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Active</span>
                     </div>
                 </div>
             </section>
+
             <div id="game-modal" class="game-modal hidden">
                 <div class="gm-header">
                     <div class="gm-timer"><i class="fa-solid fa-clock"></i> Play for <span id="game-timer">15</span>s to earn</div>
@@ -927,4 +901,5 @@
     </script>
 </body>
 </html>
+
 
