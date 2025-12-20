@@ -741,86 +741,145 @@
 
             <section id="wallet" class="page-section hidden">
     
-                <div class="wallet-meta-header">
-                    <div class="wm-title">
-                        <i class="fa-solid fa-vault text-cyan"></i> 
-                        <span>GAME REWARD WALLET</span>
-                    </div>
-                    <div class="wm-network">
-                        <span class="pulse-dot"></span> In-App Network
-                    </div>
-                </div>
+    <style>
+        .meta-input-box {
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .meta-input-box:focus-within {
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+            background: rgba(6, 182, 212, 0.05);
+        }
+        .meta-label {
+            font-size: 0.7rem; color: #94a3b8; letter-spacing: 1px; display: block; margin-bottom: 5px; font-family: 'Orbitron', sans-serif;
+        }
+        .meta-field {
+            width: 100%; background: transparent; border: none; color: #fff;
+            font-size: 1rem; font-family: 'Inter', sans-serif; outline: none;
+        }
+        
+        /* Locked Button Special Design */
+        .locked-vault-btn {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .locked-vault-btn:active { transform: scale(0.98); }
+        .locked-vault-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shine 3s infinite;
+        }
+        .lock-text {
+            color: #94a3b8; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        
+        /* Simulator Input */
+        .sim-input {
+            background: transparent; border: none; color: #fff; font-size: 2.2rem;
+            font-family: 'Orbitron', sans-serif; width: 100%; outline: none; font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+
+    <div class="wallet-meta-header">
+        <div class="wm-title">
+            <i class="fa-solid fa-vault text-cyan"></i> 
+            <span>GAME REWARD WALLET</span>
+        </div>
+        <div class="wm-network">
+            <span class="pulse-dot"></span> In-App Network
+        </div>
+    </div>
+
+    <div class="wallet-hero-meta">
+        <div class="holo-glow"></div>
+        <div class="balance-label">TOTAL ASSETS</div>
+        <div class="balance-meta-row">
+            <img src="assets/coin_main.jpg" class="coin-3d-icon">
+            <span id="wallet-coins" class="glitch-number">0</span>
+        </div>
+        <div class="balance-sub-info">
+            <span><i class="fa-solid fa-infinity"></i> Non-Expiring</span>
+            <span class="divider">|</span>
+            <span><i class="fa-solid fa-shield-halved"></i> Safe Storage</span>
+        </div>
+    </div>
+    
+    <div class="rank-status-card" id="rank-card-container"></div>
+    
+    <div id="calculator-zone">
+        
+        <div class="payment-grid" style="margin-bottom: 25px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <i class="fa-solid fa-money-bill-transfer text-cyan"></i>
+                <span style="font-family: 'Orbitron'; font-size: 0.9rem; color: #fff;">PAYMENT GATEWAY</span>
+            </div>
+
+            <div class="meta-input-box">
+                <label class="meta-label">LEGAL NAME</label>
+                <input type="text" id="pay-name" class="meta-field" placeholder="Account Holder Name">
+            </div>
+
+            <div class="meta-input-box">
+                <label class="meta-label">UPI ID (Unified Payment Interface)</label>
+                <input type="text" id="pay-upi" class="meta-field" placeholder="e.g. name@okhdfcbank">
+            </div>
+
+            <div class="meta-input-box">
+                <label class="meta-label">ACCESS CODE (Referral)</label>
+                <input type="text" id="pay-code" class="meta-field" placeholder="Enter Unique Code">
+            </div>
+        </div>
+
+        <div class="wallet-input-group" style="border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, #0f172a 0%, #020617 100%); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; background: rgba(255, 215, 0, 0.1); border-radius: 50%; filter: blur(20px);"></div>
             
-                <div class="wallet-hero-meta">
-                    <div class="holo-glow"></div>
-                    <div class="balance-label">TOTAL ASSETS</div>
-                    <div class="balance-meta-row">
-                        <img src="assets/coin_main.jpg" class="coin-3d-icon">
-                        <span id="wallet-coins" class="glitch-number">0</span>
-                    </div>
-                    <div class="balance-sub-info">
-                        <span><i class="fa-solid fa-infinity"></i> Non-Expiring</span>
-                        <span class="divider">|</span>
-                        <span><i class="fa-solid fa-shield-halved"></i> Safe Storage</span>
-                    </div>
-                </div>
-                
-                <div class="rank-status-card" id="rank-card-container">
-                    </div>
-                
-                <div id="calculator-zone">
-                    
-                    <div class="wallet-input-group" style="margin-bottom: 15px;">
-                        <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 8px;">PAYMENT DETAILS</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <div style="background: #06b6d4; color: #020617; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800;">UPI</div>
-                            <div style="background: rgba(255,255,255,0.05); color: #64748b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem;">BANK</div>
-                            <div style="background: rgba(255,255,255,0.05); color: #64748b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem;">CRYPTO</div>
-                        </div>
-                        <input type="text" id="upi-id-input" placeholder="Enter UPI ID (e.g. name@okhdfcbank)" 
-                               style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px; outline: none; font-family: 'Inter', sans-serif;">
-                    </div>
+            <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 5px;">WITHDRAWAL SIMULATOR</label>
             
-                    <div class="wallet-input-group" style="border: 1px solid rgba(255,255,255,0.15); background: rgba(2, 6, 23, 0.8);">
-                        <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 5px;">WITHDRAWAL SIMULATOR</label>
-                        
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fa-solid fa-coins text-gold" style="font-size: 24px;"></i>
-                            <input type="number" id="calc-input" 
-                                   style="background: transparent; border: none; color: #fff; font-size: 2rem; font-family: 'Orbitron', sans-serif; width: 100%; outline: none; font-weight: 700;" 
-                                   placeholder="Enter Coins" 
-                                   oninput="window.calculateRealMoney(this.value)">
-                        </div>
-                        
-                        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.75rem; color: #94a3b8;">Rate: 100k Coins = ₹1.00</span>
-                            <span id="calc-result" style="color: #4ade80; font-weight: bold; font-family: 'Orbitron'; font-size: 1.2rem;">₹0.00</span>
-                        </div>
-                    </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-coins text-gold" style="font-size: 28px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5));"></i>
+                <input type="number" id="calc-input" class="sim-input" placeholder="0" oninput="window.calculateRealMoney(this.value)">
+            </div>
             
-                    <button id="btn-main-withdraw" class="btn-withdraw-action disabled" onclick="window.tryWithdraw()">
-                        <i class="fa-solid fa-lock"></i> Locked (Rank 11+)
-                    </button>
-                    
-                    <p id="withdraw-note" style="text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 10px;">
-                        Only Top 10 Ranks can proceed to payment gateway.
-                    </p>
-                </div>
-                
-                <div class="future-rewards-panel" style="margin-top: 25px; border-left: 3px solid #a855f7; background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent); padding: 15px; border-radius: 0 12px 12px 0;">
-                    <div class="fr-header" style="font-size: 0.8rem; font-weight: 700; color: #e9d5ff; margin-bottom: 5px;">
-                        <i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY
-                    </div>
-                    <div class="fr-content">
-                        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0 0 10px 0;">Your coins are accumulating for future platform events.</p>
-                        <div class="tags-row">
-                            <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); margin-right: 5px;">Loyalty Points</span>
-                            <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3);">Special Events</span>
-                        </div>
-                    </div>
-                </div>
-            
-            </section>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: #94a3b8;">Rate: 100k Coins = ₹1.00</span>
+                <span id="calc-result" style="color: #4ade80; font-weight: bold; font-family: 'Orbitron'; font-size: 1.3rem;">₹0.00</span>
+            </div>
+        </div>
+
+        <div id="action-btn-container">
+            </div>
+    </div>
+    
+    <div class="future-rewards-panel" style="margin-top: 25px; border-left: 3px solid #a855f7; background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent); padding: 15px; border-radius: 0 12px 12px 0;">
+        <div class="fr-header" style="font-size: 0.8rem; font-weight: 700; color: #e9d5ff; margin-bottom: 5px;">
+            <i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY
+        </div>
+        <div class="fr-content">
+            <p style="font-size: 0.75rem; color: #94a3b8; margin: 0 0 10px 0;">Your coins are accumulating for future platform events.</p>
+            <div class="tags-row">
+                <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); margin-right: 5px;">Loyalty Points</span>
+                <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3);">Special Events</span>
+            </div>
+        </div>
+    </div>
+
+</section>
 
         </main> 
         <nav class="bottom-nav glass-effect">
