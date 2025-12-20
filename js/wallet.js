@@ -1,165 +1,137 @@
 /* =========================================
-   GAME REWARD WALLET LOGIC
+   SMART WALLET LOGIC (Live Calc + Rank)
    ========================================= */
 
-const CONVERSION_DIVISOR = 100000; // 100,000 Coins = 1 Unit (Rupee)
-// NOTE: For testing, you can manually set window.currentUser.rank in console
+const EXCHANGE_RATE = 100000; // 100k Coins = ₹1
+const MIN_WITHDRAWAL = 50;    // Minimum ₹50
+let selectedMethod = 'UPI';
 
+// 1. Initialize Wallet
 function initWallet() {
-    updateWalletUI();
-    renderHistory();
+    updateWalletDisplay();
 }
 
-function updateWalletUI() {
+// 2. Main Display Logic
+function updateWalletDisplay() {
     if(!currentUser) return;
 
-    // 1. Update Coins (Real-time look)
-    const coins = Math.floor(currentUser.balance || 0);
-    const coinDisplay = document.getElementById('wallet-coins-display');
-    if(coinDisplay) coinDisplay.innerText = coins.toLocaleString();
-
-    // 2. Rank Logic
-    // Default to rank 999 if not set
-    const userRank = currentUser.rank || 105; 
-    document.getElementById('user-rank-display').innerText = userRank;
-
-    const rankContainer = document.getElementById('rank-status-container');
-    const withdrawView = document.getElementById('withdrawal-view');
-    const storageView = document.getElementById('storage-view');
-
-    // Reset Classes
-    rankContainer.innerHTML = '';
-    withdrawView.classList.add('hidden');
-    storageView.classList.add('hidden');
-
-    if (userRank <= 10) {
-        // ✅ TOP 10: ELIGIBLE
-        rankContainer.innerHTML = `
-            <div class="rank-status-card eligible">
-                <div class="rs-info">
-                    <h4>You are Top 10! 🏆</h4>
-                    <p>Cash withdrawal enabled.</p>
-                </div>
-                <div class="rs-badge">Cash Active</div>
-            </div>
-        `;
-        withdrawView.classList.remove('hidden');
-    } else {
-        // 🔒 RANK 11+: STORAGE MODE
-        rankContainer.innerHTML = `
-            <div class="rank-status-card locked">
-                <div class="rs-info">
-                    <h4>Current Rank: #${userRank}</h4>
-                    <p>Reach Top 10 to unlock cash.</p>
-                </div>
-                <div class="rs-badge">Storage Mode</div>
-            </div>
-        `;
-        storageView.classList.remove('hidden');
-    }
-}
-
-// --- WITHDRAWAL LOGIC (Top 10 Only) ---
-window.calculateCoinCost = function(inrAmount) {
-    const cost = Math.floor(inrAmount * CONVERSION_DIVISOR);
-    document.getElementById('coin-cost-display').innerText = cost.toLocaleString();
+    // Coins
+    document.getElementById('wallet-balance-display').innerText = Math.floor(currentUser.balance).toLocaleString();
     
-    const displayEl = document.getElementById('coin-cost-display');
-    if(currentUser.balance < cost) {
-        displayEl.style.color = '#ef4444'; // Red
-    } else {
-        displayEl.style.color = '#fff'; // White
-    }
-}
+    // Rank
+    const rank = currentUser.rank || 999; // Default to low rank
+    document.getElementById('wallet-rank-display').innerText = rank;
 
-window.handleWithdraw = async function() {
-    const inrAmount = parseFloat(document.getElementById('withdraw-inr').value);
-    
-    if(!inrAmount || inrAmount <= 0) {
-        showToast("⚠️ Enter valid amount");
-        return;
-    }
+    const statusBar = document.getElementById('rank-status-bar');
+    const statusBadge = document.getElementById('wallet-status-badge');
+    const withdrawDiv = document.getElementById('withdraw-interface');
+    const lockedDiv = document.getElementById('locked-interface');
 
-    const coinCost = inrAmount * CONVERSION_DIVISOR;
-
-    if(currentUser.balance < coinCost) {
-        showToast("🚫 Not enough coins!");
-        return;
-    }
-
-    // Processing Simulation
-    Swal.fire({
-        title: 'Processing...',
-        text: 'Verifying Rank & Balance',
-        background: '#020617',
-        color: '#fff',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    setTimeout(async () => {
-        // Deduct Coins
-        currentUser.balance -= coinCost;
+    // Logic: Rank 1-10 Unlocked
+    if (rank <= 10) {
+        statusBar.className = 'rank-strip unlocked';
+        statusBadge.innerText = 'Unlocked';
+        statusBadge.innerHTML = '<i class="fa-solid fa-unlock"></i> Unlocked';
         
-        // Save to Firebase (Simulated Backend Update)
+        withdrawDiv.classList.remove('hidden');
+        lockedDiv.classList.add('hidden');
+    } else {
+        statusBar.className = 'rank-strip locked';
+        statusBadge.innerText = 'Locked';
+        statusBadge.innerHTML = '<i class="fa-solid fa-lock"></i> Locked';
+        
+        withdrawDiv.classList.add('hidden');
+        lockedDiv.classList.remove('hidden');
+    }
+}
+
+// 3. Live Calculator
+window.calculateLiveCost = function(inrAmount) {
+    const amount = parseFloat(inrAmount);
+    const display = document.getElementById('live-coin-cost');
+    const btn = document.getElementById('btn-final-withdraw');
+
+    if (!amount || amount <= 0) {
+        display.innerText = "0 Coins";
+        display.style.color = "#fbbf24";
+        return;
+    }
+
+    const cost = Math.floor(amount * EXCHANGE_RATE);
+    display.innerText = `- ${cost.toLocaleString()} Coins`;
+
+    // Validation Color
+    if (currentUser.balance < cost) {
+        display.style.color = "#ef4444"; // Red (Not enough)
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.innerText = "Insufficient Coins";
+    } else {
+        display.style.color = "#22c55e"; // Green (Good)
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerText = "Transfer Funds";
+    }
+};
+
+// 4. Select Method
+window.selectPaymentMethod = function(el, method) {
+    document.querySelectorAll('.pm-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedMethod = method;
+    
+    // Placeholder update
+    const input = document.getElementById('payment-id');
+    if(method === 'UPI') input.placeholder = "Enter UPI ID (e.g. name@okhdfcbank)";
+    else if(method === 'Paytm') input.placeholder = "Enter Paytm Number";
+    else input.placeholder = "Enter Account Number";
+};
+
+// 5. Process Withdraw
+window.processWithdrawal = function() {
+    const amount = parseFloat(document.getElementById('withdraw-inr-input').value);
+    const payId = document.getElementById('payment-id').value;
+    
+    if(!amount || amount < MIN_WITHDRAWAL) {
+        showToast(`⚠️ Minimum withdrawal is ₹${MIN_WITHDRAWAL}`);
+        return;
+    }
+    
+    if(!payId || payId.length < 5) {
+        showToast("⚠️ Enter valid Payment ID");
+        return;
+    }
+
+    const cost = amount * EXCHANGE_RATE;
+
+    // Simulate Processing
+    const btn = document.getElementById('btn-final-withdraw');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    
+    setTimeout(() => {
+        // Deduct Logic
+        currentUser.balance -= cost;
+        updateWalletDisplay(); // Refresh UI
+        
+        // Save to Firebase (Simulated)
         if(window.saveUserData) {
-            await saveUserData(currentUser.uid, { 
-                balance: currentUser.balance,
-                lastWithdrawal: new Date()
-            });
+            saveUserData(currentUser.uid, { balance: currentUser.balance });
         }
 
-        updateWalletUI(); // Refresh UI
-        document.getElementById('withdraw-inr').value = '';
-        document.getElementById('coin-cost-display').innerText = '0';
-        
-        // Add to History
-        addHistoryItem("Cash Withdrawal", "Processing", `-${coinCost.toLocaleString()}`, false);
+        // Reset Form
+        document.getElementById('withdraw-inr-input').value = '';
+        document.getElementById('live-coin-cost').innerText = '0 Coins';
+        btn.innerHTML = 'Transfer Funds';
 
         Swal.fire({
             icon: 'success',
-            title: 'Request Sent!',
-            text: `₹${inrAmount} withdrawal request submitted. Status: Pending Approval.`,
+            title: 'Withdrawal Successful!',
+            text: `₹${amount} has been sent to your ${selectedMethod}.`,
             background: '#020617',
             color: '#fff',
             confirmButtonColor: '#22c55e'
         });
 
     }, 2000);
-}
-
-// --- HISTORY LOGIC ---
-function renderHistory() {
-    const list = document.getElementById('wallet-history-list');
-    list.innerHTML = ''; // Clear
-    
-    // Fake Data for Demo
-    const mockHistory = [
-        { title: "Tap Game Reward", date: "Today, 10:00 AM", amount: "+500", type: "earn" },
-        { title: "Referral Bonus", date: "Yesterday", amount: "+1,000", type: "earn" }
-    ];
-
-    mockHistory.forEach(item => {
-        addHistoryItem(item.title, item.date, item.amount, true);
-    });
-}
-
-function addHistoryItem(title, date, amount, isEarn) {
-    const list = document.getElementById('wallet-history-list');
-    const div = document.createElement('div');
-    div.className = 'hist-item';
-    div.innerHTML = `
-        <div class="hi-left">
-            <h4>${title}</h4>
-            <span>${date}</span>
-        </div>
-        <div class="hi-amount ${isEarn ? 'text-gold' : 'text-red'}">${amount}</div>
-    `;
-    list.prepend(div);
-}
-
-// Call init on load
-// initWallet();
+};
 
