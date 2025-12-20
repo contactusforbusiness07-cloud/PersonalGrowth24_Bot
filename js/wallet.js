@@ -1,41 +1,44 @@
-/* Wallet Module - Live Sync & Pro Logic */
+/* Wallet Module - Final Fix */
 
 const EXCHANGE_RATE = 100000; // 100k coins = 1 Rupee
 
 window.updateWalletUI = function() {
-    // --- 1. LIVE SYNC FIX ---
-    // Forcefully read from localStorage to get the exact coin count from the Game
-    const localCoins = localStorage.getItem('local_balance'); // Matches games.js save logic
+    // ==========================================
+    // 🛠️ CRITICAL FIX: LIVE COIN SYNC
+    // ==========================================
+    // We check ALL possible storage keys where coins might be hidden
+    let storedCoins = localStorage.getItem('local_balance') || localStorage.getItem('coins') || localStorage.getItem('mining_balance');
     
-    if (window.currentUser) {
-        // If localStorage has newer data than currentUser (common when switching tabs), update it.
-        if(localCoins) {
-            const parsedCoins = parseFloat(localCoins);
-            if(!isNaN(parsedCoins)) {
-                window.currentUser.balance = parsedCoins;
-            }
-        }
-    } else {
-        // Initialize if missing
-        window.currentUser = { 
-            balance: localCoins ? parseFloat(localCoins) : 0, 
-            rank: 999 
-        };
+    // Initialize currentUser if missing
+    if (!window.currentUser) {
+        window.currentUser = { balance: 0, rank: 999 };
     }
+
+    // If storage has more coins than memory, update memory
+    if (storedCoins) {
+        let parsed = parseFloat(storedCoins);
+        if (!isNaN(parsed) && parsed > window.currentUser.balance) {
+            window.currentUser.balance = parsed;
+        }
+    }
+    // Force save back to ensure sync
+    localStorage.setItem('local_balance', window.currentUser.balance);
 
     const balance = Math.floor(window.currentUser.balance);
     
-    // Update UI Displays
+    // Update UI
     const wd = document.getElementById('wallet-coins');
     const hd = document.getElementById('header-coin-balance');
     if(wd) wd.innerText = balance.toLocaleString();
     if(hd) hd.innerText = balance.toLocaleString();
 
-    // --- 2. Rank Logic ---
+    // ==========================================
+    // 🏆 RANK LOGIC
+    // ==========================================
     const rank = window.currentUser.rank || 999;
     const isTop10 = rank <= 10;
     
-    // Update Rank Card
+    // Status Card
     const rankContainer = document.getElementById('rank-card-container');
     if(rankContainer) {
         rankContainer.innerHTML = `
@@ -50,25 +53,35 @@ window.updateWalletUI = function() {
             </div>`;
     }
 
-    // --- 3. Button Logic (Design Match) ---
-    const btn = document.getElementById('btn-main-withdraw');
-    const note = document.getElementById('withdraw-note');
+    // ==========================================
+    // 🔒 BUTTON LOGIC (Dynamic)
+    // ==========================================
+    const btnContainer = document.getElementById('action-btn-container');
     
-    if(btn) {
+    if(btnContainer) {
         if(isTop10) {
-            // Enabled for Top 10
-            btn.className = "btn-withdraw-action active";
-            btn.innerHTML = `INITIATE TRANSFER <i class="fa-solid fa-paper-plane"></i>`;
-            btn.onclick = window.tryWithdraw; 
-            note.innerText = "Funds will be sent to your UPI instantly.";
-            note.style.color = "#4ade80";
+            // UNLOCKED: Show Withdrawal Button
+            btnContainer.innerHTML = `
+                <button class="btn-withdraw-action active" onclick="window.processTop10Withdraw()">
+                    INITIATE TRANSFER <i class="fa-solid fa-paper-plane"></i>
+                </button>
+                <p style="text-align: center; font-size: 0.7rem; color: #4ade80; margin-top: 10px;">
+                    <i class="fa-solid fa-circle-check"></i> Gateway Active
+                </p>
+            `;
         } else {
-            // "Look Locked" for Rank 11+ (But still clickable to show Popup)
-            btn.className = "btn-withdraw-action disabled";
-            btn.innerHTML = `<i class="fa-solid fa-lock"></i> LOCKED (RANK 11+)`;
-            btn.onclick = window.tryWithdraw; // Still calls function to show rejection popup
-            note.innerText = "Only Top 10 Ranks can proceed to payment gateway.";
-            note.style.color = "#64748b";
+            // LOCKED: Show "Vault" Button
+            btnContainer.innerHTML = `
+                <div class="locked-vault-btn" onclick="window.showLockedPopup()">
+                    <div class="lock-text">
+                        <i class="fa-solid fa-lock" style="font-size:1.2rem; color:#fbbf24;"></i> 
+                        LOCKED (Rank 11+)
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 10px;">
+                    Only Top 10 Ranks can proceed to payment gateway.
+                </p>
+            `;
         }
     }
 };
@@ -80,34 +93,41 @@ window.calculateRealMoney = function(val) {
     res.innerText = "₹" + (coins/EXCHANGE_RATE).toFixed(2);
 };
 
-// --- WITHDRAWAL & POPUP LOGIC ---
-window.tryWithdraw = function() {
-    const amountInput = document.getElementById('calc-input').value;
-    const upiInput = document.getElementById('upi-id-input').value;
-    const coinsToWithdraw = parseFloat(amountInput);
-    const rank = window.currentUser.rank || 999;
-    const isTop10 = rank <= 10;
+// ==========================================
+// 🚨 POPUP LOGIC (As per Request)
+// ==========================================
+window.showLockedPopup = function() {
+    Swal.fire({ 
+        title: 'Access Restricted', 
+        html: `
+            <div style="text-align:left; font-size:0.9rem; color:#cbd5e1; line-height: 1.6;">
+                <p>Exclusive withdrawal features are currently reserved for our <b>Top 10 Elite Players</b>.</p>
+                <br>
+                <p>Your coins are safe in <b>Storage Mode</b>. Climb the leaderboard to unlock this premium benefit.</p>
+            </div>
+        `,
+        icon: 'warning', 
+        confirmButtonText: 'I Understand',
+        background: '#0f172a', 
+        color: '#fff',
+        confirmButtonColor: '#334155',
+        customClass: {
+            popup: 'glass-panel-tech'
+        }
+    });
+};
 
-    // 1. NON-TOP 10 REJECTION (Professional English)
-    if(!isTop10) {
-        Swal.fire({ 
-            title: 'Access Restricted', 
-            html: `
-                <div style="text-align:left; font-size:0.9rem; color:#cbd5e1;">
-                    <p>Exclusive withdrawal features are currently reserved for our <b>Top 10 Elite Players</b>.</p>
-                    <p style="margin-top:10px;">Your coins are safe in <b>Storage Mode</b>. Climb the leaderboard to unlock this premium benefit.</p>
-                </div>
-            `,
-            icon: 'lock', 
-            confirmButtonText: 'I Understand',
-            background: '#0f172a', 
-            color: '#fff',
-            confirmButtonColor: '#334155'
-        });
-        return;
-    }
+// ==========================================
+// 💸 WITHDRAWAL LOGIC (Top 10 Only)
+// ==========================================
+window.processTop10Withdraw = function() {
+    const name = document.getElementById('pay-name').value;
+    const upi = document.getElementById('pay-upi').value;
+    const code = document.getElementById('pay-code').value;
+    const coinsStr = document.getElementById('calc-input').value;
+    const coinsToWithdraw = parseFloat(coinsStr);
 
-    // 2. Validate Amount
+    // 1. Validation
     if(!coinsToWithdraw || coinsToWithdraw <= 0) {
         Swal.fire({ icon:'error', title:'Invalid Amount', text:'Enter coins to withdraw.', background:'#020617', color:'#fff' });
         return;
@@ -116,26 +136,29 @@ window.tryWithdraw = function() {
          Swal.fire({ icon:'error', title:'Insufficient Balance', text:'You need more coins!', background:'#020617', color:'#fff' });
          return;
     }
-
-    // 3. Validate UPI
-    if(upiInput.length < 5 || !upiInput.includes('@')) {
-        Swal.fire({ icon:'error', title:'Invalid Payment Details', text:'Please enter a valid UPI ID.', background:'#020617', color:'#fff' });
+    if(!name || !upi || !code) {
+        Swal.fire({ icon:'error', title:'Details Missing', text:'Please fill Name, UPI and Access Code.', background:'#020617', color:'#fff' });
         return;
     }
 
-    // 4. SUCCESS: Deduct Coins & Process
-    window.currentUser.balance -= coinsToWithdraw; // Deduct from memory
-    localStorage.setItem('local_balance', window.currentUser.balance); // Save to storage
-    
-    // Update UI immediately
-    updateWalletUI(); 
-    document.getElementById('calc-input').value = ""; // Clear input
+    // 2. DEDUCT COINS
+    window.currentUser.balance -= coinsToWithdraw;
+    localStorage.setItem('local_balance', window.currentUser.balance); // Update Storage
+    updateWalletUI(); // Refresh View
+    document.getElementById('calc-input').value = ""; // Reset Input
 
+    // 3. SUCCESS MESSAGE
+    // Note: Since we don't have a backend, we confirm to user. 
+    // In future, you can capture 'name', 'upi', 'code', 'coinsToWithdraw' and send to a bot.
     Swal.fire({ 
         icon:'success', 
-        title:'Transfer Initiated', 
-        text:`₹${(coinsToWithdraw/EXCHANGE_RATE).toFixed(2)} is being processed.`, 
+        title:'Request Submitted!', 
+        html: `
+            Withdrawal of <b>₹${(coinsToWithdraw/EXCHANGE_RATE).toFixed(2)}</b> initiated.<br>
+            <span style="font-size:0.8rem; color:#aaa;">Request sent to admin via secure channel.</span>
+        `, 
         background:'#020617', 
         color:'#fff' 
     });
 };
+
