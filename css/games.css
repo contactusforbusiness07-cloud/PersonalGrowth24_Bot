@@ -1,10 +1,10 @@
 /* =========================================
-   FINAL COMPACT ARENA (NO SCROLL + ANIMATION)
+   ULTRA COMPACT GAME ARENA (FIXED SCREEN)
    ========================================= */
 
 /* 1. LOCK SCREEN & BACKGROUND */
 body, html {
-    overflow: hidden;
+    overflow: hidden; /* Scroll bilkul band */
     height: 100%;
     width: 100%;
     position: fixed;
@@ -13,114 +13,113 @@ body, html {
 }
 
 #games {
-    /* Use dynamic viewport height to fit mobile browser bars */
+    /* 100dvh mobile browser bars ko handle karta hai */
     height: 100dvh; 
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* Space Between: Cheezon ko barabar failega taaki screen bhari lage */
+    justify-content: space-between; 
     background: radial-gradient(circle at 50% 30%, #1e293b 0%, #020617 80%);
-    /* Padding adjusted to fit everything without scroll */
     padding-top: 10px;
-    padding-bottom: 85px; /* Space for Bottom Nav */
-    position: relative;
+    padding-bottom: 90px; /* Bottom Nav ke liye jagah */
     box-sizing: border-box;
 }
 
-/* 2. AD SPACE (Compact) */
+/* 2. AD SPACE (Small) */
 .native-ad-placeholder {
     width: 90%;
-    height: 50px; /* Fixed small height */
-    min-height: 50px;
+    height: 45px; /* Height kam ki */
+    min-height: 45px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
-    font-size: 0.7rem;
-    margin-bottom: 5px;
+    font-size: 0.65rem;
+    backdrop-filter: blur(5px);
 }
 
-/* 3. HEADER & BALANCE */
+/* 3. HEADER (Compact) */
 .game-header {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 0;
-    flex-shrink: 0; /* Prevent shrinking */
+    padding: 0;
+    margin-bottom: 5px;
 }
 
 .user-rank-badge {
     background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
     border: 1px solid rgba(255, 215, 0, 0.4);
-    padding: 6px 25px;
-    border-radius: 30px;
-    font-size: 0.9rem;
+    padding: 4px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     color: #ffd700;
     font-weight: 700;
-    letter-spacing: 1px;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
 }
 
+/* 4. BALANCE (Smaller Text) */
 .balance-container {
     text-align: center;
-    margin-bottom: 5px;
     flex-shrink: 0;
 }
 
 .current-mining-label {
     color: #94a3b8;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     letter-spacing: 2px;
     text-transform: uppercase;
+    margin-bottom: 2px;
 }
 
 .big-gold-text {
-    font-size: 3rem;
+    font-size: 2.5rem; /* Font size kam kiya */
     font-weight: 800;
     color: #fff;
-    text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
     font-family: 'Orbitron', sans-serif;
-    line-height: 1.1;
+    line-height: 1;
     margin: 0;
 }
 
-/* 4. THE ARENA (Flexible Spacer) */
+/* 5. THE ARENA (Coin Size Reduced for Fit) */
 .tap-arena {
-    flex-grow: 1; /* Takes available space */
+    flex-grow: 1; 
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     position: relative;
-    max-height: 320px; /* Limit height on tall screens */
+    max-height: 280px; /* Height limit lagayi */
 }
 
-/* 🔥 ANIMATED GLOW RING */
+/* 🔥 ANIMATED RING (Tez Ghumega) */
 .coin-glow-ring {
     position: absolute;
-    width: 260px;
-    height: 260px;
+    width: 240px; /* Size chhota kiya */
+    height: 240px;
     border-radius: 50%;
-    border: 2px dashed rgba(0, 220, 255, 0.3);
-    box-shadow: 0 0 40px rgba(0, 220, 255, 0.15);
-    /* Animation must be defined here */
-    animation: spinTech 10s linear infinite; 
+    border: 2px dashed rgba(0, 220, 255, 0.4);
+    box-shadow: 0 0 30px rgba(0, 220, 255, 0.15);
+    animation: spinTech 8s linear infinite; /* Animation ON */
     pointer-events: none;
-    will-change: transform; /* Performance optimization */
+    will-change: transform;
 }
 
 .coin-container {
-    width: 230px;
-    height: 230px;
+    width: 210px; /* Coin size chhota kiya */
+    height: 210px;
     border-radius: 50%;
     position: relative;
     z-index: 10;
     cursor: pointer;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     transition: transform 0.05s;
     overflow: hidden;
     border: 4px solid rgba(255, 215, 0, 0.5);
@@ -138,21 +137,22 @@ body, html {
     border-color: #fff;
 }
 
+/* Animation Definition */
 @keyframes spinTech {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* 5. ENERGY PANEL (Compact Bottom) */
+/* 6. ENERGY PANEL (Compact) */
 .energy-control-panel {
     width: 92%;
     background: rgba(15, 23, 42, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
-    padding: 12px 15px;
+    padding: 12px;
     backdrop-filter: blur(10px);
     z-index: 20;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
     box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
 }
 
@@ -163,7 +163,6 @@ body, html {
     color: #94a3b8;
     font-weight: 700;
     font-size: 0.75rem;
-    text-transform: uppercase;
 }
 
 .energy-bar-bg {
@@ -190,7 +189,7 @@ body, html {
     border-radius: 10px;
     color: white;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -199,7 +198,7 @@ body, html {
     text-transform: uppercase;
 }
 
-/* Security Badge (New) */
+/* Security Badge */
 .security-badge {
     display: flex;
     justify-content: space-between;
@@ -213,17 +212,17 @@ body, html {
 /* Float Animation */
 .float-text {
     position: absolute;
-    font-size: 2.5rem;
-    font-weight: 900;
+    font-size: 2rem;
+    font-weight: 800;
     color: #fff;
     pointer-events: none;
     animation: floatUp 0.6s ease-out forwards;
     z-index: 100;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
 }
 
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-100px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
 }
 
