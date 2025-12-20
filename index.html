@@ -769,31 +769,33 @@
                     </div>
                 
                 <div id="calculator-zone">
-                    <div class="wallet-input-group" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px;">
-                        <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 10px;">WITHDRAWAL SIMULATOR</label>
+                    
+                    <div class="wallet-input-group" style="margin-bottom: 15px;">
+                        <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 8px;">PAYMENT DETAILS</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div style="background: #06b6d4; color: #020617; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800;">UPI</div>
+                            <div style="background: rgba(255,255,255,0.05); color: #64748b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem;">BANK</div>
+                            <div style="background: rgba(255,255,255,0.05); color: #64748b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem;">CRYPTO</div>
+                        </div>
+                        <input type="text" id="upi-id-input" placeholder="Enter UPI ID (e.g. name@okhdfcbank)" 
+                               style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px; outline: none; font-family: 'Inter', sans-serif;">
+                    </div>
+            
+                    <div class="wallet-input-group" style="border: 1px solid rgba(255,255,255,0.15); background: rgba(2, 6, 23, 0.8);">
+                        <label style="font-size: 0.7rem; color: #64748b; letter-spacing: 1px; display: block; margin-bottom: 5px;">WITHDRAWAL SIMULATOR</label>
                         
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <i class="fa-solid fa-coins text-gold" style="font-size: 1.8rem;"></i>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-coins text-gold" style="font-size: 24px;"></i>
                             <input type="number" id="calc-input" 
-                                   style="background: transparent; border: none; color: white; font-size: 1.8rem; font-family: 'Orbitron', sans-serif; width: 100%; outline: none;" 
+                                   style="background: transparent; border: none; color: #fff; font-size: 2rem; font-family: 'Orbitron', sans-serif; width: 100%; outline: none; font-weight: 700;" 
                                    placeholder="Enter Coins" 
                                    oninput="window.calculateRealMoney(this.value)">
                         </div>
                         
-                        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-size: 0.75rem; color: #94a3b8;">Rate: 100k Coins = ₹1.00</span>
                             <span id="calc-result" style="color: #4ade80; font-weight: bold; font-family: 'Orbitron'; font-size: 1.2rem;">₹0.00</span>
                         </div>
-                    </div>
-            
-                    <div id="payment-gateway-ui" class="hidden" style="margin-top: 15px; background: rgba(6, 182, 212, 0.1); border: 1px solid #06b6d4; border-radius: 12px; padding: 15px;">
-                        <label style="font-size: 0.75rem; color: #06b6d4; font-weight: bold; margin-bottom: 8px; display: block;">PAYMENT GATEWAY</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <div style="background: #06b6d4; color: black; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold;">UPI</div>
-                            <div style="background: rgba(255,255,255,0.1); color: #aaa; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem;">Bank</div>
-                        </div>
-                        <input type="text" id="upi-id-input" placeholder="Enter UPI ID (e.g., name@okaxis)" 
-                               style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 8px; outline: none;">
                     </div>
             
                     <button id="btn-main-withdraw" class="btn-withdraw-action disabled" onclick="window.tryWithdraw()">
@@ -942,5 +944,4 @@
     </script>
 </body>
 </html>
-
 
