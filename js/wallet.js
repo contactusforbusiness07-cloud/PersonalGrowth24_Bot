@@ -1,127 +1,111 @@
-/* Wallet Module - Metaverse Edition */
+/* Wallet Module - Addictive & Secure Logic */
 
-const EXCHANGE_RATE = 100000; // 100k coins = 1 Rupee
+const EXCHANGE_RATE = 100000; // 100k Coins = 1 INR
 
-export function initWallet() {
-    console.log("Metaverse Wallet Initialized");
-    updateWalletUI();
-    loadTransactionHistory();
-}
-
-function updateWalletUI() {
-    if (!currentUser) return;
-
-    // 1. Update Main Balance (Animated)
-    document.getElementById('wallet-coins').innerText = Math.floor(currentUser.balance).toLocaleString();
-
-    // 2. Rank & Eligibility Logic
-    const rank = currentUser.rank || 999; 
-    const isEligible = rank <= 10;
+// Function called when Wallet Tab is clicked
+window.updateWalletUI = function() {
+    // 1. Sync Balance from Global User (Assume currentUser exists in main.js)
+    // Fallback to 0 if user not loaded
+    const balance = (window.currentUser && window.currentUser.balance) ? window.currentUser.balance : 0;
     
-    // Render Rank Card
-    const rankHTML = `
-        <div class="r-info">
-            <span class="r-label">CURRENT RANK</span>
-            <span class="r-val">#${rank}</span>
-        </div>
-        <div class="status-badge ${isEligible ? 'unlocked' : 'locked'}">
-            ${isEligible ? '<i class="fa-solid fa-lock-open"></i> Cash Eligible' : '<i class="fa-solid fa-database"></i> Storage Mode'}
-        </div>
-    `;
-    document.getElementById('rank-card-container').innerHTML = rankHTML;
-
-    // 3. Render Action Zone (The Switch)
-    const actionZone = document.getElementById('action-zone');
+    // Update Header & Main Wallet Display
+    const walletDisplay = document.getElementById('wallet-coins');
+    const headerDisplay = document.getElementById('header-coin-balance');
     
-    if (isEligible) {
-        // --- TOP 10 VIEW (WITHDRAWAL) ---
-        actionZone.innerHTML = `
-            <div class="meta-input-group">
-                <label class="meta-input-label">WITHDRAW FUNDS (INR)</label>
-                <div class="meta-input-wrapper">
-                    <span class="currency-symbol">₹</span>
-                    <input type="number" id="withdraw-amount" class="meta-input" placeholder="0" oninput="calculateConversion(this.value)">
+    if(walletDisplay) walletDisplay.innerText = Math.floor(balance).toLocaleString();
+    if(headerDisplay) headerDisplay.innerText = formatNumber(balance); // Helper needed or use simple toLocaleString
+
+    // 2. Rank Logic
+    const rank = (window.currentUser && window.currentUser.rank) ? window.currentUser.rank : 999;
+    const isTop10 = rank <= 10;
+
+    // 3. Update Status Card
+    const rankContainer = document.getElementById('rank-card-container');
+    if(rankContainer) {
+        rankContainer.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <span style="font-size:0.7rem; color:#94a3b8;">CURRENT RANK</span><br>
+                    <span style="font-size:1.2rem; color:white; font-weight:bold; font-family:'Orbitron'">#${rank}</span>
                 </div>
-                <div class="conversion-preview" id="conversion-display">Cost: 0 Coins</div>
+                <div style="padding:5px 12px; border-radius:8px; border:1px solid ${isTop10 ? '#22c55e' : '#64748b'}; background: ${isTop10 ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)'}; color: ${isTop10 ? '#4ade80' : '#94a3b8'}; font-size:0.7rem; font-weight:bold;">
+                    ${isTop10 ? '<i class="fa-solid fa-lock-open"></i> UNLOCKED' : '<i class="fa-solid fa-lock"></i> STORAGE MODE'}
+                </div>
             </div>
-            <button class="btn-withdraw-meta" onclick="processWithdrawal()">
-                INITIATE TRANSFER <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            <p style="text-align:center; font-size:0.7rem; color:#64748b; margin-top:10px;">
-                Rate: 100k Coins = ₹1.00
-            </p>
-        `;
-    } else {
-        // --- RANK 11+ VIEW (STORAGE) ---
-        actionZone.innerHTML = `
-            <div class="vault-message">
-                <i class="fa-solid fa-shield-cat vault-icon"></i>
-                <div class="vault-text">
-                    <strong>Wallet in Safe Storage Mode</strong><br>
-                    Only Top 10 players can access the cash bridge.<br>
-                    <span style="color: #fbbf24; font-size: 0.75rem;">Your coins are safe for future rewards.</span>
-                </div>
+            <div style="margin-top:10px; height:4px; width:100%; background:rgba(255,255,255,0.1); border-radius:2px;">
+                <div style="height:100%; width:${isTop10 ? '100%' : '10%'}; background:${isTop10 ? '#22c55e' : '#fbbf24'}; border-radius:2px;"></div>
+            </div>
+            <div style="margin-top:5px; font-size:0.6rem; color:#fbbf24; text-align:right;">
+                ${isTop10 ? 'You are eligible for Cash Out!' : 'Reach Top 10 to Unlock Cash Out'}
             </div>
         `;
     }
-}
 
-// Global function for input calculation
-window.calculateConversion = function(amount) {
-    const val = parseFloat(amount);
-    const costDisplay = document.getElementById('conversion-display');
-    if (isNaN(val) || val <= 0) {
-        costDisplay.innerText = "Cost: 0 Coins";
-        return;
-    }
-    const cost = Math.floor(val * EXCHANGE_RATE);
-    costDisplay.innerHTML = `Cost: <span style="color:#fff">${cost.toLocaleString()}</span> Coins`;
+    // 4. Update Button State
+    const btn = document.getElementById('btn-main-withdraw');
+    const note = document.getElementById('withdraw-note');
     
-    // Validations (Visual Only)
-    if(cost > currentUser.balance) {
-        costDisplay.innerHTML += ` <span style="color:#f43f5e">(Insufficient)</span>`;
+    if(btn) {
+        if(isTop10) {
+            btn.className = "btn-withdraw-action active";
+            btn.innerHTML = `WITHDRAW CASH <i class="fa-solid fa-arrow-right"></i>`;
+            btn.onclick = window.processWithdrawal; // Real function
+            note.innerText = "Funds will be transferred to your registered UPI.";
+            note.style.color = "#4ade80";
+        } else {
+            btn.className = "btn-withdraw-action disabled";
+            btn.innerHTML = `<i class="fa-solid fa-lock"></i> UNLOCK AT RANK #10`;
+            btn.onclick = function() { Swal.fire({ title:'Locked!', text:'Keep grinding to reach Top 10!', icon:'info', background:'#020617', color:'#fff' }); };
+            note.innerText = "Only Top 10 Ranks can proceed to payment gateway.";
+            note.style.color = "#64748b";
+        }
     }
 };
 
-window.processWithdrawal = function() {
-    const amount = document.getElementById('withdraw-amount').value;
-    const cost = Math.floor(parseFloat(amount) * EXCHANGE_RATE);
-
-    if (cost > currentUser.balance) {
-        Swal.fire({
-            background: '#0f172a', color: '#fff', icon: 'error', 
-            title: 'Insufficient Balance', text: 'You need more coins!'
-        });
+// Real-time Calculator Logic (For Everyone)
+window.calculateRealMoney = function(coinInput) {
+    const coins = parseFloat(coinInput);
+    const resultDisplay = document.getElementById('calc-result');
+    
+    if(!coins || coins < 0) {
+        resultDisplay.innerText = "₹0.00";
         return;
+    }
+
+    const rupees = coins / EXCHANGE_RATE;
+    resultDisplay.innerText = "₹" + rupees.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    // Psychology: If they enter huge amount, show color change
+    if(rupees > 100) {
+        resultDisplay.style.color = "#fbbf24"; // Gold color for high amount
+    } else {
+        resultDisplay.style.color = "#4ade80"; // Green for normal
+    }
+};
+
+// Process Withdrawal (Top 10 Only)
+window.processWithdrawal = function() {
+    const amountInput = document.getElementById('calc-input').value;
+    const coins = parseFloat(amountInput);
+
+    // Security Check
+    if(!coins || coins <= 0) {
+        Swal.fire({ icon:'error', title:'Invalid Amount', text:'Please enter coins to withdraw.', background:'#020617', color:'#fff' });
+        return;
+    }
+    
+    if(coins > window.currentUser.balance) {
+         Swal.fire({ icon:'error', title:'Insufficient Balance', text:'You do not have enough coins!', background:'#020617', color:'#fff' });
+         return;
     }
 
     // Success Simulation
-    Swal.fire({
-        background: '#0f172a', color: '#fff', icon: 'success',
-        title: 'Processing', text: 'Funds requested successfully!'
+    Swal.fire({ 
+        icon:'success', 
+        title:'Request Sent!', 
+        text:`Withdrawal of ₹${(coins/EXCHANGE_RATE).toFixed(2)} initiated.`, 
+        background:'#020617', 
+        color:'#fff' 
     });
-    // In real backend, you would deduct here and send API request
 };
-
-function loadTransactionHistory() {
-    // Simulated History (Lightweight)
-    const historyData = [
-        { type: 'Tap Mining', val: '+500', icon: 'fa-hand-pointer' },
-        { type: 'Daily Task', val: '+2000', icon: 'fa-list-check' },
-        { type: 'Referral', val: '+5000', icon: 'fa-user-plus' }
-    ];
-
-    let html = '';
-    historyData.forEach(item => {
-        html += `
-        <div class="mh-item">
-            <div class="mh-left">
-                <div class="mh-icon"><i class="fa-solid ${item.icon}"></i></div>
-                <div class="mh-info"><h5>${item.type}</h5><span>Today</span></div>
-            </div>
-            <div class="mh-val plus">${item.val}</div>
-        </div>`;
-    });
-    document.getElementById('wallet-history-list').innerHTML = html;
-}
 
