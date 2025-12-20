@@ -697,13 +697,12 @@
                 
                 <div class="balance-container">
                     <div class="current-mining-label">Current Mining</div>
-                    <div id="display-balance" class="big-gold-text">0</div>
+                    <div id="display-balance" class="big-gold-text neon-text-gold">0</div>
                 </div>
 
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
                     <div class="coin-glow-ring"></div>
-                    
                     <div class="coin-container">
                         <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin">
                     </div>
@@ -717,12 +716,10 @@
                     <div class="energy-bar-bg">
                         <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
                     </div>
-                    
                     <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
-                        <i class="fa-solid fa-play"></i> 
-                        <span id="refill-label">Free Boost (3 Left)</span>
+                        <i class="fa-solid fa-rocket"></i> 
+                        <span id="refill-label">Full Tank (3 Left)</span>
                     </button>
-
                     <div class="security-badge">
                         <span><i class="fa-solid fa-lock"></i> Adsterra Secured</span>
                         <span class="text-green"><i class="fa-solid fa-shield-halved"></i> Anti-Cheat Active</span>
@@ -741,142 +738,63 @@
 
             <section id="wallet" class="page-section hidden">
                 
-                <div id="wallet-lock-screen" class="hidden">
-                    <i class="fa-solid fa-lock" style="font-size: 40px; color: #3b82f6; margin-bottom: 20px;"></i>
-                    <h3 style="color: white; margin: 0;">Enter Wallet PIN</h3>
-                    <p style="color: #64748b; font-size: 12px;">Secure Access</p>
-                    
-                    <div class="pin-dots">
-                        <div class="dot" id="dot-1"></div>
-                        <div class="dot" id="dot-2"></div>
-                        <div class="dot" id="dot-3"></div>
-                        <div class="dot" id="dot-4"></div>
+                <div class="wallet-hero-reward">
+                    <div class="wh-title">Game Reward Wallet</div>
+                    <div class="wh-coin-display">
+                        <i class="fa-solid fa-coins"></i>
+                        <span id="wallet-coins-display">0</span>
                     </div>
+                    <p class="wh-subtext">Lifetime Valid • Non-Expiring</p>
+                </div>
 
-                    <div class="numpad">
-                        <div class="num-btn" onclick="enterPin(1)">1</div>
-                        <div class="num-btn" onclick="enterPin(2)">2</div>
-                        <div class="num-btn" onclick="enterPin(3)">3</div>
-                        <div class="num-btn" onclick="enterPin(4)">4</div>
-                        <div class="num-btn" onclick="enterPin(5)">5</div>
-                        <div class="num-btn" onclick="enterPin(6)">6</div>
-                        <div class="num-btn" onclick="enterPin(7)">7</div>
-                        <div class="num-btn" onclick="enterPin(8)">8</div>
-                        <div class="num-btn" onclick="enterPin(9)">9</div>
-                        <div class="num-btn" style="opacity:0"></div>
-                        <div class="num-btn" onclick="enterPin(0)">0</div>
-                        <div class="num-btn" onclick="clearPin()"><i class="fa-solid fa-delete-left"></i></div>
+                <div id="rank-status-container">
+                    <div class="rank-status-card locked">
+                        <div class="rs-info">
+                            <h4>Current Rank: #<span id="user-rank-display">--</span></h4>
+                            <p>Top 10 players unlock cash withdrawals.</p>
+                        </div>
+                        <div class="rs-badge">Storage Mode</div>
                     </div>
                 </div>
 
-                <div id="wallet-content">
-                    
-                    <div class="wallet-header-controls">
-                        <div class="balance-toggle" onclick="toggleBalancePrivacy()">
-                            <i class="fa-solid fa-eye" id="eye-icon"></i>
-                            <span>Show Balance</span>
+                <div id="withdrawal-view" class="hidden">
+                    <div class="withdraw-section">
+                        <div class="conversion-rule">
+                            <i class="fa-solid fa-lightbulb"></i> Rule: 100,000 Coins = ₹1.00
                         </div>
-                        <i class="fa-solid fa-gear text-gray-400" style="font-size: 18px;" onclick="showToast('Settings Coming Soon')"></i>
+                        
+                        <div class="withdraw-input-group">
+                            <input type="number" id="withdraw-inr" placeholder="Enter Amount (₹)" oninput="calculateCoinCost(this.value)">
+                        </div>
+                        <div class="withdraw-hint">
+                            Cost: <span id="coin-cost-display" style="color: #fff; font-weight: bold;">0</span> Coins
+                        </div>
+
+                        <button class="btn-cashout" onclick="handleWithdraw()">
+                            Withdraw Cash
+                        </button>
                     </div>
+                </div>
 
-                    <div class="wallet-hero-pro">
-                        <div class="main-balance-row">
-                            <div class="balance-group">
-                                <h4>TOTAL ASSETS</h4>
-                                <div id="main-balance-display" class="balance-value">₹0.00</div>
-                            </div>
-                            <div class="currency-badge">INR</div>
-                        </div>
-
-                        <div class="sub-balances">
-                            <div class="sb-item">
-                                <span class="sb-label">Coins <i class="fa-solid fa-circle-info"></i></span>
-                                <span class="sb-val text-gold" id="wallet-coins">0</span>
-                            </div>
-                            <div class="sb-item">
-                                <span class="sb-label">Locked <i class="fa-solid fa-lock text-red"></i></span>
-                                <span class="sb-val" id="wallet-locked">₹0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="withdraw-progress-card">
-                        <div class="wp-header">
-                            <span>Minimum Withdrawal</span>
-                            <span id="progress-text">0 / ₹100</span>
-                        </div>
-                        <div class="progress-track">
-                            <div id="withdraw-progress-bar" class="progress-fill"></div>
-                        </div>
-                        <p style="font-size: 10px; color: #64748b; margin-top: 8px; text-align: right;">
-                            Estimated Time: <span style="color: #22c55e;">Instant - 24 Hrs</span>
+                <div id="storage-view" class="hidden">
+                    <div class="future-rewards-card">
+                        <div class="fr-icon"><i class="fa-solid fa-gift"></i></div>
+                        <h3 class="fr-title">Upcoming Rewards</h3>
+                        <p class="fr-desc">
+                            Your coins are safe! Keep grinding to reach the Top 10 for cash outs, or save them for exclusive events, merchandise, and platform benefits coming soon.
                         </p>
                     </div>
-
-                    <div class="withdraw-panel" style="margin-bottom: 20px;">
-                        <h3>Withdraw Funds</h3>
-                        <div class="method-selector">
-                            <div class="method-chip active" onclick="selectMethod(this, 'upi')">UPI</div>
-                            <div class="method-chip" onclick="selectMethod(this, 'paytm')">Paytm</div>
-                            <div class="method-chip" onclick="selectMethod(this, 'bank')">Bank</div>
-                        </div>
-                        <div class="input-group">
-                            <span class="currency-symbol">₹</span>
-                            <input type="number" id="withdraw-amount" placeholder="Amount" oninput="validateWithdraw(this.value)">
-                        </div>
-                        <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdrawRequest()">
-                            Request Payout
-                        </button>
-                   </div>
-
-                    <div class="chart-section">
-                        <h4 style="color:#94a3b8; font-size:12px; margin-bottom:10px;">EARNING SOURCES</h4>
-                        <div class="chart-container">
-                            <div class="chart-bar-group">
-                                <div class="chart-bar highlight" style="height: 80%;"></div>
-                                <span class="chart-label">Game</span>
-                            </div>
-                            <div class="chart-bar-group">
-                                <div class="chart-bar" style="height: 40%;"></div>
-                                <span class="chart-label">Task</span>
-                            </div>
-                            <div class="chart-bar-group">
-                                <div class="chart-bar" style="height: 60%;"></div>
-                                <span class="chart-label">Refer</span>
-                            </div>
-                            <div class="chart-bar-group">
-                                <div class="chart-bar" style="height: 20%;"></div>
-                                <span class="chart-label">Ad</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="history-section">
-                        <div class="timeline-filters">
-                            <div class="tf-chip active">All</div>
-                            <div class="tf-chip">Earned</div>
-                            <div class="tf-chip">Spent</div>
-                        </div>
-                        
-                        <div class="transaction-list" id="wallet-history-list">
-                            <div class="tx-card credit">
-                                <div class="tx-left">
-                                    <div class="tx-icon"><i class="fa-solid fa-gamepad text-gold"></i></div>
-                                    <div class="tx-details">
-                                        <h4>Game Reward</h4>
-                                        <span>Today, 10:30 AM</span>
-                                    </div>
-                                </div>
-                                <div class="tx-amount text-green">+ ₹5.00</div>
-                            </div>
-                        </div>
-                        
-                        <button onclick="showToast('Downloading Statement...')" style="width:100%; margin-top:15px; background:none; border:1px solid #334155; padding:10px; color:#94a3b8; border-radius:10px; font-size:12px;">
-                            <i class="fa-solid fa-download"></i> Download Statement
-                        </button>
-                    </div>
-
                 </div>
+
+                <div class="history-section">
+                    <div class="section-header">
+                        <span>ACTIVITY LOG</span>
+                        <i class="fa-solid fa-history"></i>
+                    </div>
+                    <div id="wallet-history-list">
+                        </div>
+                </div>
+
             </section>
 
         </main> 
@@ -912,10 +830,8 @@
             <div class="menu-item" onclick="navigateTo('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
             <div class="menu-item" style="opacity: 0.6;"><div class="mi-icon"><i class="fa-solid fa-id-card"></i></div><span>KYC Verification</span><span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span></div>
             <div class="menu-item" onclick="openInternalPage('page-refer')"><div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></div>
-            <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span></div>
-            
+            <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span>Brand</span></div>
             <hr class="menu-divider">
-            
             <div class="menu-item small" onclick="openInfoPage('withdraw_terms')"><div class="mi-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div><span>Withdrawal Terms</span></div>
             <div class="menu-item small" onclick="openInfoPage('terms')"><div class="mi-icon"><i class="fa-solid fa-file-contract"></i></div><span>Terms & Conditions</span></div>
             <div class="menu-item small" onclick="openInfoPage('privacy')"><div class="mi-icon"><i class="fa-solid fa-lock"></i></div><span>Privacy Policy</span></div>
@@ -929,20 +845,17 @@
         </div>
     </div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
+    
     <script type="module" src="js/main.js"></script> 
     
     <script src="js/pro-core.js"></script>
-
     <script src="js/home.js"></script>
     <script src="js/wallet.js"></script>
     <script src="js/tasks.js"></script>
     <script src="js/games.js"></script>
     <script src="js/leaderboard.js"></script>
-
     <script src="js/pro-profile.js"></script>
     <script src="js/pro-refer.js"></script>
     <script src="js/pro-brand.js"></script>
@@ -951,53 +864,6 @@
 
     <script>
       AOS.init();
-
-      // Reliable Menu Toggle
-      window.toggleProfileMenu = function(forceState) {
-          const menu = document.getElementById('side-menu');
-          const overlay = document.getElementById('menu-overlay');
-          
-          if (!menu || !overlay) {
-              console.error("Menu elements not found!");
-              return;
-          }
-
-          // Close
-          if (forceState === false) {
-              menu.classList.remove('open');
-              overlay.classList.remove('visible');
-              return;
-          }
-          // Open
-          if (forceState === true) {
-              menu.classList.add('open');
-              overlay.classList.add('visible');
-              return;
-          }
-          
-          // Toggle
-          if (menu.classList.contains('open')) {
-              menu.classList.remove('open');
-              overlay.classList.remove('visible');
-          } else {
-              menu.classList.add('open');
-              overlay.classList.add('visible');
-          }
-      };
-
-      // ✅ FIXED: Back Button Logic
-      // Ye ab page ko background se hata dega aur Home show karega menu ke piche
-      window.backToProfileMenu = function() {
-          // 1. Pehle Menu Kholo
-          window.toggleProfileMenu(true);
-
-          // 2. Jo Page khula tha usko chhupa do (Hide Current Page)
-          document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
-
-          // 3. Background me 'Home' section dikha do (Taaki blank na lage)
-          const homeSection = document.getElementById('home');
-          if(homeSection) homeSection.classList.remove('hidden');
-      };
     </script>
 </body>
 </html>
