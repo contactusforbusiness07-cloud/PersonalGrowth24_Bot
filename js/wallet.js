@@ -1,36 +1,41 @@
-/* Wallet Module - Design Restored & Live Sync Fixed */
+/* Wallet Module - Live Sync & Pro Logic */
 
 const EXCHANGE_RATE = 100000; // 100k coins = 1 Rupee
 
 window.updateWalletUI = function() {
-    // 1. SYNC FIX: Force fetch latest balance from storage or memory
-    // Games.js usually saves to 'local_energy' or similar, but let's assume 'currentUser' is the source of truth
-    // We try to grab from localStorage just in case tabs weren't synced
-    const localCoins = localStorage.getItem('local_balance');
+    // --- 1. LIVE SYNC FIX ---
+    // Forcefully read from localStorage to get the exact coin count from the Game
+    const localCoins = localStorage.getItem('local_balance'); // Matches games.js save logic
     
     if (window.currentUser) {
-        // If we found a newer value in local storage (from game tap), use it
-        if(localCoins && parseFloat(localCoins) > window.currentUser.balance) {
-            window.currentUser.balance = parseFloat(localCoins);
+        // If localStorage has newer data than currentUser (common when switching tabs), update it.
+        if(localCoins) {
+            const parsedCoins = parseFloat(localCoins);
+            if(!isNaN(parsedCoins)) {
+                window.currentUser.balance = parsedCoins;
+            }
         }
     } else {
-        // Fallback if user object missing
-        window.currentUser = { balance: localCoins ? parseFloat(localCoins) : 0, rank: 999 };
+        // Initialize if missing
+        window.currentUser = { 
+            balance: localCoins ? parseFloat(localCoins) : 0, 
+            rank: 999 
+        };
     }
 
     const balance = Math.floor(window.currentUser.balance);
     
-    // Update Displays
+    // Update UI Displays
     const wd = document.getElementById('wallet-coins');
     const hd = document.getElementById('header-coin-balance');
     if(wd) wd.innerText = balance.toLocaleString();
     if(hd) hd.innerText = balance.toLocaleString();
 
-    // 2. Rank Logic
+    // --- 2. Rank Logic ---
     const rank = window.currentUser.rank || 999;
     const isTop10 = rank <= 10;
     
-    // Update Rank UI
+    // Update Rank Card
     const rankContainer = document.getElementById('rank-card-container');
     if(rankContainer) {
         rankContainer.innerHTML = `
@@ -45,31 +50,23 @@ window.updateWalletUI = function() {
             </div>`;
     }
 
-    // 3. Button & Gateway State
+    // --- 3. Button Logic (Design Match) ---
     const btn = document.getElementById('btn-main-withdraw');
     const note = document.getElementById('withdraw-note');
-    const gateway = document.getElementById('payment-gateway-ui');
     
     if(btn) {
         if(isTop10) {
-            // User is Top 10: Show Payment Gateway, Enable Button
-            gateway.classList.remove('hidden');
+            // Enabled for Top 10
             btn.className = "btn-withdraw-action active";
             btn.innerHTML = `INITIATE TRANSFER <i class="fa-solid fa-paper-plane"></i>`;
             btn.onclick = window.tryWithdraw; 
             note.innerText = "Funds will be sent to your UPI instantly.";
             note.style.color = "#4ade80";
         } else {
-            // User is Rank 11+: Hide Gateway, Lock Button
-            gateway.classList.add('hidden');
+            // "Look Locked" for Rank 11+ (But still clickable to show Popup)
             btn.className = "btn-withdraw-action disabled";
             btn.innerHTML = `<i class="fa-solid fa-lock"></i> LOCKED (RANK 11+)`;
-            btn.onclick = () => Swal.fire({ 
-                title:'Locked', 
-                text:'You must be in the Top 10 to access the Payment Gateway.', 
-                icon:'warning', 
-                background:'#020617', color:'#fff' 
-            });
+            btn.onclick = window.tryWithdraw; // Still calls function to show rejection popup
             note.innerText = "Only Top 10 Ranks can proceed to payment gateway.";
             note.style.color = "#64748b";
         }
@@ -83,13 +80,34 @@ window.calculateRealMoney = function(val) {
     res.innerText = "₹" + (coins/EXCHANGE_RATE).toFixed(2);
 };
 
-// --- WITHDRAWAL & PAYMENT LOGIC ---
+// --- WITHDRAWAL & POPUP LOGIC ---
 window.tryWithdraw = function() {
     const amountInput = document.getElementById('calc-input').value;
     const upiInput = document.getElementById('upi-id-input').value;
     const coinsToWithdraw = parseFloat(amountInput);
-    
-    // 1. Validate Amount
+    const rank = window.currentUser.rank || 999;
+    const isTop10 = rank <= 10;
+
+    // 1. NON-TOP 10 REJECTION (Professional English)
+    if(!isTop10) {
+        Swal.fire({ 
+            title: 'Access Restricted', 
+            html: `
+                <div style="text-align:left; font-size:0.9rem; color:#cbd5e1;">
+                    <p>Exclusive withdrawal features are currently reserved for our <b>Top 10 Elite Players</b>.</p>
+                    <p style="margin-top:10px;">Your coins are safe in <b>Storage Mode</b>. Climb the leaderboard to unlock this premium benefit.</p>
+                </div>
+            `,
+            icon: 'lock', 
+            confirmButtonText: 'I Understand',
+            background: '#0f172a', 
+            color: '#fff',
+            confirmButtonColor: '#334155'
+        });
+        return;
+    }
+
+    // 2. Validate Amount
     if(!coinsToWithdraw || coinsToWithdraw <= 0) {
         Swal.fire({ icon:'error', title:'Invalid Amount', text:'Enter coins to withdraw.', background:'#020617', color:'#fff' });
         return;
@@ -99,50 +117,25 @@ window.tryWithdraw = function() {
          return;
     }
 
-    // 2. Validate Payment Details (Gateway Check)
+    // 3. Validate UPI
     if(upiInput.length < 5 || !upiInput.includes('@')) {
-        Swal.fire({ icon:'error', title:'Invalid UPI', text:'Please enter a valid UPI ID (e.g. user@bank).', background:'#020617', color:'#fff' });
+        Swal.fire({ icon:'error', title:'Invalid Payment Details', text:'Please enter a valid UPI ID.', background:'#020617', color:'#fff' });
         return;
     }
 
-    // 3. Referral Check
-    const refCount = window.currentUser.referrals || 0; 
-    if(refCount < 1) {
-        Swal.fire({ 
-            icon:'info', title:'Referral Required', 
-            text:'Invite 1 friend to unlock this withdrawal.',
-            confirmButtonText: 'Invite Now',
-            background:'#020617', color:'#fff' 
-        }).then((res) => { if(res.isConfirmed) openInternalPage('page-refer'); });
-        return;
-    }
-
-    // 4. Monthly Limit Check
-    const lastDate = localStorage.getItem('last_withdraw_date');
-    const now = new Date();
-    if(lastDate) {
-        const d = new Date(lastDate);
-        if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-             Swal.fire({ icon:'warning', title:'Limit Reached', text:'Monthly withdrawal limit reached.', background:'#020617', color:'#fff' });
-             return;
-        }
-    }
-
-    // 5. SUCCESS: Deduct Coins Instantly
-    window.currentUser.balance -= coinsToWithdraw; // Cut from memory
+    // 4. SUCCESS: Deduct Coins & Process
+    window.currentUser.balance -= coinsToWithdraw; // Deduct from memory
     localStorage.setItem('local_balance', window.currentUser.balance); // Save to storage
-    localStorage.setItem('last_withdraw_date', now.toISOString()); // Mark date
     
-    // Update UI immediately to show cut coins
+    // Update UI immediately
     updateWalletUI(); 
     document.getElementById('calc-input').value = ""; // Clear input
 
     Swal.fire({ 
         icon:'success', 
-        title:'Transfer Successful!', 
-        text:`₹${(coinsToWithdraw/EXCHANGE_RATE).toFixed(2)} has been sent to ${upiInput}.`, 
+        title:'Transfer Initiated', 
+        text:`₹${(coinsToWithdraw/EXCHANGE_RATE).toFixed(2)} is being processed.`, 
         background:'#020617', 
         color:'#fff' 
     });
 };
-
