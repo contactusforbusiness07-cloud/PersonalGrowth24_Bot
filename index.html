@@ -740,46 +740,143 @@
 
 
             <section id="wallet" class="page-section hidden">
-                <div class="wallet-hero">
-                    <div class="wh-label">Total Balance</div>
-                    <div class="wh-balance"><i class="fa-solid fa-coins text-gold"></i><span id="wallet-total-coins">0</span></div>
-                    <div class="wh-value">≈ ₹ <span id="wallet-inr-value">0.00</span> INR</div>
-                    <div class="wh-deco-icon"><i class="fa-solid fa-wallet"></i></div>
+                
+                <div id="wallet-lock-screen" class="hidden">
+                    <i class="fa-solid fa-lock" style="font-size: 40px; color: #3b82f6; margin-bottom: 20px;"></i>
+                    <h3 style="color: white; margin: 0;">Enter Wallet PIN</h3>
+                    <p style="color: #64748b; font-size: 12px;">Secure Access</p>
+                    
+                    <div class="pin-dots">
+                        <div class="dot" id="dot-1"></div>
+                        <div class="dot" id="dot-2"></div>
+                        <div class="dot" id="dot-3"></div>
+                        <div class="dot" id="dot-4"></div>
+                    </div>
+
+                    <div class="numpad">
+                        <div class="num-btn" onclick="enterPin(1)">1</div>
+                        <div class="num-btn" onclick="enterPin(2)">2</div>
+                        <div class="num-btn" onclick="enterPin(3)">3</div>
+                        <div class="num-btn" onclick="enterPin(4)">4</div>
+                        <div class="num-btn" onclick="enterPin(5)">5</div>
+                        <div class="num-btn" onclick="enterPin(6)">6</div>
+                        <div class="num-btn" onclick="enterPin(7)">7</div>
+                        <div class="num-btn" onclick="enterPin(8)">8</div>
+                        <div class="num-btn" onclick="enterPin(9)">9</div>
+                        <div class="num-btn" style="opacity:0"></div>
+                        <div class="num-btn" onclick="enterPin(0)">0</div>
+                        <div class="num-btn" onclick="clearPin()"><i class="fa-solid fa-delete-left"></i></div>
+                    </div>
                 </div>
 
-                <div class="balance-grid">
-                    <div class="bal-card green" onclick="showToast('Available for Instant Withdraw')"><div class="bc-label">Withdrawable</div><div class="bc-val">100%</div></div>
-                    <div class="bal-card gray" onclick="showToast('Locked for non-top 10 rankers')"><div class="bc-label">Locked</div><div class="bc-val">0%</div></div>
-                    <div class="bal-card blue" onclick="showToast('Eligible for Month-End Payout')"><div class="bc-label">Monthly</div><div class="bc-val">₹0</div></div>
-                </div>
-
-                <div class="withdraw-panel" data-aos="fade-up">
-                    <h3>Withdraw Funds</h3>
-                    <div class="method-selector">
-                        <div class="method-chip active" onclick="selectMethod(this, 'upi')">UPI</div>
-                        <div class="method-chip" onclick="selectMethod(this, 'paytm')">Paytm</div>
-                        <div class="method-chip" onclick="selectMethod(this, 'crypto')">Crypto</div>
+                <div id="wallet-content">
+                    
+                    <div class="wallet-header-controls">
+                        <div class="balance-toggle" onclick="toggleBalancePrivacy()">
+                            <i class="fa-solid fa-eye" id="eye-icon"></i>
+                            <span>Show Balance</span>
+                        </div>
+                        <i class="fa-solid fa-gear text-gray-400" style="font-size: 18px;" onclick="showToast('Settings Coming Soon')"></i>
                     </div>
-                    <div class="input-group">
-                        <span class="currency-symbol">₹</span>
-                        <input type="number" id="withdraw-amount" placeholder="Enter Coins" oninput="calculateWithdrawValue(this.value)">
-                    </div>
-                    <div class="input-hint">Value: ₹<span id="calc-value">0.00</span></div>
-                    <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdraw()">Transfer Now</button>
-               </div>
 
-                <div class="history-section mt-4">
-                    <h3>History</h3>
-                    <div class="history-list">
-                        <div class="hist-item">
-                            <div class="hist-icon in"><i class="fa-solid fa-arrow-down"></i></div>
-                            <div class="hist-info"><h4>Daily Bonus</h4><p>Today, 10:00 AM</p></div>
-                            <div class="hist-amount positive">+100</div>
+                    <div class="wallet-hero-pro">
+                        <div class="main-balance-row">
+                            <div class="balance-group">
+                                <h4>TOTAL ASSETS</h4>
+                                <div id="main-balance-display" class="balance-value">₹0.00</div>
+                            </div>
+                            <div class="currency-badge">INR</div>
+                        </div>
+
+                        <div class="sub-balances">
+                            <div class="sb-item">
+                                <span class="sb-label">Coins <i class="fa-solid fa-circle-info"></i></span>
+                                <span class="sb-val text-gold" id="wallet-coins">0</span>
+                            </div>
+                            <div class="sb-item">
+                                <span class="sb-label">Locked <i class="fa-solid fa-lock text-red"></i></span>
+                                <span class="sb-val" id="wallet-locked">₹0</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="wallet-footer"><i class="fa-solid fa-lock"></i> 256-bit Secure Payments</div>
+                    <div class="withdraw-progress-card">
+                        <div class="wp-header">
+                            <span>Minimum Withdrawal</span>
+                            <span id="progress-text">0 / ₹100</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="withdraw-progress-bar" class="progress-fill"></div>
+                        </div>
+                        <p style="font-size: 10px; color: #64748b; margin-top: 8px; text-align: right;">
+                            Estimated Time: <span style="color: #22c55e;">Instant - 24 Hrs</span>
+                        </p>
+                    </div>
+
+                    <div class="withdraw-panel" style="margin-bottom: 20px;">
+                        <h3>Withdraw Funds</h3>
+                        <div class="method-selector">
+                            <div class="method-chip active" onclick="selectMethod(this, 'upi')">UPI</div>
+                            <div class="method-chip" onclick="selectMethod(this, 'paytm')">Paytm</div>
+                            <div class="method-chip" onclick="selectMethod(this, 'bank')">Bank</div>
+                        </div>
+                        <div class="input-group">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" id="withdraw-amount" placeholder="Amount" oninput="validateWithdraw(this.value)">
+                        </div>
+                        <button class="btn-withdraw" id="btn-withdraw-action" onclick="handleWithdrawRequest()">
+                            Request Payout
+                        </button>
+                   </div>
+
+                    <div class="chart-section">
+                        <h4 style="color:#94a3b8; font-size:12px; margin-bottom:10px;">EARNING SOURCES</h4>
+                        <div class="chart-container">
+                            <div class="chart-bar-group">
+                                <div class="chart-bar highlight" style="height: 80%;"></div>
+                                <span class="chart-label">Game</span>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 40%;"></div>
+                                <span class="chart-label">Task</span>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 60%;"></div>
+                                <span class="chart-label">Refer</span>
+                            </div>
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 20%;"></div>
+                                <span class="chart-label">Ad</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <div class="timeline-filters">
+                            <div class="tf-chip active">All</div>
+                            <div class="tf-chip">Earned</div>
+                            <div class="tf-chip">Spent</div>
+                        </div>
+                        
+                        <div class="transaction-list" id="wallet-history-list">
+                            <div class="tx-card credit">
+                                <div class="tx-left">
+                                    <div class="tx-icon"><i class="fa-solid fa-gamepad text-gold"></i></div>
+                                    <div class="tx-details">
+                                        <h4>Game Reward</h4>
+                                        <span>Today, 10:30 AM</span>
+                                    </div>
+                                </div>
+                                <div class="tx-amount text-green">+ ₹5.00</div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="showToast('Downloading Statement...')" style="width:100%; margin-top:15px; background:none; border:1px solid #334155; padding:10px; color:#94a3b8; border-radius:10px; font-size:12px;">
+                            <i class="fa-solid fa-download"></i> Download Statement
+                        </button>
+                    </div>
+
+                </div>
             </section>
 
         </main> 
