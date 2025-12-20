@@ -1,178 +1,165 @@
 /* =========================================
-   WALLET PRO LOGIC
+   GAME REWARD WALLET LOGIC
    ========================================= */
 
-const MIN_WITHDRAW_INR = 100;
-const COIN_RATE = 0.001; // 1000 Coins = ₹1
-let isBalanceHidden = false;
-let currentPin = "";
-const CORRECT_PIN = "1234"; // Default PIN (User setting can change this)
+const CONVERSION_DIVISOR = 100000; // 100,000 Coins = 1 Unit (Rupee)
+// NOTE: For testing, you can manually set window.currentUser.rank in console
 
-// 1. Initialization
 function initWallet() {
-    // Check if locked
-    if(localStorage.getItem('wallet_locked') === 'true') {
-        document.getElementById('wallet-lock-screen').classList.remove('hidden');
-    }
-    
     updateWalletUI();
     renderHistory();
 }
 
-// 2. PIN Logic
-window.enterPin = function(num) {
-    if(currentPin.length < 4) {
-        currentPin += num;
-        updatePinDots();
-    }
-    
-    if(currentPin.length === 4) {
-        setTimeout(() => {
-            if(currentPin === CORRECT_PIN) {
-                // Unlock
-                document.getElementById('wallet-lock-screen').classList.add('hidden');
-                currentPin = "";
-                updatePinDots();
-                showToast("🔓 Wallet Unlocked");
-            } else {
-                // Fail
-                currentPin = "";
-                updatePinDots();
-                if(window.Telegram?.WebApp?.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-                }
-                showToast("❌ Incorrect PIN");
-            }
-        }, 200);
-    }
-};
-
-window.clearPin = function() {
-    currentPin = "";
-    updatePinDots();
-};
-
-function updatePinDots() {
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, index) => {
-        if(index < currentPin.length) dot.classList.add('filled');
-        else dot.classList.remove('filled');
-    });
-}
-
-// 3. Privacy Toggle
-window.toggleBalancePrivacy = function() {
-    isBalanceHidden = !isBalanceHidden;
-    const balanceEl = document.getElementById('main-balance-display');
-    const eyeIcon = document.getElementById('eye-icon');
-    
-    if(isBalanceHidden) {
-        balanceEl.classList.add('blur-balance');
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-    } else {
-        balanceEl.classList.remove('blur-balance');
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-    }
-};
-
-// 4. Update UI & Progress
 function updateWalletUI() {
     if(!currentUser) return;
 
+    // 1. Update Coins (Real-time look)
     const coins = Math.floor(currentUser.balance || 0);
-    const inr = (coins * COIN_RATE).toFixed(2);
-    
-    // Update Text
-    document.getElementById('main-balance-display').innerText = `₹${inr}`;
-    document.getElementById('wallet-coins').innerText = coins.toLocaleString();
-    
-    // Progress Bar
-    const progress = Math.min((inr / MIN_WITHDRAW_INR) * 100, 100);
-    document.getElementById('withdraw-progress-bar').style.width = `${progress}%`;
-    document.getElementById('progress-text').innerText = `₹${inr} / ₹${MIN_WITHDRAW_INR}`;
-    
-    // Change color if ready
-    if(progress >= 100) {
-        document.getElementById('withdraw-progress-bar').style.background = '#22c55e';
+    const coinDisplay = document.getElementById('wallet-coins-display');
+    if(coinDisplay) coinDisplay.innerText = coins.toLocaleString();
+
+    // 2. Rank Logic
+    // Default to rank 999 if not set
+    const userRank = currentUser.rank || 105; 
+    document.getElementById('user-rank-display').innerText = userRank;
+
+    const rankContainer = document.getElementById('rank-status-container');
+    const withdrawView = document.getElementById('withdrawal-view');
+    const storageView = document.getElementById('storage-view');
+
+    // Reset Classes
+    rankContainer.innerHTML = '';
+    withdrawView.classList.add('hidden');
+    storageView.classList.add('hidden');
+
+    if (userRank <= 10) {
+        // ✅ TOP 10: ELIGIBLE
+        rankContainer.innerHTML = `
+            <div class="rank-status-card eligible">
+                <div class="rs-info">
+                    <h4>You are Top 10! 🏆</h4>
+                    <p>Cash withdrawal enabled.</p>
+                </div>
+                <div class="rs-badge">Cash Active</div>
+            </div>
+        `;
+        withdrawView.classList.remove('hidden');
+    } else {
+        // 🔒 RANK 11+: STORAGE MODE
+        rankContainer.innerHTML = `
+            <div class="rank-status-card locked">
+                <div class="rs-info">
+                    <h4>Current Rank: #${userRank}</h4>
+                    <p>Reach Top 10 to unlock cash.</p>
+                </div>
+                <div class="rs-badge">Storage Mode</div>
+            </div>
+        `;
+        storageView.classList.remove('hidden');
     }
 }
 
-// 5. Withdraw Request
-window.handleWithdrawRequest = function() {
-    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    const coinsNeeded = amount / COIN_RATE;
+// --- WITHDRAWAL LOGIC (Top 10 Only) ---
+window.calculateCoinCost = function(inrAmount) {
+    const cost = Math.floor(inrAmount * CONVERSION_DIVISOR);
+    document.getElementById('coin-cost-display').innerText = cost.toLocaleString();
     
-    if(!amount || amount < MIN_WITHDRAW_INR) {
-        showToast(`⚠️ Minimum withdrawal is ₹${MIN_WITHDRAW_INR}`);
-        return;
+    const displayEl = document.getElementById('coin-cost-display');
+    if(currentUser.balance < cost) {
+        displayEl.style.color = '#ef4444'; // Red
+    } else {
+        displayEl.style.color = '#fff'; // White
     }
+}
+
+window.handleWithdraw = async function() {
+    const inrAmount = parseFloat(document.getElementById('withdraw-inr').value);
     
-    if(currentUser.balance < coinsNeeded) {
-        showToast("🚫 Insufficient Balance");
+    if(!inrAmount || inrAmount <= 0) {
+        showToast("⚠️ Enter valid amount");
         return;
     }
 
-    // Success Simulation
-    const btn = document.getElementById('btn-withdraw-action');
-    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-    
-    setTimeout(() => {
-        // Update State
-        currentUser.balance -= coinsNeeded;
-        updateWalletUI();
+    const coinCost = inrAmount * CONVERSION_DIVISOR;
+
+    if(currentUser.balance < coinCost) {
+        showToast("🚫 Not enough coins!");
+        return;
+    }
+
+    // Processing Simulation
+    Swal.fire({
+        title: 'Processing...',
+        text: 'Verifying Rank & Balance',
+        background: '#020617',
+        color: '#fff',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    setTimeout(async () => {
+        // Deduct Coins
+        currentUser.balance -= coinCost;
+        
+        // Save to Firebase (Simulated Backend Update)
+        if(window.saveUserData) {
+            await saveUserData(currentUser.uid, { 
+                balance: currentUser.balance,
+                lastWithdrawal: new Date()
+            });
+        }
+
+        updateWalletUI(); // Refresh UI
+        document.getElementById('withdraw-inr').value = '';
+        document.getElementById('coin-cost-display').innerText = '0';
         
         // Add to History
-        addTxCard("Withdrawal Request", "Under Review", `- ₹${amount}`, "pending");
-        
-        btn.innerHTML = 'Request Payout';
-        
+        addHistoryItem("Cash Withdrawal", "Processing", `-${coinCost.toLocaleString()}`, false);
+
         Swal.fire({
-            title: 'Request Submitted',
-            text: 'Your payout is under review. Estimated time: 24 Hours.',
             icon: 'success',
+            title: 'Request Sent!',
+            text: `₹${inrAmount} withdrawal request submitted. Status: Pending Approval.`,
             background: '#020617',
             color: '#fff',
             confirmButtonColor: '#22c55e'
         });
-        
-        // Save to Firebase
-        if(window.saveUserData) {
-            saveUserData(currentUser.uid, { balance: currentUser.balance });
-        }
-    }, 2000);
-};
 
-// 6. Helper: Add Transaction
-function addTxCard(title, status, amount, type) {
+    }, 2000);
+}
+
+// --- HISTORY LOGIC ---
+function renderHistory() {
+    const list = document.getElementById('wallet-history-list');
+    list.innerHTML = ''; // Clear
+    
+    // Fake Data for Demo
+    const mockHistory = [
+        { title: "Tap Game Reward", date: "Today, 10:00 AM", amount: "+500", type: "earn" },
+        { title: "Referral Bonus", date: "Yesterday", amount: "+1,000", type: "earn" }
+    ];
+
+    mockHistory.forEach(item => {
+        addHistoryItem(item.title, item.date, item.amount, true);
+    });
+}
+
+function addHistoryItem(title, date, amount, isEarn) {
     const list = document.getElementById('wallet-history-list');
     const div = document.createElement('div');
-    
-    let colorClass = type === 'credit' ? 'credit' : (type === 'debit' ? 'debit' : 'pending');
-    let amountClass = type === 'credit' ? 'text-green' : (type === 'debit' ? 'text-red' : 'text-gold');
-    let icon = type === 'credit' ? 'fa-arrow-down' : (type === 'debit' ? 'fa-arrow-up' : 'fa-clock');
-
-    div.className = `tx-card ${colorClass}`;
+    div.className = 'hist-item';
     div.innerHTML = `
-        <div class="tx-left">
-            <div class="tx-icon"><i class="fa-solid ${icon}"></i></div>
-            <div class="tx-details">
-                <h4>${title}</h4>
-                <span>${status}</span>
-            </div>
+        <div class="hi-left">
+            <h4>${title}</h4>
+            <span>${date}</span>
         </div>
-        <div class="tx-amount ${amountClass}">${amount}</div>
+        <div class="hi-amount ${isEarn ? 'text-gold' : 'text-red'}">${amount}</div>
     `;
     list.prepend(div);
 }
 
-// Dummy History Load
-function renderHistory() {
-    // Ideally fetch from Firebase 'transactions' collection
-    // For now, static
-}
-
-// Initialize on Load
+// Call init on load
 // initWallet();
 
