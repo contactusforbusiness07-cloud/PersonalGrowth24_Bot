@@ -1,179 +1,160 @@
-/* =========================================
-   HI-TECH PRO WALLET (FINAL VERSION)
-   ========================================= */
-
+/* Metaverse Wallet Styles */
 #wallet {
+    background: radial-gradient(circle at top center, #1e293b 0%, #020617 70%);
+    padding: 20px;
     min-height: 100vh;
+    box-sizing: border-box;
     padding-bottom: 100px;
-    background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
-    padding-top: 20px;
 }
 
-/* 1. MAIN BALANCE CARD (ATM Style) */
-.wallet-card-main {
-    width: 92%;
-    margin: 0 auto 25px auto;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 25px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-
-.wallet-card-main::after {
-    content: '';
-    position: absolute;
-    top: -50%; right: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
-    pointer-events: none;
-}
-
-.wc-label {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-}
-
-.wc-balance {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    display: flex; align-items: center; gap: 10px;
-}
-
-.wc-sub {
-    font-size: 0.8rem;
-    color: #22c55e; /* Green */
-    margin-top: 5px;
-    display: flex; align-items: center; gap: 5px;
-}
-
-/* 2. RANK STATUS STRIP */
-.rank-strip {
-    width: 92%;
-    margin: 0 auto 20px auto;
-    padding: 12px 20px;
-    border-radius: 12px;
+/* Header */
+.wallet-meta-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
+    margin-bottom: 25px;
 }
-
-.rank-strip.unlocked {
-    background: rgba(34, 197, 94, 0.15); /* Green Tint */
-    border-color: #22c55e;
-}
-
-.rank-strip.locked {
-    background: rgba(239, 68, 68, 0.1); /* Red Tint */
-    border-color: #ef4444;
-}
-
-.rs-text { font-size: 0.9rem; color: #fff; font-weight: 600; }
-.rs-status { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
-
-.unlocked .rs-status { background: #22c55e; color: #000; }
-.locked .rs-status { background: #ef4444; color: #fff; }
-
-/* 3. LIVE CALCULATOR & WITHDRAW FORM */
-.withdraw-form-card {
-    width: 92%;
-    margin: 0 auto;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-}
-
-.wf-header {
-    display: flex; justify-content: space-between; margin-bottom: 20px;
-}
-.wf-title { color: #fff; font-size: 1.1rem; font-weight: bold; }
-.wf-rate { color: #fbbf24; font-size: 0.75rem; border: 1px dashed #fbbf24; padding: 4px 8px; border-radius: 6px; }
-
-/* Payment Methods */
-.pay-methods {
-    display: flex; gap: 10px; margin-bottom: 20px;
-}
-.pm-chip {
-    flex: 1;
-    background: #0f172a;
-    border: 1px solid #334155;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.pm-chip.active {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    border-color: #3b82f6;
-    font-weight: bold;
-}
-
-/* Input Area */
-.amount-input-box {
-    position: relative;
-    margin-bottom: 10px;
-}
-.currency-sign {
-    position: absolute;
-    left: 15px; top: 50%; transform: translateY(-50%);
-    color: #fff; font-size: 1.2rem;
-}
-.amount-input-box input {
-    width: 100%;
-    background: #020617;
-    border: 1px solid #475569;
-    padding: 16px 16px 16px 40px;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 1.2rem;
+.wm-title {
     font-family: 'Orbitron', sans-serif;
-    outline: none;
-}
-.amount-input-box input:focus { border-color: #22c55e; }
-
-/* Live Calculation Text */
-.calc-result {
-    display: flex; justify-content: space-between;
-    font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;
-}
-.calc-coins { color: #fbbf24; font-weight: bold; }
-
-/* Action Button */
-.btn-withdraw-final {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    border: none;
-    border-radius: 14px;
-    color: white;
+    font-weight: 700;
+    color: #fff;
     font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
     letter-spacing: 1px;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.btn-withdraw-final:disabled {
-    background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed;
+.text-cyan { color: #06b6d4; text-shadow: 0 0 10px rgba(6, 182, 212, 0.6); }
+.text-purple { color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
+
+.wm-network {
+    font-size: 0.65rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.pulse-dot {
+    width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
+    box-shadow: 0 0 8px #22c55e;
 }
 
-/* Locked Message */
-.locked-message {
-    text-align: center; padding: 30px; color: #94a3b8; font-size: 0.9rem;
+/* Hero Card (Holographic) */
+.wallet-hero-meta {
+    position: relative;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 24px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.05);
 }
-.locked-icon { font-size: 3rem; color: #475569; margin-bottom: 15px; }
+.holo-glow {
+    position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 60%);
+    animation: rotateHolo 10s linear infinite; pointer-events: none;
+}
+@keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.balance-label {
+    font-size: 0.7rem; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+}
+.balance-meta-row {
+    display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px;
+}
+.coin-3d-icon { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+.glitch-number {
+    font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+.balance-sub-info {
+    display: flex; justify-content: center; gap: 15px; font-size: 0.75rem; color: #94a3b8; position: relative; z-index: 2;
+}
+.divider { color: #334155; }
+
+/* Rank & Status Cards */
+.rank-status-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.r-info { display: flex; flex-direction: column; }
+.r-label { font-size: 0.7rem; color: #64748b; }
+.r-val { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #fff; font-weight: bold; }
+.status-badge {
+    padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+}
+.status-badge.unlocked { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
+.status-badge.locked { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
+
+/* Input & Vault Areas */
+.meta-input-group {
+    background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px;
+}
+.meta-input-label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; }
+.meta-input-wrapper { display: flex; align-items: center; gap: 10px; }
+.currency-symbol { font-size: 1.2rem; color: #4ade80; }
+.meta-input {
+    background: transparent; border: none; color: #fff; font-size: 1.4rem; font-family: 'Orbitron', sans-serif; width: 100%; outline: none;
+}
+.conversion-preview {
+    font-size: 0.75rem; color: #fbbf24; text-align: right; margin-top: 5px;
+}
+
+.btn-withdraw-meta {
+    width: 100%; padding: 16px;
+    background: linear-gradient(90deg, #22c55e, #10b981);
+    border: none; border-radius: 12px;
+    color: #020617; font-weight: 800; font-family: 'Orbitron', sans-serif; text-transform: uppercase;
+    cursor: pointer; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    transition: all 0.2s;
+}
+.btn-withdraw-meta:active { transform: scale(0.98); }
+
+.vault-message {
+    text-align: center; padding: 20px;
+    background: rgba(255, 255, 255, 0.02); border-radius: 16px; border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+.vault-icon { font-size: 2rem; color: #64748b; margin-bottom: 10px; display: block; }
+.vault-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+
+/* Future Rewards */
+.future-rewards-panel {
+    border-left: 3px solid #a855f7;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent);
+    padding: 15px; border-radius: 0 12px 12px 0; margin-bottom: 25px;
+}
+.fr-header { font-size: 0.8rem; font-weight: 700; color: #e9d5ff; margin-bottom: 5px; }
+.fr-content p { font-size: 0.75rem; color: #94a3b8; margin: 0 0 10px 0; }
+.tag-meta { font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); margin-right: 5px; }
+
+/* History */
+.meta-history { margin-top: 10px; }
+.mh-header { font-size: 0.75rem; color: #64748b; margin-bottom: 15px; font-weight: 700; display: flex; justify-content: space-between; }
+.mh-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.mh-left { display: flex; align-items: center; gap: 12px; }
+.mh-icon {
+    width: 32px; height: 32px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.8rem;
+}
+.mh-info h5 { margin: 0; color: #e2e8f0; font-size: 0.85rem; font-weight: 500; }
+.mh-info span { font-size: 0.7rem; color: #64748b; }
+.mh-val { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; }
+.mh-val.plus { color: #fbbf24; }
+.mh-val.minus { color: #f43f5e; }
+
