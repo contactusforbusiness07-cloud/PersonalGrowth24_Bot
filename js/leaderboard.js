@@ -1,7 +1,12 @@
 // js/leaderboard.js
 
+// --- ⚙️ PRODUCTION CONFIGURATION ---
+// 15 Minutes Cache (Quota Safety Active ✅)
+const CACHE_DURATION_MS = 15 * 60 * 1000; 
+const LB_CACHE_KEY = 'fingamepro_lb_data';
+const LB_TIME_KEY = 'fingamepro_lb_time';
+
 // --- HELPER: Get Max Local Balance ---
-// Ye function saare keys check karega taaki balance kabhi galat na ho
 function getLocalSmartBalance() {
     const keys = ['local_balance', 'coins', 'mining_balance', 'userBalance'];
     let maxBal = 0;
@@ -12,7 +17,7 @@ function getLocalSmartBalance() {
     return maxBal;
 }
 
-// ✅ STEP 1: INSTANT LOCAL LOAD (No Waiting)
+// ✅ STEP 1: INSTANT LOCAL LOAD (Visual Fix - Runs Immediately)
 (function instantFix() {
     console.log("🚀 Force Starting Leaderboard...");
 
@@ -20,7 +25,7 @@ function getLocalSmartBalance() {
         const localName = localStorage.getItem('userName') || "You";
         const localBal = getLocalSmartBalance(); // Use Smart Balance
         
-        // Khud ko King banao local data ke saath
+        // Khud ko King banao local data ke saath (Visual only)
         updatePodium(1, localName, localBal, 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png', true);
         
         // Rank 2 & 3 Waiting
@@ -82,7 +87,7 @@ function forceUpdateWalletRank(rankStr) {
 }
 
 
-// ✅ STEP 2: REAL FIREBASE SYNC (With Smart Merge)
+// ✅ STEP 2: REAL FIREBASE SYNC (With Smart Merge & Caching)
 setTimeout(async () => {
     if (typeof firebase === 'undefined') return;
     
@@ -92,8 +97,23 @@ setTimeout(async () => {
     auth.onAuthStateChanged(async (user) => {
         if (!user) return; 
 
+        // --- 💾 CACHE CHECK LOGIC START ---
+        const cachedTime = localStorage.getItem(LB_TIME_KEY);
+        const now = Date.now();
+
+        // Agar Cache exist karta hai aur 15 min purana nahi hai
+        if (cachedTime && (now - parseInt(cachedTime) < CACHE_DURATION_MS)) {
+            console.log("⚡ Using Cached Leaderboard Data (Quota Saved)");
+            const cachedData = JSON.parse(localStorage.getItem(LB_CACHE_KEY));
+            
+            // Render Cache directly
+            renderRealData(cachedData, user.uid);
+            return; // STOP HERE (Do not read Firebase)
+        }
+        // --- 💾 CACHE CHECK LOGIC END ---
+
         try {
-            console.log("🔥 Fetching Global Ranks...");
+            console.log("🔥 Fetching Fresh Global Ranks...");
             const snapshot = await db.collection('users')
                 .orderBy('balance', 'desc')
                 .limit(100)
@@ -143,6 +163,10 @@ setTimeout(async () => {
 
             // Re-Sort (Kyunki humne local balance update kiya hai)
             leaderboardData.sort((a, b) => b.balance - a.balance);
+
+            // 💾 SAVE TO CACHE
+            localStorage.setItem(LB_CACHE_KEY, JSON.stringify(leaderboardData));
+            localStorage.setItem(LB_TIME_KEY, now.toString());
 
             renderRealData(leaderboardData, user.uid);
 
@@ -194,4 +218,3 @@ function renderRealData(data, myId) {
         forceUpdateWalletRank("100+");
     }
 }
- c
