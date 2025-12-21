@@ -1,57 +1,57 @@
 // js/leaderboard.js
 
-// Firebase references (Assuming firebase-init.js ran first)
-const db = firebase.firestore(); 
-const auth = firebase.auth(); 
+// --- 1. SAFE INITIALIZATION ---
+// Hum check karenge ki Firebase load hua hai ya nahi
+let db, auth;
+
+function initFirebaseRefs() {
+    if (typeof firebase !== 'undefined') {
+        db = firebase.firestore();
+        auth = firebase.auth();
+        return true;
+    }
+    return false;
+}
 
 const LB_CACHE_KEY = 'fingamepro_lb_data';
 const LB_TIME_KEY = 'fingamepro_lb_time';
-// ⚠️ CHANGED: Cache 0 for instant updates during testing
+// LIVE FIX: Cache duration 0 kar diya hai taaki har baar fresh data dikhe
 const CACHE_DURATION_MS = 0; 
 
-// --- Helper: Format Numbers ---
-function formatK(num) {
-    if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-    return num.toLocaleString();
+// --- 2. MAIN ENGINE (RETRY LOGIC) ---
+// Ye function tab tak chalega jab tak Leaderboard load na ho jaye
+async function forceStartLeaderboard() {
+    // Wait for Firebase to be ready
+    if (!initFirebaseRefs()) {
+        console.log("Firebase not ready yet... retrying in 500ms");
+        setTimeout(forceStartLeaderboard, 500);
+        return;
+    }
+
+    // Wait for User Login (Auth)
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log("✅ User Found:", user.uid);
+            openLeaderboard(); // Start Fetching
+        } else {
+            console.log("Waiting for user login...");
+        }
+    });
 }
 
-// --- Main Function: Open Leaderboard ---
+// --- 3. DATA FETCHING LOGIC ---
 async function openLeaderboard() {
     const listContainer = document.getElementById('lb-list-render');
     
-    // Only show "Fetching" if container is visible and empty
+    // UI: Show loading if empty
     if(listContainer && listContainer.innerHTML.trim() === "") {
-         listContainer.innerHTML = '<p style="text-align:center; color: #888; padding-top: 20px;">Fetching global ranks...</p>';
+         listContainer.innerHTML = '<p style="text-align:center; color: #888; padding-top: 20px;">Fetching live ranks...</p>';
     }
 
-    const now = Date.now();
-    const cachedTime = localStorage.getItem(LB_TIME_KEY);
-    let leaderboardData = [];
-
-    // 1. Check Cache
-    if (cachedTime && (now - parseInt(cachedTime) < CACHE_DURATION_MS)) {
-        console.log("Using Cached Leaderboard Data ⚡");
-        try {
-            leaderboardData = JSON.parse(localStorage.getItem(LB_CACHE_KEY));
-            renderHitechLeaderboard(leaderboardData);
-            updateMyRankInBackground(leaderboardData); // Update Wallet Rank
-        } catch(e) {
-            // Corrupt cache? Fetch fresh.
-            fetchFromFirebase(listContainer);
-        }
-    } else {
-        // 2. Fetch Fresh Data
-        fetchFromFirebase(listContainer);
-    }
-}
-
-// --- Fetch Logic (Separated for Stability) ---
-async function fetchFromFirebase(listContainer) {
-    console.log("Fetching Fresh Leaderboard Data from Firebase 🔥");
-    const now = Date.now();
-
+    console.log("🚀 Fetching Leaderboard Data...");
+    
     try {
+        // --- REAL LOGIC: Fetch Top 100 ---
         const snapshot = await db.collection('users')
             .orderBy('balance', 'desc')
             .limit(100)
@@ -68,119 +68,132 @@ async function fetchFromFirebase(listContainer) {
             });
         });
 
-        // Handle Empty DB Case
+        // --- EMPTY STATE FIX (Agar aap akele user ho) ---
         if (leaderboardData.length === 0) {
-            if(listContainer) listContainer.innerHTML = "<p style='text-align:center; color:#888;'>No players found.</p>";
-            // Create a fake "Me" entry if logged in, just to fix UI
-            const user = auth.currentUser;
-            if(user) {
-                leaderboardData.push({ 
-                    id: user.uid, 
-                    name: "You", 
-                    balance: parseInt(localStorage.getItem('coins') || 0) 
+            const currentUser = auth.currentUser;
+            if(currentUser) {
+                // Fake entry create karo taaki UI khali na dikhe
+                leaderboardData.push({
+                    id: currentUser.uid,
+                    name: "You (King)",
+                    balance: window.currentUser ? window.currentUser.balance : 0
                 });
             }
         }
 
-        // Save Cache
-        localStorage.setItem(LB_CACHE_KEY, JSON.stringify(leaderboardData));
-        localStorage.setItem(LB_TIME_KEY, now.toString());
-
+        // Render UI
         renderHitechLeaderboard(leaderboardData);
-        updateMyRankInBackground(leaderboardData); // Crucial for Wallet
+        
+        // --- CRITICAL: Update Wallet Rank Immediately ---
+        updateMyRankInBackground(leaderboardData);
 
     } catch (error) {
         console.error("Leaderboard Error:", error);
-        if(listContainer) listContainer.innerHTML = '<p style="color:red; text-align:center;">Failed to load. Check internet.</p>';
+        // Retry automatically if failed
+        setTimeout(openLeaderboard, 2000);
     }
 }
 
 
-// --- Renderer Function (Updates UI) ---
+// --- 4. RENDER UI (HITECH LOOK) ---
 function renderHitechLeaderboard(data) {
     const listContainer = document.getElementById('lb-list-render');
-    if(!listContainer) return; // Safety check
+    if(!listContainer) return;
 
-    listContainer.innerHTML = ''; 
+    listContainer.innerHTML = ''; // Clear "Loading..."
 
-    // --- STATIC IMAGES ---
-    const IMG_RANK_1 = 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png'; // King
-    const IMG_RANK_2 = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'; // Silver
-    const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'; // Bronze
+    // Images
+    const IMG_RANK_1 = 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png';
+    const IMG_RANK_2 = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+    const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png';
     const IMG_DEFAULT = 'assets/default_avatar.png'; 
 
-    // --- Update Podium ---
+    // --- Update Podium (Top 3) ---
+    // Rank 1
     if (data[0]) updatePodiumItem(1, data[0].name, data[0].balance, IMG_RANK_1, true);
-    else updatePodiumItem(1, "Waiting...", 0, IMG_RANK_1, false);
-
+    
+    // Rank 2
     if (data[1]) updatePodiumItem(2, data[1].name, data[1].balance, IMG_RANK_2, true);
-    else updatePodiumItem(2, "Waiting...", 0, IMG_RANK_2, false);
+    else updatePodiumItem(2, "Waiting...", 0, IMG_RANK_2, false); // Dim logic
 
+    // Rank 3
     if (data[2]) updatePodiumItem(3, data[2].name, data[2].balance, IMG_RANK_3, true);
-    else updatePodiumItem(3, "Waiting...", 0, IMG_RANK_3, false);
+    else updatePodiumItem(3, "Waiting...", 0, IMG_RANK_3, false); // Dim logic
 
-    // --- Render List (Rank 4+) ---
+    // --- Update List (Rank 4-100) ---
     for (let i = 3; i < data.length; i++) {
         const user = data[i];
         const rank = i + 1;
+        
         const card = document.createElement('div');
         card.className = 'lb-card';
-        card.style.animation = `fadeInUp 0.5s ease backwards ${i * 0.05}s`;
         card.innerHTML = `
             <span class="lb-rank">#${rank}</span>
-            <img src="${IMG_DEFAULT}" class="lb-avatar" alt="user" onerror="this.src='assets/coin_main.jpg'">
+            <img src="${IMG_DEFAULT}" class="lb-avatar" onerror="this.src='assets/coin_main.jpg'">
             <span class="lb-username">${user.name}</span>
             <span class="lb-coins">${user.balance.toLocaleString()}</span>
         `;
         listContainer.appendChild(card);
     }
+    
+    // Hide Loading Text in Podium
+    const loadingTexts = document.querySelectorAll('.podium-info span');
+    loadingTexts.forEach(el => {
+        if(el.innerText === "Loading...") el.innerText = "Waiting...";
+    });
 }
 
-// --- Helper: Update Podium Element ---
+// Helper for Podium
 function updatePodiumItem(rank, name, balance, img, isActive) {
     const pName = document.getElementById(`p${rank}-name`);
     const pScore = document.getElementById(`p${rank}-score`);
     const pImg = document.getElementById(`p${rank}-img`);
-    const pContainer = document.querySelector(`.rank-${rank}`);
+    const pDiv = document.querySelector(`.rank-${rank}`);
 
     if(pName) pName.innerText = name;
-    if(pScore) pScore.innerText = isActive ? formatK(balance) : "--";
+    if(pScore) pScore.innerText = isActive ? balance.toLocaleString() : "--";
     if(pImg) pImg.src = img;
-    if(pContainer) pContainer.style.opacity = isActive ? '1' : '0.4';
+    
+    // Opacity control for empty slots
+    if(pDiv) pDiv.style.opacity = isActive ? '1' : '0.4';
 }
 
 
-// --- 🚀 CRITICAL: Update Wallet Rank (Runs in Background) ---
+// --- 5. WALLET RANK SYNC (Background) ---
 function updateMyRankInBackground(data) {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
 
-    // Find my index
+    // List me apna naam dhoondo
     const myIndex = data.findIndex(u => u.id === currentUser.uid);
-    let myDisplayRank = "100+"; 
+    let myRank = "100+";
 
     if (myIndex !== -1) {
-        myDisplayRank = (myIndex + 1).toString();
+        myRank = (myIndex + 1).toString(); // Example: "1"
     } else if (data.length < 100) {
-        // If I'm not in list but list is small, it means I haven't synced yet.
-        // Assume Rank = Last Rank + 1 for now
-        myDisplayRank = (data.length + 1).toString();
+        // Agar list me nahi ho aur list full nahi hai, mtlb tum last ho
+        myRank = (data.length + 1).toString();
+    }
+
+    // Save Logic for Wallet Page
+    localStorage.setItem('mySavedRank', myRank);
+    
+    // Agar user abhi Wallet page par hai, to turant update karo
+    const rankDisplay = document.querySelector('#rank-card-container span[style*="font-size:1.2rem"]');
+    if(rankDisplay) {
+        rankDisplay.innerText = "#" + myRank;
     }
     
-    // Save for Wallet
-    localStorage.setItem('mySavedRank', myDisplayRank);
-    console.log("✅ Rank Updated for Wallet: #" + myDisplayRank);
+    // Unlock button bhi update karo
+    if(window.updateWalletUI) {
+        window.currentUser.rank = parseInt(myRank); // Update Global Memory
+        window.updateWalletUI(); // Force Refresh Wallet UI
+    }
+
+    console.log("✅ Wallet Rank Updated to: #" + myRank);
 }
 
 
-// ==========================================
-// 🔥 AUTO-START ENGINE (Fixes Loading Issue)
-// ==========================================
-// Wait for Firebase Auth to be ready, THEN fetch
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        console.log("Auth Ready. Starting Leaderboard Engine...");
-        openLeaderboard(); // Run once automatically on load
-    }
-});
-
+// --- 6. AUTO START TRIGGER ---
+// Ye line script load hote hi engine start kar degi
+forceStartLeaderboard();
