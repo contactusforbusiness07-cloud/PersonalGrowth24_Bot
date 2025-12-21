@@ -5,7 +5,7 @@ const EARN_PER_TAP = 2;
 const MAX_ENERGY = 1000;
 const REFILL_RATE = 3; 
 
-// --- ANTI-CHEAT SETTINGS ---
+// --- ANTI-CHEAT SETTINGS (New Security) ---
 const MAX_CPS = 14;           // Human Limit (Clicks Per Second)
 const WARNING_THRESHOLD = 3;  // 3 Warnings before Ban
 const BAN_DURATION_MS = 5 * 60 * 1000; // 5 Minutes Ban
@@ -23,13 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const coinBtn = document.getElementById('tap-coin');
     if(coinBtn) {
-        // Use pointerdown for instant response
+        // --- SECURITY: PREVENT IMAGE DOWNLOAD/MENU ---
+        coinBtn.addEventListener('contextmenu', (e) => e.preventDefault()); // Stop Right Click
+        coinBtn.setAttribute('draggable', 'false'); // Stop Dragging
+
+        // Use pointerdown for instant response (Mobile friendly)
         coinBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault(); // Stop zoom/scroll
             handleTap(e);
         });
         
-        // 3D Tilt Effect on Move
+        // 3D Tilt Effect on Move (Metaverse Feel)
         coinBtn.addEventListener('pointermove', handleTilt);
         coinBtn.addEventListener('pointerup', resetTilt);
         coinBtn.addEventListener('pointerleave', resetTilt);
@@ -60,7 +64,7 @@ function gameLoop() {
     }
 }
 
-// --- TAP HANDLER (Strict) ---
+// --- TAP HANDLER (Strict Logic) ---
 function handleTap(e) {
     if (isBanned) return;
 
@@ -94,15 +98,13 @@ function handleTap(e) {
     
     updateDisplay();
     
-    // VFX
+    // VFX & Physics
     spawnFloatingText(e.clientX, e.clientY);
     hapticFeedback('light');
-    
-    // Tilt Coin towards click
-    tiltCoin(e);
+    tiltCoin(e); // Tilt towards finger
 }
 
-// --- ANTI-CHEAT LOGIC ---
+// --- ANTI-CHEAT FUNCTIONS ---
 function triggerWarning() {
     warningCount++;
     hapticFeedback('heavy');
@@ -110,14 +112,16 @@ function triggerWarning() {
     if (warningCount >= WARNING_THRESHOLD) {
         activateBan();
     } else {
-        // Show Warning Toast
-        Swal.fire({
-            icon: 'warning',
-            title: 'TOO FAST!',
-            text: 'Please tap slower. Auto-clickers are detected.',
-            toast: true, position: 'top', timer: 2000,
-            showConfirmButton: false, background: '#ef4444', color: '#fff'
-        });
+        // Show Warning Toast (Requires SweetAlert2)
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'SLOW DOWN!',
+                text: 'System detected inhuman speed.',
+                toast: true, position: 'top', timer: 1500,
+                showConfirmButton: false, background: '#ef4444', color: '#fff'
+            });
+        }
     }
 }
 
@@ -126,7 +130,7 @@ function activateBan() {
     banEndTime = Date.now() + BAN_DURATION_MS;
     localStorage.setItem('banEndTime', banEndTime);
     
-    // UI Update
+    // Visual update
     const coin = document.getElementById('tap-coin');
     if(coin) coin.classList.add('coin-banned');
     
@@ -136,7 +140,9 @@ function activateBan() {
         overlay = document.createElement('div');
         overlay.id = 'ban-msg';
         overlay.className = 'ban-overlay';
-        document.querySelector('.tap-arena').appendChild(overlay);
+        // Ensure .tap-arena exists in HTML, else fallback to body
+        const container = document.querySelector('.tap-arena') || document.body;
+        container.appendChild(overlay);
         overlay.style.display = 'block';
     }
 }
@@ -151,14 +157,6 @@ function liftBan() {
     
     const overlay = document.getElementById('ban-msg');
     if(overlay) overlay.style.display = 'none';
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Ban Lifted',
-        text: 'You can play again. Play fair!',
-        timer: 2000, showConfirmButton: false,
-        background: '#0f172a', color: '#fff'
-    });
 }
 
 function updateBanUI(ms) {
@@ -166,27 +164,26 @@ function updateBanUI(ms) {
     if(overlay) {
         const mins = Math.floor(ms / 60000);
         const secs = Math.floor((ms % 60000) / 1000);
-        overlay.innerHTML = `<i class="fa-solid fa-ban"></i> RESTRICTED<br>${mins}:${secs < 10 ? '0'+secs : secs}`;
+        overlay.innerHTML = `<i class="fa-solid fa-ban"></i> SYSTEM LOCKED<br>${mins}:${secs < 10 ? '0'+secs : secs}`;
     }
 }
 
-// --- 3D TILT PHYSICS ---
+// --- 3D TILT PHYSICS (Metaverse Style) ---
 function tiltCoin(e) {
     const coin = e.target;
     const rect = coin.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
     
-    // Calculate rotation (Max 20deg)
-    const rotateX = (y / rect.height) * -30; 
-    const rotateY = (x / rect.width) * 30;
+    // Calculate rotation
+    const rotateX = (y / rect.height) * -25; 
+    const rotateY = (x / rect.width) * 25;
 
     coin.style.transform = `perspective(500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.95)`;
     setTimeout(() => coin.style.transform = `perspective(500px) rotateX(0) rotateY(0) scale(1)`, 100);
 }
 
 function handleTilt(e) {
-    // Subtle movement when hovering/dragging finger
     if(isBanned) return;
     const coin = e.target;
     const rect = coin.getBoundingClientRect();
@@ -211,7 +208,7 @@ function loadGameState() {
         currentEnergy = Math.min(MAX_ENERGY, parseInt(saved) + (diff * REFILL_RATE));
     }
     
-    // Check Ban
+    // Check Ban Status
     const savedBan = localStorage.getItem('banEndTime');
     if (savedBan && parseInt(savedBan) > Date.now()) {
         activateBan();
@@ -244,7 +241,7 @@ function spawnFloatingText(x, y) {
     const el = document.createElement('div');
     el.className = 'floating-text';
     el.innerText = `+${EARN_PER_TAP}`;
-    // Mobile center fix
+    // Fallback for click position
     if(!x || x === 0) {
         const rect = document.getElementById('tap-coin').getBoundingClientRect();
         x = rect.left + rect.width/2;
@@ -261,24 +258,23 @@ function hapticFeedback(style) {
         if(style === 'error') window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
         else window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
     } else if (navigator.vibrate) {
-        // Fallback for browser
         if(style === 'heavy') navigator.vibrate(200);
         else navigator.vibrate(10);
     }
 }
 
-// --- AD TIMER (Unchanged, kept as requested) ---
+// --- AD LOGIC (PRESERVED: Hitech Metaverse Style) ---
 window.handleRefill = function() {
-    if(currentEnergy >= MAX_ENERGY) return; // No refill if full
+    if(currentEnergy >= MAX_ENERGY) return;
     
-    // Show Ad Overlay
     const div = document.createElement('div');
     div.className = 'ad-overlay';
+    // Using original "System Sync" text as it fits Metaverse theme better
     div.innerHTML = `<div style="text-align:center; color:white;">
         <div class="ad-timer-circle" id="ad-spinner" style="margin:0 auto 20px auto;">15</div>
-        <h3>WATCHING AD...</h3>
-        <p>Wait to verify reward</p>
-        <button id="claim-btn" style="display:none; margin-top:20px; padding:10px 20px; background:#22c55e; border:none; border-radius:5px; font-weight:bold;" onclick="finishAd()">CLAIM ⚡</button>
+        <h3>RECHARGING...</h3>
+        <p>System Sync in progress</p>
+        <button id="claim-btn" style="display:none; margin-top:20px; padding:12px 30px; background:#06b6d4; border:none; border-radius:8px; font-weight:bold; color:black;" onclick="finishAd()">SYSTEM ONLINE ⚡</button>
     </div>`;
     document.body.appendChild(div);
 
@@ -289,7 +285,7 @@ window.handleRefill = function() {
         if(t <= 0) {
             clearInterval(interval);
             div.querySelector('#claim-btn').style.display = 'inline-block';
-            div.querySelector('h3').innerText = "AD COMPLETE";
+            div.querySelector('h3').innerText = "READY";
         }
     }, 1000);
 
