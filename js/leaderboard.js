@@ -42,22 +42,13 @@ async function openLeaderboard() {
 
             leaderboardData = [];
             
-            // --- 🟢 IMPORTANT: Default Coin Image Logic ---
-            const DEFAULT_COIN_IMG = 'assets/coin_main.jpg'; 
-
             snapshot.forEach(doc => {
                 const data = doc.data();
                 
-                // Check if user has a valid photoURL
-                let finalAvatar = DEFAULT_COIN_IMG;
-                if (data.photoURL && data.photoURL.length > 5) {
-                    finalAvatar = data.photoURL;
-                }
-
+                // Hum ab photoURL fetch hi nahi kar rahe, seedha static image lagayenge render ke time.
                 leaderboardData.push({
                     id: doc.id,
                     name: data.firstName ? data.firstName : `User_${doc.id.substring(0,4)}`,
-                    avatar: finalAvatar, // Yahan decide hua photo ya coin
                     balance: data.balance || 0
                 });
             });
@@ -85,22 +76,31 @@ function renderHitechLeaderboard(data) {
         return;
     }
 
+    // --- STATIC IMAGES SETUP ---
+    // Top 3 ke liye Special High-Quality Icons
+    const IMG_RANK_1 = 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png'; // King
+    const IMG_RANK_2 = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'; // Silver
+    const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'; // Bronze
+    
+    // Rank 4+ ke liye Common Avatar (Aapka Coin image ya Default Avatar)
+    const IMG_DEFAULT = 'assets/default_avatar.png'; 
+
     // --- 1. Update Top 3 Podium (The Kings) ---
     
     // Rank 1
     document.getElementById('p1-name').innerText = data[0].name;
     document.getElementById('p1-score').innerText = formatK(data[0].balance);
-    document.getElementById('p1-img').src = data[0].avatar; // Photo Set
+    document.getElementById('p1-img').src = IMG_RANK_1;
 
     // Rank 2
     document.getElementById('p2-name').innerText = data[1].name;
     document.getElementById('p2-score').innerText = formatK(data[1].balance);
-    document.getElementById('p2-img').src = data[1].avatar; // Photo Set
+    document.getElementById('p2-img').src = IMG_RANK_2;
 
     // Rank 3
     document.getElementById('p3-name').innerText = data[2].name;
     document.getElementById('p3-score').innerText = formatK(data[2].balance);
-    document.getElementById('p3-img').src = data[2].avatar; // Photo Set
+    document.getElementById('p3-img').src = IMG_RANK_3;
 
 
     // --- 2. Render List (Rank 4 to 100) ---
@@ -113,16 +113,14 @@ function renderHitechLeaderboard(data) {
         // Animation delay for cool effect
         card.style.animation = `fadeInUp 0.5s ease backwards ${i * 0.05}s`;
 
+        // Yahan 'src' mein humne fix 'IMG_DEFAULT' laga diya hai
         card.innerHTML = `
             <span class="lb-rank">#${rank}</span>
-            <img src="${user.avatar}" class="lb-avatar" alt="user" onerror="this.src='assets/coin_main.jpg'">
+            <img src="${IMG_DEFAULT}" class="lb-avatar" alt="user" onerror="this.src='assets/coin_main.jpg'">
             <span class="lb-username">${user.name}</span>
             <span class="lb-coins">${user.balance.toLocaleString()}</span>
         `;
         listContainer.appendChild(card);
     }
 }
-
-// Auto-Run if needed, or wait for click
-// setTimeout(openLeaderboard, 1000);
 
