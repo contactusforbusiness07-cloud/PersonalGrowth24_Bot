@@ -1,7 +1,9 @@
+/* js/main.js - Smart Sync Integrated with Robust Logic */
+
 // --- 1. FIREBASE IMPORTS & CONFIG (Fixed Version 10.13.1) ---
-// ⚠️ CHANGED: 12.7.0 -> 10.13.1 to fix loading error
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, runTransaction, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+// ✅ ADDED: 'onSnapshot' for Live Sync
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, runTransaction, serverTimestamp, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCg7hL0aFYWj7hRtP9cp9nqXYQQPzhHMMc",
@@ -16,11 +18,49 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app); // Exporting for other modules
 window.db = db; // Global access for debugging
-
-// 🔥 GLOBAL STATE FOR GAME ENGINE (Important for games.js)
-window.currentUser = null; 
+window.currentUser = null; // Global State
 
 console.log("🔥 Firebase Connected & Ready!");
+
+// --- ✅ NEW HELPER: Smart Sync (Local vs Server Balance) ---
+// Ye check karega ki LocalStorage me balance jyada hai ya Server pe.
+function getSmartBalance(serverData) {
+    const serverBal = serverData.balance || 0;
+    const localBal = parseFloat(localStorage.getItem('local_balance'));
+
+    // Agar Local Balance bada hai (Matlab user ne offline khela hai), to Local use karo
+    if (!isNaN(localBal) && localBal > serverBal) {
+        console.log(`📈 Keeping Local Progress: ${localBal} (Server: ${serverBal})`);
+        return localBal;
+    }
+    // Nahi to Server sahi hai
+    return serverBal;
+}
+
+// --- ✅ NEW: LIVE SYNC (Real-time Updates) ---
+window.syncUserWithFirebase = function(userId) {
+    if(!userId) return;
+    const userRef = doc(db, "users", String(userId));
+    
+    // onSnapshot se agar database me coin badhega to turant app me dikhega
+    onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const finalBalance = getSmartBalance(data); // 🔥 SMART CHECK
+            
+            // Global State Update
+            window.currentUser = { ...data, balance: finalBalance };
+            
+            // LocalStorage backup update
+            localStorage.setItem('local_balance', finalBalance);
+
+            updateUIWithData(window.currentUser);
+            
+            // Agar Wallet UI khula hai to usko bhi update karo
+            if(typeof window.updateWalletUI === 'function') window.updateWalletUI();
+        }
+    });
+};
 
 // --- 2. STARTUP LOGIC (User Login & Verify) ---
 document.addEventListener('DOMContentLoaded', async () => {
@@ -36,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Agar Telegram User hai to Login karo
         if (user) {
-            // 🔥 NEW: Start Firebase Live Sync immediately (Added per your request)
+            // 🔥 ADDED: Start Firebase Live Sync immediately
             if(window.syncUserWithFirebase) {
                 window.syncUserWithFirebase(user.id);
             }
@@ -45,7 +85,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             // Testing ke liye (Agar browser me khola bina Telegram ke)
             console.log("No Telegram User. Running in Guest/Test Mode.");
-            // Uncomment below line to test with fake ID
             // await loginUser({ id: "1078605976", first_name: "Test User", username: "tester" });
         }
     } else {
@@ -56,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(window.navigateTo) window.navigateTo('home');
 });
 
-// --- 3. LOGIN & DATA FETCHING ---
+// --- 3. LOGIN & DATA FETCHING (Updated with Smart Balance) ---
 async function loginUser(tgUser) {
     console.log("👤 Logging in:", tgUser.id);
     
@@ -71,30 +110,42 @@ async function loginUser(tgUser) {
 
         if (snap.exists()) {
             // OLD USER: Data Load karo
-            const userData = snap.data();
-            console.log("✅ User Found:", userData);
+            const data = snap.data();
+            
+            // 🔥 APPLY SMART BALANCE LOGIC
+            const finalBalance = getSmartBalance(data); 
+            
+            // Update Global & Local Storage
+            window.currentUser = { ...data, balance: finalBalance };
+            localStorage.setItem('local_balance', finalBalance);
 
-            // 🔥 SET GLOBAL STATE & START GAME ENGINE
-            window.currentUser = userData;
+            console.log("✅ User Found:", window.currentUser);
+
+            // Start Game Engine
             if (typeof window.initGame === "function") {
                 window.initGame(); 
                 console.log("🚀 Game Engine Started");
             }
 
             // --- CHECK REFERRAL VERIFICATION ---
-            if (userData.referralStatus === 'pending' && userData.joined_via) {
+            if (data.referralStatus === 'pending' && data.joined_via) {
                 console.log("⏳ Pending Referral Detected...");
-                await verifyReferral(String(tgUser.id), userData.joined_via, tgUser.first_name);
+                await verifyReferral(String(tgUser.id), data.joined_via, tgUser.first_name);
                 
                 // Verify hone ke baad naya data fresh fetch karo
                 const newSnap = await getDoc(userRef);
-                window.currentUser = newSnap.data(); // Update Global State again
-                updateUIWithData(newSnap.data());
-                passDataToReferralPage(newSnap.data(), String(tgUser.id));
+                const newData = newSnap.data();
+                
+                // Re-apply smart balance logic on new data
+                const newSmartBal = getSmartBalance(newData);
+                window.currentUser = { ...newData, balance: newSmartBal };
+                
+                updateUIWithData(window.currentUser);
+                passDataToReferralPage(window.currentUser, String(tgUser.id));
             } else {
                 // Normal Load
-                updateUIWithData(userData);
-                passDataToReferralPage(userData, String(tgUser.id));
+                updateUIWithData(window.currentUser);
+                passDataToReferralPage(window.currentUser, String(tgUser.id));
             }
 
         } else {
@@ -114,8 +165,10 @@ async function loginUser(tgUser) {
             
             await setDoc(userRef, newUser);
             
-            // 🔥 SET GLOBAL STATE & START GAME ENGINE
+            // Set Global State
             window.currentUser = newUser;
+            localStorage.setItem('local_balance', 0); // New user starts at 0
+
             if (typeof window.initGame === "function") {
                 window.initGame(); 
                 console.log("🚀 Game Engine Started (New User)");
@@ -245,8 +298,7 @@ window.navigateTo = function(sectionId) {
 window.openInternalPage = function(pageId) {
     console.log("Opening Page:", pageId);
 
-    // 1. Hide ALL internal pages first (Important!)
-    // Isse ye ensure hoga ki agar Terms khula hai to wo band ho jaye
+    // 1. Hide ALL internal pages first
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
     
     // 2. Hide Main Sections (Home, Wallet etc)
@@ -266,7 +318,7 @@ window.openInternalPage = function(pageId) {
 
 // --- 8. LOGOUT FUNCTION (The Fix) ---
 window.handleLogout = function() {
-    // 1. Force Close Menu First (Important Fix)
+    // 1. Force Close Menu First
     if(window.toggleProfileMenu) {
         window.toggleProfileMenu(false);
     }
