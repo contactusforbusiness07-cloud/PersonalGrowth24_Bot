@@ -2,11 +2,12 @@
 
 // Ensure Firebase is initialized
 const db = firebase.firestore(); 
-const auth = firebase.auth(); // Auth bhi chahiye user ki rank check karne ke liye
+const auth = firebase.auth(); 
 
 const LB_CACHE_KEY = 'fingamepro_lb_data';
 const LB_TIME_KEY = 'fingamepro_lb_time';
-const CACHE_DURATION_MS = 20 * 60 * 1000; // 20 Minutes Cache
+// Optimization: 15 Minutes Cache (Balance between "Live" and "Quota Saving")
+const CACHE_DURATION_MS = 15 * 60 * 1000; 
 
 // --- Helper: Format Numbers (1.2k, 1M) ---
 function formatK(num) {
@@ -20,7 +21,7 @@ async function openLeaderboard() {
     const listContainer = document.getElementById('lb-list-render');
     
     // Clear old list & show loading
-    listContainer.innerHTML = '<p style="text-align:center; color: #888; padding-top: 20px;">Updating live ranks...</p>';
+    listContainer.innerHTML = '<p style="text-align:center; color: #888; padding-top: 20px;">Fetching global ranks...</p>';
 
     const now = Date.now();
     const cachedTime = localStorage.getItem(LB_TIME_KEY);
@@ -36,6 +37,7 @@ async function openLeaderboard() {
         console.log("Fetching Fresh Leaderboard Data from Firebase 🔥");
         
         try {
+            // Logic: Pure Database se Top 100 users nikalo jinke paas sabse zyada coins hain
             const snapshot = await db.collection('users')
                 .orderBy('balance', 'desc')
                 .limit(100)
@@ -60,7 +62,7 @@ async function openLeaderboard() {
 
         } catch (error) {
             console.error("Error fetching leaderboard:", error);
-            listContainer.innerHTML = '<p style="color:red; text-align:center;">Failed to load ranks.</p>';
+            listContainer.innerHTML = '<p style="color:red; text-align:center;">Failed to load ranks. Check internet.</p>';
         }
     }
 }
@@ -70,11 +72,10 @@ function renderHitechLeaderboard(data) {
     const listContainer = document.getElementById('lb-list-render');
     listContainer.innerHTML = ''; // Clear loading text
 
+    // Handle Empty Game State (0 Users)
     if (data.length === 0) {
         listContainer.innerHTML = "<p style='text-align:center; color:#888;'>No players yet!</p>";
-        // Reset Podium text
-        document.getElementById('p1-name').innerText = "--";
-        document.getElementById('p1-score').innerText = "0";
+        resetPodium();
         return;
     }
 
@@ -84,45 +85,31 @@ function renderHitechLeaderboard(data) {
     const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'; // Bronze
     const IMG_DEFAULT = 'assets/default_avatar.png'; 
 
-    // --- 1. Update Top 3 Podium (Handle Empty Slots) ---
+    // --- 1. Update Top 3 Podium (Dynamic Logic) ---
+    // Yeh logic check karega user hai ya nahi. Agar hai to dikhayega, nahi to "Waiting..."
     
-    // Rank 1 (Hamesha rahega agar 1 user bhi hai)
+    // Rank 1 (King)
     if (data[0]) {
-        document.getElementById('p1-name').innerText = data[0].name;
-        document.getElementById('p1-score').innerText = formatK(data[0].balance);
-        document.getElementById('p1-img').src = IMG_RANK_1;
-        // Make visible
-        document.querySelector('.rank-1').style.opacity = '1';
+        updatePodiumItem(1, data[0].name, data[0].balance, IMG_RANK_1, true);
     }
 
-    // Rank 2 (Check if exists)
+    // Rank 2 (Silver)
     if (data[1]) {
-        document.getElementById('p2-name').innerText = data[1].name;
-        document.getElementById('p2-score').innerText = formatK(data[1].balance);
-        document.getElementById('p2-img').src = IMG_RANK_2;
-        document.querySelector('.rank-2').style.opacity = '1';
+        updatePodiumItem(2, data[1].name, data[1].balance, IMG_RANK_2, true);
     } else {
-        // Hide Rank 2 if no user
-        document.querySelector('.rank-2').style.opacity = '0.3';
-        document.getElementById('p2-name').innerText = "Waiting...";
-        document.getElementById('p2-score').innerText = "--";
+        updatePodiumItem(2, "Waiting...", 0, IMG_RANK_2, false);
     }
 
-    // Rank 3 (Check if exists)
+    // Rank 3 (Bronze)
     if (data[2]) {
-        document.getElementById('p3-name').innerText = data[2].name;
-        document.getElementById('p3-score').innerText = formatK(data[2].balance);
-        document.getElementById('p3-img').src = IMG_RANK_3;
-        document.querySelector('.rank-3').style.opacity = '1';
+        updatePodiumItem(3, data[2].name, data[2].balance, IMG_RANK_3, true);
     } else {
-        // Hide Rank 3 if no user
-        document.querySelector('.rank-3').style.opacity = '0.3';
-        document.getElementById('p3-name').innerText = "Waiting...";
-        document.getElementById('p3-score').innerText = "--";
+        updatePodiumItem(3, "Waiting...", 0, IMG_RANK_3, false);
     }
 
 
     // --- 2. Render List (Rank 4 to 100) ---
+    // Loop wahan tak chalega jitne users hain (Max 100)
     for (let i = 3; i < data.length; i++) {
         const user = data[i];
         const rank = i + 1;
@@ -141,25 +128,45 @@ function renderHitechLeaderboard(data) {
     }
 
     // --- 3. AUTO-FIX: Update My Personal Rank ---
-    // Ye logic aapka Rank dhoond kar LocalStorage mein save karega
-    // Taaki Wallet section mein #999 ki jagah real Rank dikhe
-    
+    // Yeh check karega ki "Main" is list mein hoon ya nahi
     const currentUser = auth.currentUser;
+    
     if (currentUser) {
-        // Find my index in the data
+        // Find my index in the top 100 list
         const myIndex = data.findIndex(u => u.id === currentUser.uid);
         
+        let myDisplayRank = "100+"; // Default agar Top 100 mein nahi ho
+        
         if (myIndex !== -1) {
-            const myRealRank = myIndex + 1;
-            console.log("Found My Rank:", myRealRank);
-            
-            // Save to Storage for Wallet Page
-            localStorage.setItem('mySavedRank', myRealRank);
-            
-            // Try to update Wallet UI immediately if it exists on screen
-            // (Note: Wallet #999 element ka ID check karna padega, 
-            // agar wo kisi ID ke andar hai to hum yahan se update kar sakte hain)
-        }
+            // Agar Top 100 mein ho, to sahi Rank dikhao
+            myDisplayRank = (myIndex + 1).toString();
+        } 
+        // Note: Agar user akela hai, to myIndex 0 hoga, aur rank "1" save hoga.
+        
+        // Save to Storage for Wallet Page
+        localStorage.setItem('mySavedRank', myDisplayRank);
+        console.log("My Updated Rank:", myDisplayRank);
+        
+        // Agar Wallet Page ka element abhi screen par hai, to turant update kar do
+        const walletRankEl = document.getElementById('rank-status-card'); // Element ID check kar lena
+        // Ya agar koi specific span hai jisme #999 likha hai
     }
+}
+
+// Helper to clean up code
+function updatePodiumItem(rank, name, balance, img, isActive) {
+    const prefix = `p${rank}`;
+    document.getElementById(`${prefix}-name`).innerText = name;
+    document.getElementById(`${prefix}-score`).innerText = isActive ? formatK(balance) : "--";
+    document.getElementById(`${prefix}-img`).src = img;
+    
+    const container = document.querySelector(`.rank-${rank}`);
+    if(container) container.style.opacity = isActive ? '1' : '0.5';
+}
+
+function resetPodium() {
+    updatePodiumItem(1, "No Data", 0, "", false);
+    updatePodiumItem(2, "No Data", 0, "", false);
+    updatePodiumItem(3, "No Data", 0, "", false);
 }
 
