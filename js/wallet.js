@@ -1,4 +1,4 @@
-/* js/wallet.js - Design Intact, Withdrawal Disabled (Storage Only) */
+/* js/wallet.js - Design Intact, Withdrawal Disabled (Storage Only) + Rank Fix */
 
 const EXCHANGE_RATE = 100000;
 
@@ -8,16 +8,38 @@ const EXCHANGE_RATE = 100000;
 window.updateWalletUI = function() {
     // 1. Get Balance
     let balance = 0;
-    if(window.currentUser && window.currentUser.balance) balance = window.currentUser.balance;
-    else if(localStorage.getItem('local_balance')) balance = parseFloat(localStorage.getItem('local_balance'));
+    if(window.currentUser && window.currentUser.balance) {
+        balance = window.currentUser.balance;
+    } else if(localStorage.getItem('local_balance')) {
+        balance = parseFloat(localStorage.getItem('local_balance'));
+    }
 
     const displayBal = Math.floor(balance).toLocaleString();
     if(document.getElementById('wallet-coins')) document.getElementById('wallet-coins').innerText = displayBal;
     if(document.getElementById('header-coin-balance')) document.getElementById('header-coin-balance').innerText = displayBal;
 
-    // 2. Rank Logic (Design ke liye)
-    const rank = (window.currentUser && window.currentUser.rank) ? window.currentUser.rank : 999;
-    const isTop10 = rank <= 10;
+    // ==========================================
+    // 🏆 RANK LOGIC (UPDATED WITH FIX)
+    // ==========================================
+    let rank = 999; // Default
+
+    // 1. Check Window Object (Memory)
+    if (window.currentUser && window.currentUser.rank) {
+        rank = window.currentUser.rank;
+    }
+
+    // 2. ✅ REQUESTED UPDATE: Check LocalStorage from Leaderboard
+    const savedRank = localStorage.getItem('mySavedRank');
+    if(savedRank) {
+       rank = savedRank; // Overwrite with real rank from leaderboard
+    }
+
+    // Logic for Badge Color
+    // If rank is "100+", treat it as > 10
+    let numericRank = parseInt(rank);
+    if(rank === "100+") numericRank = 101; 
+    
+    const isTop10 = numericRank <= 10;
     
     // 3. Rank Badge (Visual Only - Green for Top 10, Grey for others)
     const rankDiv = document.getElementById('rank-card-container');
@@ -33,7 +55,7 @@ window.updateWalletUI = function() {
         </div>`;
     }
 
-    // 4. ACTION BUTTON (DISABLED FOR EVERYONE)
+    // 4. ACTION BUTTON (DISABLED FOR EVERYONE - STORAGE MODE)
     // Ab chahe Top 10 ho ya nahi, sabko "Storage Mode" dikhega.
     const btnDiv = document.getElementById('action-btn-container');
     if(btnDiv) {
@@ -72,8 +94,6 @@ window.showStoragePopup = function() {
     });
 };
 
-// Note: processPaymentRequest function ko hata diya gaya hai.
-// Ab koi request generate nahi hogi.
-
 // Auto Refresh UI
 setInterval(window.updateWalletUI, 1000);
+
