@@ -1,78 +1,153 @@
-/* --- LEADERBOARD HEADER --- */
-.lb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.lb-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.text-gold { color: var(--gold); }
-.lb-timer { font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; }
-.lb-subtitle { font-size: 11px; color: #64748b; margin-bottom: 20px; text-align: left; }
+:root {
+    --bg-dark: #080a12; /* Very deep dark blue/black */
+    --card-bg: #121420;
+    --neon-gold: #FFD700;
+    --neon-silver: #C0C0C0;
+    --neon-bronze: #CD7F32;
+    --neon-blue: #00f3ff;
+    --text-primary: #ffffff;
+    --text-secondary: #8a8a9b;
+}
 
-/* --- PODIUM LAYOUT (Top 3) --- */
+/* Container Setup */
+.metaverse-container {
+    background-color: var(--bg-dark);
+    min-height: 100vh;
+    padding: 20px 15px 80px 15px; /* Padding bottom for nav bar */
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Header */
+.lb-header h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+.reset-timer {
+    color: var(--text-secondary);
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+/* --- PODIUM STYLES (Top 3) --- */
 .podium-container {
-    display: flex; justify-content: center; align-items: flex-end; gap: 15px;
-    margin-bottom: 30px; padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 30px;
+    margin-bottom: 40px;
+    height: 200px; /* Fixed height for alignment */
 }
 
-.podium-card { display: flex; flex-direction: column; align-items: center; position: relative; }
-
-/* Avatar Frames */
-.avatar-frame {
-    width: 60px; height: 60px; border-radius: 50%; padding: 3px;
-    position: relative; margin-bottom: 8px;
-}
-.avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #0f172a; }
-
-.rank-1 .avatar-frame { width: 80px; height: 80px; background: linear-gradient(45deg, #ffd700, #f59e0b); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
-.rank-2 .avatar-frame { background: linear-gradient(45deg, #e2e8f0, #94a3b8); }
-.rank-3 .avatar-frame { background: linear-gradient(45deg, #cd7f32, #a0522d); }
-
-.rank-badge-circle {
-    position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-    width: 20px; height: 20px; background: #0f172a; color: #fff;
-    border-radius: 50%; font-size: 10px; font-weight: bold;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-.rank-1 .rank-badge-circle { background: var(--gold); color: #000; width: 24px; height: 24px; font-size: 12px; }
-
-/* Crown Icon */
-.crown-icon { position: absolute; top: -25px; color: var(--gold); font-size: 24px; animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-/* Text Styles */
-.podium-name { font-size: 12px; color: #cbd5e1; margin-bottom: 2px; }
-.podium-name.highlight { font-size: 14px; font-weight: 700; color: #fff; }
-.podium-coins { font-size: 12px; color: var(--green); font-weight: 600; }
-.podium-coins.main { font-size: 14px; }
-
-/* --- LIST STYLES (Rank 4+) --- */
-.leaderboard-list {
-    display: flex; flex-direction: column; gap: 8px;
-    padding-bottom: 100px; /* Space for sticky card */
+.podium-item {
+    text-align: center;
+    position: relative;
+    flex: 1;
 }
 
-.lb-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px;
-    background: rgba(30, 41, 59, 0.4);
-    border: 1px solid rgba(255,255,255,0.03);
-    border-radius: 12px;
-}
-.lb-row:hover { background: rgba(30, 41, 59, 0.7); }
+/* Positioning ranks */
+.rank-2 { z-index: 2; transform: translateY(20px); }
+.rank-1 { z-index: 3; /* King is highest */ }
+.rank-3 { z-index: 1; transform: translateY(40px); }
 
-.lb-left { display: flex; align-items: center; gap: 12px; }
-.lb-rank { font-size: 14px; font-weight: 600; color: #64748b; width: 20px; }
-.lb-avatar-small { width: 32px; height: 32px; border-radius: 50%; }
-.lb-username { font-size: 13px; color: #e2e8f0; }
-.lb-coins { font-size: 13px; font-weight: 600; color: var(--gold); }
+/* Crowns */
+.crown-icon { font-size: 20px; margin-bottom: -10px; position: relative; z-index: 4;}
+.giant-crown { font-size: 32px; margin-bottom: -15px; text-shadow: 0 0 15px var(--neon-gold); }
 
-/* --- RULES CARD (Sticky) --- */
-.lb-rules-card {
-    background: #0f172a;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 15px; margin-top: 20px; border-radius: 16px;
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+/* Avatars with Neon Glows */
+.avatar-glow {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    padding: 3px;
+    margin: 0 auto;
+    background-clip: content-box;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
-.rule-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
-.gold-text { color: var(--gold); }
-.gray-text { color: #64748b; }
-.rule-val { color: #fff; font-weight: 500; }
-.lb-footer-note { font-size: 10px; color: #475569; text-align: center; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.avatar-glow img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+}
+
+.main-glow { width: 100px; height: 100px; } /* Rank 1 bigger */
+
+/* Glow Colors based on the image */
+.gold-glow { border: 3px solid var(--neon-gold); box-shadow: 0 0 25px var(--neon-gold); }
+.silver-glow { border: 3px solid var(--neon-silver); box-shadow: 0 0 15px var(--neon-silver); }
+.bronze-glow { border: 3px solid var(--neon-bronze); box-shadow: 0 0 15px var(--neon-bronze); }
+
+/* Text Info */
+.podium-info { margin-top: 10px; display: flex; flex-direction: column; }
+.p-name { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+.king-name { font-size: 18px; color: var(--neon-gold); }
+.p-score { font-weight: 800; font-size: 14px; }
+.giant-score { font-size: 20px; }
+
+.gold-txt { color: var(--neon-gold); text-shadow: 0 0 5px var(--neon-gold); }
+.silver-txt { color: var(--neon-silver); }
+.bronze-txt { color: var(--neon-bronze); }
+
+
+/* --- LIST STYLES (Ranks 4+) --- */
+.lb-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lb-card {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    /* Hitech subtle glow border */
+    position: relative;
+    overflow: hidden;
+}
+
+.lb-card:before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+    opacity: 0.3;
+}
+
+.lb-rank {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    width: 40px;
+}
+
+.lb-avatar {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.lb-username {
+    font-weight: 500;
+    flex-grow: 1; /*Pushes score to the right*/
+}
+
+.lb-coins {
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--neon-gold);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* Helper for hidden state */
+.hidden { display: none; }
