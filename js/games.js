@@ -1,4 +1,4 @@
-/* js/games.js - Pro Gameplay, Anti-Cheat & Adsterra Integration */
+/* js/games.js - Pro Gameplay + Adsterra + 6-Hour Batch Sync */
 
 /* =========================================
    CONFIG & SETTINGS
@@ -7,12 +7,13 @@
 // 🔥 UPDATE THIS WITH YOUR ADSTERRA DIRECT LINK
 const ADSTERRA_DIRECT_LINK = "https://www.google.com"; // Yaha apna Direct Link lagana
 
+// Sync Logic: 6 Hours in Milliseconds (6 * 60 * 60 * 1000) - From Old Code
+const CLOUD_SAVE_INTERVAL = 21600000; 
+
 // Game Constants
 const MAX_ENERGY = 1000;
 const ENERGY_REGEN_RATE = 2; // Energy per second
 const TAP_VALUE = 1;         // Coins per tap
-const SYNC_INTERVAL = 5000;  // Save to Firebase every 5 seconds
-const MIN_TAPS_TO_SYNC = 10; // Minimum taps before auto-save
 
 // Refill Limits
 const MAX_FREE_REFILLS = 3;
@@ -23,14 +24,13 @@ let energy = 1000;
 let tapTimes = [];   // For Anti-Cheat
 let isBanned = false;
 let warningCount = 0;
-let unsavedTaps = 0; // Batch update queue
 
 /* =========================================
    INITIALIZATION
    ========================================= */
 
 function initGame() {
-    console.log("🎮 Game Engine Loaded");
+    console.log("🎮 Game Engine Loaded with 6-Hour Sync & Adsterra");
     checkDailyReset();
     
     // 1. Load Local Data (Fast Load)
@@ -52,15 +52,22 @@ function initGame() {
     updateUI();
     updateRefillUI();
     
-    // Energy Regeneration Loop
+    // Energy Regeneration Loop (Local only)
     setInterval(regenEnergy, 1000);
     
-    // Auto-Save Loop
-    setInterval(() => saveProgress(false), SYNC_INTERVAL);
+    // 🔥 MAIN SYNC LOOP (Checks every 1 minute if 6 hours passed) - From Old Code
+    setInterval(checkAndSyncToFirebase, 60000);
+    
+    // Also try to sync once on startup if time has passed
+    setTimeout(checkAndSyncToFirebase, 5000);
 
-    // Save on Close/Minimize
+    // Save on Close/Minimize (Safety Backup)
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === 'hidden') saveProgress(true);
+        if (document.visibilityState === 'hidden') {
+            // Optional: Force sync on close if needed, but keeping 6-hour logic priority
+            localStorage.setItem('local_balance', window.currentUser?.balance || 0);
+            localStorage.setItem('local_energy', energy);
+        }
     });
 
     // 3. Attach Event Listeners
@@ -78,7 +85,7 @@ function initGame() {
 }
 
 /* =========================================
-   REFILL & ADSTERRA LOGIC
+   REFILL & ADSTERRA LOGIC (From New Code)
    ========================================= */
 
 function checkDailyReset() {
@@ -137,7 +144,8 @@ function performRefill(type, currentCount) {
     }
     
     updateRefillUI();
-    saveProgress(true); // Immediate Save
+    // Save local state immediately
+    localStorage.setItem('local_energy', energy);
 }
 
 function updateRefillUI() {
@@ -189,7 +197,7 @@ function handleTap(e) {
     // Remove taps older than 1 second
     tapTimes = tapTimes.filter(t => now - t < 1000);
 
-    // Limit: Max 15 taps per second (Humanly impossible to sustain)
+    // Limit: Max 18 taps per second
     if (tapTimes.length > 18) {
         warningCount++;
         if(warningCount > 5) {
@@ -200,12 +208,12 @@ function handleTap(e) {
         return; // Ignore this tap
     }
 
-    // 3. Game Logic
+    // 3. Game Logic (Local Update)
     energy -= TAP_VALUE;
-    unsavedTaps += TAP_VALUE;
     
     if (window.currentUser) {
         window.currentUser.balance = (window.currentUser.balance || 0) + TAP_VALUE;
+        // Save to Phone Storage instantly (Crucial for 6-hour sync logic)
         localStorage.setItem('local_balance', window.currentUser.balance);
     }
     localStorage.setItem('local_energy', energy);
@@ -232,6 +240,47 @@ function handleTap(e) {
     // Haptic Feedback
     if (window.Telegram?.WebApp?.HapticFeedback) {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    }
+    
+    // Sync Wallet UI if visible (From Old Code)
+    if(typeof window.updateWalletUI === 'function') {
+        window.updateWalletUI();
+    }
+}
+
+/* =========================================
+   SMART SYNC FUNCTION (6-Hour Logic - Preserved)
+   ========================================= */
+
+async function checkAndSyncToFirebase() {
+    if(!window.currentUser || !window.currentUser.id) return;
+
+    const lastSync = parseInt(localStorage.getItem('last_cloud_sync') || '0');
+    const now = Date.now();
+
+    // Check: Kya 6 ghante beet gaye?
+    if (now - lastSync > CLOUD_SAVE_INTERVAL) {
+        console.log("⏳ 6 Hours Passed. Syncing to Firebase...");
+        
+        try {
+            if(window.saveUserData) {
+                // Save current TOTAL balance to Firebase
+                await window.saveUserData(window.currentUser.id, {
+                    balance: window.currentUser.balance,
+                    energy: energy,
+                    last_active: new Date().toISOString()
+                });
+                
+                // Update Timestamp
+                localStorage.setItem('last_cloud_sync', now);
+                console.log("✅ Data Secured on Cloud.");
+                showToast("✅ Progress Saved to Cloud");
+            }
+        } catch(e) {
+            console.error("Sync Failed (Will retry next minute):", e);
+        }
+    } else {
+        // Logic safe: Local storage is handling updates
     }
 }
 
@@ -270,7 +319,7 @@ function regenEnergy() {
 
 function spawnFloatingText(x, y) {
     const floatEl = document.createElement('div');
-    floatEl.className = 'float-text neon-text-gold'; // Added neon class back
+    floatEl.className = 'float-text neon-text-gold';
     floatEl.innerText = `+${TAP_VALUE}`;
     floatEl.style.left = `${x}px`;
     floatEl.style.top = `${y}px`;
@@ -282,7 +331,7 @@ function spawnFloatingText(x, y) {
     setTimeout(() => floatEl.remove(), 800);
 }
 
-// 🛑 IMPORTANT: Inject CSS Styles for Floating Text (From Old Code)
+// 🛑 IMPORTANT: Inject CSS Styles for Floating Text
 const style = document.createElement('style');
 style.innerHTML = `
 .float-text { 
@@ -303,7 +352,7 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 /* =========================================
-   SAVE & ALERTS
+   ALERTS
    ========================================= */
 
 function detectBot(reason) {
@@ -331,35 +380,12 @@ function showToast(msg) {
         border: 1px solid #333;
     `;
     
-    if(msg.includes("Restored")) toast.style.borderColor = "#00ff00"; // Green for success
+    if(msg.includes("Restored") || msg.includes("Saved")) toast.style.borderColor = "#00ff00"; // Green for success
     if(msg.includes("Limit") || msg.includes("Cheat")) toast.style.borderColor = "#ff0000"; // Red for error
 
     toast.innerText = msg;
     document.body.appendChild(toast);
     setTimeout(()=>toast.remove(), 2500);
-}
-
-async function saveProgress(force = false) {
-    if (unsavedTaps === 0) return;
-    if (!force && unsavedTaps < MIN_TAPS_TO_SYNC) return;
-
-    // Use window.currentUser ID or UID safely
-    const uid = window.currentUser?.id || window.currentUser?.uid;
-
-    if(window.saveUserData && uid) {
-        try {
-            // Send TOTAL balance, not just increment
-            await window.saveUserData(uid, {
-                balance: window.currentUser.balance,
-                energy: energy,
-                lastActive: new Date().toISOString()
-            });
-            console.log(`💾 Saved +${unsavedTaps} taps`);
-            unsavedTaps = 0; 
-        } catch (e) { 
-            console.error("Save failed", e); 
-        }
-    }
 }
 
 // Start Game Logic
