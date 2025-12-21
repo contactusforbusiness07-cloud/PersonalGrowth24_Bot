@@ -33,7 +33,7 @@ function getSmartBalance(serverData) {
         console.log(`📈 Keeping Local Progress: ${localBal} (Server: ${serverBal})`);
         return localBal;
     }
-    // Nahi to Server sahi hai
+    // Nahi to Server sahi hai (matlab referral bonus ya dusre device se khela)
     return serverBal;
 }
 
@@ -46,7 +46,9 @@ window.syncUserWithFirebase = function(userId) {
     onSnapshot(userRef, (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            const finalBalance = getSmartBalance(data); // 🔥 SMART CHECK
+            
+            // 🔥 SMART LOGIC: Compare Server vs Local
+            const finalBalance = getSmartBalance(data); 
             
             // Global State Update
             window.currentUser = { ...data, balance: finalBalance };
@@ -85,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             // Testing ke liye (Agar browser me khola bina Telegram ke)
             console.log("No Telegram User. Running in Guest/Test Mode.");
+            // Uncomment below to test
             // await loginUser({ id: "1078605976", first_name: "Test User", username: "tester" });
         }
     } else {
@@ -112,7 +115,8 @@ async function loginUser(tgUser) {
             // OLD USER: Data Load karo
             const data = snap.data();
             
-            // 🔥 APPLY SMART BALANCE LOGIC
+            // 🔥 APPLY SMART BALANCE LOGIC HERE TOO
+            // Ye ensure karega ki login karte waqt agar local me jyada paise hain to wo 0 na ho jaye
             const finalBalance = getSmartBalance(data); 
             
             // Update Global & Local Storage
