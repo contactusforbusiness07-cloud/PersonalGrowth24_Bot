@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Agar Telegram User hai to Login karo
         if (user) {
+            // 🔥 NEW: Start Firebase Live Sync immediately
+            if(window.syncUserWithFirebase) {
+                window.syncUserWithFirebase(user.id);
+            }
+            
             await loginUser(user);
         } else {
             // Testing ke liye (Agar browser me khola bina Telegram ke)
