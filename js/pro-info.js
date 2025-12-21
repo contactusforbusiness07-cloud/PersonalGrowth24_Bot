@@ -1,180 +1,211 @@
-// --- DYNAMIC INFORMATION SYSTEM (Professional & Fixed) ---
+/* js/pro-info.js - Content Management System for Info Pages */
+/* Optimized for Indian Legal Safety, Ad Monetization & Web3 Vibe */
 
-// 1. High-Tech Crypto Hint (Top of Every Page)
-const HITECH_HINT = `
-    <div class="hitech-roadmap-box">
-        <h4><i class="fa-solid fa-microchip"></i> Future Ecosystem Roadmap</h4>
-        <p>While FinGamePro is currently a rewards platform, we are building infrastructure for <strong>Phase 2 (Web3 & Decentralization)</strong>. Early high-volume coin holders may receive exclusive <strong>Airdrop Allocations & Token Benefits</strong> in the future. Keep stacking!</p>
-    </div>
-`;
+// --- AD PLACEHOLDER HELPER ---
+const adSpaceTop = `<div class="native-ad-placeholder top-ad" style="background:#0f172a; border:1px dashed #334155; padding:15px; margin-bottom:20px; text-align:center; border-radius:8px; color:#64748b; font-size:0.8rem;"><i class="fa-solid fa-ad"></i> SPONSORED AD (TOP)</div>`;
 
-// 2. Ad Banners
-const AD_TOP = `<div class="ad-banner-placeholder"><span>📢 SPONSORED AD (TOP)</span></div>`;
-const AD_BOTTOM = `<div class="ad-banner-placeholder"><span>📢 SPONSORED AD (BOTTOM)</span></div>`;
+const adSpaceBottom = `<div class="native-ad-placeholder bottom-ad" style="background:#0f172a; border:1px dashed #334155; padding:15px; margin-top:30px; text-align:center; border-radius:8px; color:#64748b; font-size:0.8rem;"><i class="fa-solid fa-ad"></i> SPONSORED AD (BOTTOM)</div>`;
 
-// 3. FULL CONTENT DATABASE (With Spacing & Formatting)
-const INFO_DB = {
+// Content Database
+const infoContent = {
     
-    // --- WITHDRAWAL TERMS ---
-    'withdraw_terms': `
-        ${HITECH_HINT}
-        ${AD_TOP}
-        <div class="legal-text-block">
-            <h3>1. Nature of Reward Coins</h3>
-            <p>All coins earned on this platform are promotional reward points only. These coins do not represent real money, digital currency, cryptocurrency, securities, investments, or financial instruments of any kind at this stage.</p>
+    // 1. WITHDRAWAL TERMS (Smart Safe Logic)
+    withdraw_terms: `
+        ${adSpaceTop}
 
-            <h3>2. Coin Earning Policy</h3>
-            <p>Coins are awarded solely for user engagement, activity completion, promotions, or performance-based rewards. Earning coins does not create any financial entitlement, ownership right, or guaranteed income.</p>
-
-            <h3>3. Withdrawal Eligibility</h3>
-            <p>Only the <strong>Top 10 ranked users</strong>, as determined by the platform’s internal ranking system, may be eligible to convert reward coins into real money. This withdrawal facility is purely promotional and entirely at the discretion of the platform.</p>
-
-            <h3>4. Coins of Other Users</h3>
-            <p>Coins earned by users who are not in the Top 10 ranking will remain stored in their wallets. The platform may enable or disable withdrawal for such users in the future (Token Launch), without any obligation or liability.</p>
-
-            <h3>5. Coin-to-Money Conversion Formula</h3>
-            <p>For eligible Top 10 users, the total collected coins shall be divided by <strong>10,000</strong> to determine the equivalent monetary value (INR). The conversion rate is not fixed and may be modified at any time without prior notice.</p>
-
-            <h3>6. Withdrawal Time Window</h3>
-            <p>Eligible Top 10 users may submit withdrawal requests only at <strong>12:00 AM (IST)</strong>. The withdrawal window is time-restricted and may be changed at the platform’s discretion.</p>
-
-            <h3>7. Taxes & Statutory Compliance</h3>
-            <p>Any monetary reward received by a user shall be subject to applicable taxes, including Income Tax, TDS, or other statutory deductions as per Indian law.</p>
-
-            <h3>8. Right to Modify</h3>
-            <p>The platform reserves the right to modify, suspend, or terminate the reward system, withdrawal eligibility, or conversion formula at any time without prior notice.</p>
+        <div class="info-card" style="border: 1px solid #06b6d4; background: rgba(6,182,212,0.1); box-shadow: 0 0 15px rgba(6,182,212,0.2);">
+            <h3 style="color:#22d3ee; text-shadow: 0 0 5px #22d3ee;"><i class="fa-solid fa-microchip"></i> Future Ecosystem Roadmap</h3>
+            <p style="color:#ecfeff; font-size:0.95rem; line-height:1.6;">
+                While FinGamePro is currently a rewards platform, we are building infrastructure for <b>Phase 2 (Web3 & Decentralization)</b>. Early high-volume coin holders may receive exclusive <b>Airdrop Allocations & Token Benefits</b> in the future. Keep stacking!
+            </p>
         </div>
-        ${AD_BOTTOM}
+        <h4 class="mt-4 gradient-text">1. Nature of Promotional Coins</h4>
+        <p class="legal-text">
+            Coins earned on this platform are "Loyalty Reward Points" given for user engagement. They do not represent real fiat currency (INR/USD), securities, or financial instruments. They are digital markers for your contribution to the ecosystem.
+        </p>
+
+        <h4 class="mt-4 gradient-text">2. Withdrawal Status: PAUSED</h4>
+        <p class="legal-text">
+            Direct INR withdrawals are temporarily disabled as we transition to the <b>Blockchain Ledger System</b>. All user balances are securely stored in the "In-App Vault".
+        </p>
+
+        <h4 class="mt-4 gradient-text">3. Eligibility for Future Benefits</h4>
+        <p class="legal-text">
+            In Phase 2, value distribution will be strictly based on:
+            <br>• <b>Leaderboard Rank:</b> Higher rank = Higher allocation.
+            <br>• <b>Wallet Age:</b> Older active wallets get priority.
+            <br>• <b>Fair Play:</b> Accounts flagged for bot activity will be disqualified.
+        </p>
+
+        ${adSpaceBottom}
     `,
 
-    // --- TERMS & CONDITIONS ---
-    'terms': `
-        ${HITECH_HINT}
-        ${AD_TOP}
-        <div class="legal-text-block">
-            <p><strong>Last Updated:</strong> 18 Dec 2025</p>
-            <p>By accessing or using this web application (“Platform”), you agree to comply with and be bound by these Terms & Conditions.</p>
+    // 2. HELP / FAQ (Crypto Hints + Legal Safety)
+    faq: `
+        ${adSpaceTop}
 
-            <h3>1. Platform Overview</h3>
-            <p>This Platform is an entertainment and utility-based web application that provides users with access to various tools designed to support students and business professionals, along with interactive features such as tasks and games.</p>
-
-            <h3>2. Reward Coins & Earning</h3>
-            <p>Users may earn reward coins by participating in permitted activities like Referring, Viewing Ads, or Completing Tasks. Reward coins are promotional incentives only and do not represent real money or investments.</p>
-
-            <h3>3. Prohibited Activities (Strict)</h3>
-            <p>The following activities are <strong>strictly prohibited</strong>:</p>
-            <ul>
-                <li>Generating rewards through chatting or fake interactions.</li>
-                <li>Using scripts, bots, automation, or multiple accounts on one device.</li>
-                <li>Attempting to exploit system loopholes.</li>
-            </ul>
-            <p>⚠️ <em>Accounts found violating these rules will be permanently banned and all coins forfeited.</em></p>
-
-            <h3>4. Account Suspension</h3>
-            <p>The Platform reserves the right to suspend or terminate any user account if suspicious or fraudulent activity is detected. The Platform is not liable for any loss resulting from such actions.</p>
-
-            <h3>5. Entertainment-Only Disclaimer</h3>
-            <p>This Platform is not a source of guaranteed income, employment, or investment. All activities are for entertainment purposes only.</p>
-
-            <h3>6. Governing Law</h3>
-            <p>These Terms shall be governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of Indian courts.</p>
+        <div class="faq-item">
+            <h4>1. Can I withdraw money right now?</h4>
+            <p>Currently, direct withdrawals are <b>disabled</b> for maintenance and infrastructure upgrades. Your coins are being accumulated in "Storage Mode". Focus on increasing your balance to maximize your share when the <b>Phase 2 Liquidity Event</b> goes live.</p>
         </div>
-        ${AD_BOTTOM}
+
+        <div class="faq-item">
+            <h4>2. Is this a Crypto Project? 🚀</h4>
+            <p>FinGamePro operates as a Web2 reward platform today, but we are actively developing <b>Tokenization & Blockchain Integration</b> layers. Accumulating coins now is essentially "Mining" your position for the future decentralized economy.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>3. How do I increase my earnings?</h4>
+            <p>You can maximize your portfolio by:
+            <br>• <b>Daily Tasks:</b> Completing sponsored missions.
+            <br>• <b>Referral Mining:</b> Inviting real users to your network.
+            <br>• <b>Games:</b> Participating in skill-based mini-games.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>4. Why was my account banned?</h4>
+            <p>We have a zero-tolerance policy towards fraud. Bans are issued for:
+            <br>• Using auto-clickers or scripts.
+            <br>• Creating fake referral accounts on the same device.
+            <br>• Using VPNs to manipulate ad rewards.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>5. Is chatting/support allowed for rewards?</h4>
+            <p>No. Asking for free coins or spamming support chat results in an immediate penalty. Rewards must be earned via platform activities only.</p>
+        </div>
+
+        ${adSpaceBottom}
     `,
 
-    // --- PRIVACY POLICY ---
-    'privacy': `
-        ${HITECH_HINT}
-        ${AD_TOP}
-        <div class="legal-text-block">
-            <h3>1. Information We Collect</h3>
-            <p>We collect basic information to operate the platform:</p>
-            <ul>
-                <li><strong>Personal:</strong> Name, User ID (via Telegram).</li>
-                <li><strong>Activity:</strong> Tasks completed, ads viewed, game scores.</li>
-                <li><strong>Technical:</strong> Device type and IP address (for fraud prevention).</li>
-            </ul>
+    // 3. TERMS & CONDITIONS (Standard Legal Safety)
+    terms: `
+        ${adSpaceTop}
 
-            <h3>2. How We Use Information</h3>
-            <p>We use your data to track rewards, improve user experience, and detect fraud. We <strong>DO NOT</strong> sell or rent your personal data to third parties.</p>
+        <h3>User Agreement</h3>
+        <p>By accessing or using the FinGamePro web application ("Platform"), you agree to be bound by these Terms:</p>
+        
+        <h4 class="mt-4">1. Platform Overview</h4>
+        <p class="legal-text">
+            This Platform is an entertainment and utility-based application designed to support students and professionals with productivity tools, while offering gamified rewards ("Coins") for engagement.
+        </p>
 
-            <h3>3. Data Security</h3>
-            <p>We implement reasonable technical measures to protect user data from unauthorized access. However, no system is 100% secure.</p>
+        <h4 class="mt-4">2. Reward Coins & Earning</h4>
+        <p class="legal-text">
+            Users may earn coins by participating in permitted activities like Referring, Viewing Ads, or Completing Tasks. Coins are promotional incentives only and have no guaranteed monetary value until a specific redemption phase is announced.
+        </p>
 
-            <h3>4. Third-Party Ads</h3>
-            <p>The Platform may display advertisements from third-party networks. These parties may use cookies to provide relevant ads. We do not control their privacy practices.</p>
-        </div>
-        ${AD_BOTTOM}
+        <h4 class="mt-4">3. Prohibited Activities</h4>
+        <p class="legal-text">
+            You agree NOT to:
+            <br>• Use automation software (bots) to accumulate coins.
+            <br>• Exploit bugs or glitches for unfair advantage.
+            <br>• Sell or trade your account to third parties.
+            <br>Violation of these rules will result in permanent asset forfeiture.
+        </p>
+
+        <h4 class="mt-4">4. Limitation of Liability</h4>
+        <p class="legal-text">
+            The Platform is provided "as is". We are not liable for any data loss, service interruption, or value fluctuation of promotional coins caused by external market factors or technical updates.
+        </p>
+        
+        <p class="legal-footer">Last Updated: Dec 2025</p>
+
+        ${adSpaceBottom}
     `,
 
-    // --- DISCLAIMER ---
-    'disclaimer': `
-        ${HITECH_HINT}
-        ${AD_TOP}
-        <div class="legal-text-block">
-            <h3>1. No Guarantee of Earnings</h3>
-            <p>The Platform does not guarantee any income, profit, or monetary benefit. Rewards vary based on user activity and platform policies.</p>
+    // 4. PRIVACY POLICY (Data Transparency)
+    privacy: `
+        ${adSpaceTop}
 
-            <h3>2. Promotional Nature</h3>
-            <p>All reward coins are promotional in nature. They are not cryptocurrency or financial instruments (yet). Conversion is discretionary.</p>
+        <h3>Data Protection Policy</h3>
+        <p>We value your privacy. This section explains how we handle your digital footprint.</p>
+        
+        <h4 class="mt-4">1. Information We Collect</h4>
+        <p class="legal-text">
+            We collect minimal data required to operate the ledger:
+            <br>• <b>Identity:</b> Telegram User ID, First Name, and Username (for Leaderboard).
+            <br>• <b>Activity:</b> Task completion logs, ad impressions, and game scores.
+            <br>• <b>Device:</b> IP Address and User Agent (strictly for fraud prevention).
+        </p>
 
-            <h3>3. Entertainment Only</h3>
-            <p>This is NOT a gambling, betting, or lottery platform. It is strictly skill and activity-based for entertainment.</p>
+        <h4 class="mt-4">2. How We Use Information</h4>
+        <p class="legal-text">
+            Your data is used to:
+            <br>• Verify task completion and award coins.
+            <br>• Maintain the global leaderboard rankings.
+            <br>• Detect and block bot farms to protect genuine users.
+            <br><b>Note:</b> We DO NOT sell your personal conversation data or private files.
+        </p>
 
-            <h3>4. Limitation of Liability</h3>
-            <p>The Platform owners shall not be liable for any direct or indirect damages, technical failures, or reward cancellations.</p>
-        </div>
-        ${AD_BOTTOM}
+        <h4 class="mt-4">3. Third-Party Services</h4>
+        <p class="legal-text">
+            The Platform integrates with third-party ad networks and analytics providers (e.g., Google, Adsterra). These parties may use cookies to serve relevant ads based on your interests.
+        </p>
+
+        <h4 class="mt-4">4. Data Security</h4>
+        <p class="legal-text">
+            All user data is encrypted and stored using industry-standard Firebase security rules. However, no transmission over the internet is 100% secure.
+        </p>
+
+        ${adSpaceBottom}
     `,
 
-    // --- FAQ (With Crypto Hint) ---
-    'faq': `
-        ${HITECH_HINT}
-        ${AD_TOP}
-        <div class="legal-text-block">
-            <h3>1. What is this platform?</h3>
-            <p>It is an entertainment and utility app where you can use tools, play games, and earn promotional coins.</p>
+    // 5. DISCLAIMER (Most Important for India Safety)
+    disclaimer: `
+        ${adSpaceTop}
 
-            <h3>2. Is this a Crypto Project? 🚀</h3>
-            <p>Currently, it is a Web2 reward platform. However, we are actively researching <strong>Tokenization & Blockchain Integration</strong>. Accumulating coins now <em>might</em> be beneficial for future phases (Phase 2).</p>
-
-            <h3>3. Can I withdraw money?</h3>
-            <p>Only users in the <strong>Top 10 Leaderboard</strong> are eligible for promotional withdrawals. This ensures rewards go to genuine, active users.</p>
-
-            <h3>4. Why was I banned?</h3>
-            <p>Common reasons: Using bots, fake referrals, chatting for coins, or multiple accounts on one device.</p>
-
-            <h3>5. Is chatting allowed for rewards?</h3>
-            <p>❌ No. Generating rewards via chatting or fake interactions is strictly prohibited.</p>
-
-            <h3>6. How to Contact Support?</h3>
-            <p>Go to the Menu -> Contact Support for Live Chat or Ticket submission.</p>
+        <div class="info-card" style="border: 1px solid #ef4444; background: rgba(239,68,68,0.1);">
+            <h3 style="color:#f87171;"><i class="fa-solid fa-triangle-exclamation"></i> Important Legal Disclaimer</h3>
+            <p style="font-size:0.9rem; color:#fca5a5;">
+                Please read this carefully before participating.
+            </p>
         </div>
-        ${AD_BOTTOM}
+
+        <h4 class="mt-4">1. No Investment Advice</h4>
+        <p class="legal-text">
+            FinGamePro is a <b>Gamified Rewards Platform</b>. It is NOT an investment fund, bank, or gambling service. The "Coins" are virtual items used within our ecosystem and should not be treated as financial assets or securities.
+        </p>
+
+        <h4 class="mt-4">2. Regulatory Compliance</h4>
+        <p class="legal-text">
+            This app complies with Indian laws regarding "Competitions & Games of Skill". We do not ask for user deposits (Real Money) for participation. Since there is no "Pay-to-Win" element involving fiat currency, this platform falls under safe entertainment categories.
+        </p>
+
+        <h4 class="mt-4">3. Future Valuations</h4>
+        <p class="legal-text">
+            Any mention of "Phase 2", "Tokens", or "Airdrops" refers to potential future roadmap features. These are speculative and subject to market conditions. Past performance or accumulated coins do not guarantee specific future monetary returns.
+        </p>
+
+        ${adSpaceBottom}
     `
 };
 
-// --- NAVIGATION & RENDER FUNCTION (Bug Fix Included) ---
-window.openInfoPage = function(pageKey) {
-    const titleMap = {
+// --- LOGIC TO OPEN PAGES (Standard) ---
+
+function openInfoPage(pageKey) {
+    const page = document.getElementById('page-info');
+    const titleEl = document.getElementById('info-title');
+    const contentEl = document.getElementById('info-content');
+    
+    // Map Titles
+    const titles = {
         'withdraw_terms': 'Withdrawal Policy',
         'terms': 'Terms & Conditions',
         'privacy': 'Privacy Policy',
-        'disclaimer': 'Disclaimer',
+        'disclaimer': 'Legal Disclaimer',
         'faq': 'Help & FAQ'
     };
 
-    // 1. Set Title & Content
-    document.getElementById('info-title').innerText = titleMap[pageKey] || 'Information';
-    document.getElementById('info-content').innerHTML = INFO_DB[pageKey] || "<p>Loading...</p>";
-
-    // 2. SHOW Info Page, HIDE others (Explicitly)
-    document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden')); // Hide Contact/Refer/Profile
-    document.querySelectorAll('.page-section').forEach(p => p.classList.add('hidden')); // Hide Home/Wallet
-    
-    document.getElementById('page-info').classList.remove('hidden'); // Show Info
-
-    // 3. Close Menu
-    if(window.toggleProfileMenu) window.toggleProfileMenu(false);
+    if(page && contentEl) {
+        // Set Content
+        titleEl.innerText = titles[pageKey] || 'Information';
+        contentEl.innerHTML = infoContent[pageKey] || '<p>Content not found.</p>';
+        
+        // Show Page
+        page.classList.remove('hidden');
+        
+        // Close Menu if open
+        if(window.toggleProfileMenu) window.toggleProfileMenu(false);
+    }
 }
-
