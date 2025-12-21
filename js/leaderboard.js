@@ -2,6 +2,7 @@
 
 // Ensure Firebase is initialized
 const db = firebase.firestore(); 
+const auth = firebase.auth(); // Auth bhi chahiye user ki rank check karne ke liye
 
 const LB_CACHE_KEY = 'fingamepro_lb_data';
 const LB_TIME_KEY = 'fingamepro_lb_time';
@@ -44,8 +45,6 @@ async function openLeaderboard() {
             
             snapshot.forEach(doc => {
                 const data = doc.data();
-                
-                // Hum ab photoURL fetch hi nahi kar rahe, seedha static image lagayenge render ke time.
                 leaderboardData.push({
                     id: doc.id,
                     name: data.firstName ? data.firstName : `User_${doc.id.substring(0,4)}`,
@@ -71,36 +70,56 @@ function renderHitechLeaderboard(data) {
     const listContainer = document.getElementById('lb-list-render');
     listContainer.innerHTML = ''; // Clear loading text
 
-    if (data.length < 3) {
-        listContainer.innerHTML = "<p style='text-align:center; color:#888;'>Not enough players yet!</p>";
+    if (data.length === 0) {
+        listContainer.innerHTML = "<p style='text-align:center; color:#888;'>No players yet!</p>";
+        // Reset Podium text
+        document.getElementById('p1-name').innerText = "--";
+        document.getElementById('p1-score').innerText = "0";
         return;
     }
 
     // --- STATIC IMAGES SETUP ---
-    // Top 3 ke liye Special High-Quality Icons
     const IMG_RANK_1 = 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png'; // King
     const IMG_RANK_2 = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'; // Silver
     const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'; // Bronze
-    
-    // Rank 4+ ke liye Common Avatar (Aapka Coin image ya Default Avatar)
     const IMG_DEFAULT = 'assets/default_avatar.png'; 
 
-    // --- 1. Update Top 3 Podium (The Kings) ---
+    // --- 1. Update Top 3 Podium (Handle Empty Slots) ---
     
-    // Rank 1
-    document.getElementById('p1-name').innerText = data[0].name;
-    document.getElementById('p1-score').innerText = formatK(data[0].balance);
-    document.getElementById('p1-img').src = IMG_RANK_1;
+    // Rank 1 (Hamesha rahega agar 1 user bhi hai)
+    if (data[0]) {
+        document.getElementById('p1-name').innerText = data[0].name;
+        document.getElementById('p1-score').innerText = formatK(data[0].balance);
+        document.getElementById('p1-img').src = IMG_RANK_1;
+        // Make visible
+        document.querySelector('.rank-1').style.opacity = '1';
+    }
 
-    // Rank 2
-    document.getElementById('p2-name').innerText = data[1].name;
-    document.getElementById('p2-score').innerText = formatK(data[1].balance);
-    document.getElementById('p2-img').src = IMG_RANK_2;
+    // Rank 2 (Check if exists)
+    if (data[1]) {
+        document.getElementById('p2-name').innerText = data[1].name;
+        document.getElementById('p2-score').innerText = formatK(data[1].balance);
+        document.getElementById('p2-img').src = IMG_RANK_2;
+        document.querySelector('.rank-2').style.opacity = '1';
+    } else {
+        // Hide Rank 2 if no user
+        document.querySelector('.rank-2').style.opacity = '0.3';
+        document.getElementById('p2-name').innerText = "Waiting...";
+        document.getElementById('p2-score').innerText = "--";
+    }
 
-    // Rank 3
-    document.getElementById('p3-name').innerText = data[2].name;
-    document.getElementById('p3-score').innerText = formatK(data[2].balance);
-    document.getElementById('p3-img').src = IMG_RANK_3;
+    // Rank 3 (Check if exists)
+    if (data[2]) {
+        document.getElementById('p3-name').innerText = data[2].name;
+        document.getElementById('p3-score').innerText = formatK(data[2].balance);
+        document.getElementById('p3-img').src = IMG_RANK_3;
+        document.querySelector('.rank-3').style.opacity = '1';
+    } else {
+        // Hide Rank 3 if no user
+        document.querySelector('.rank-3').style.opacity = '0.3';
+        document.getElementById('p3-name').innerText = "Waiting...";
+        document.getElementById('p3-score').innerText = "--";
+    }
 
 
     // --- 2. Render List (Rank 4 to 100) ---
@@ -110,10 +129,8 @@ function renderHitechLeaderboard(data) {
 
         const card = document.createElement('div');
         card.className = 'lb-card';
-        // Animation delay for cool effect
         card.style.animation = `fadeInUp 0.5s ease backwards ${i * 0.05}s`;
 
-        // Yahan 'src' mein humne fix 'IMG_DEFAULT' laga diya hai
         card.innerHTML = `
             <span class="lb-rank">#${rank}</span>
             <img src="${IMG_DEFAULT}" class="lb-avatar" alt="user" onerror="this.src='assets/coin_main.jpg'">
@@ -121,6 +138,28 @@ function renderHitechLeaderboard(data) {
             <span class="lb-coins">${user.balance.toLocaleString()}</span>
         `;
         listContainer.appendChild(card);
+    }
+
+    // --- 3. AUTO-FIX: Update My Personal Rank ---
+    // Ye logic aapka Rank dhoond kar LocalStorage mein save karega
+    // Taaki Wallet section mein #999 ki jagah real Rank dikhe
+    
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+        // Find my index in the data
+        const myIndex = data.findIndex(u => u.id === currentUser.uid);
+        
+        if (myIndex !== -1) {
+            const myRealRank = myIndex + 1;
+            console.log("Found My Rank:", myRealRank);
+            
+            // Save to Storage for Wallet Page
+            localStorage.setItem('mySavedRank', myRealRank);
+            
+            // Try to update Wallet UI immediately if it exists on screen
+            // (Note: Wallet #999 element ka ID check karna padega, 
+            // agar wo kisi ID ke andar hai to hum yahan se update kar sakte hain)
+        }
     }
 }
 
