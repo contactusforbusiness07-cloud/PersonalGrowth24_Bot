@@ -39,10 +39,25 @@ window.updateWalletUI = function() {
     if(headerEl) headerEl.innerText = displayBal;
 
     // ==========================================
-    // 🏆 RANK & BUTTON LOGIC
+    // 🏆 RANK & BUTTON LOGIC (UPDATED)
     // ==========================================
-    const rank = window.currentUser.rank || 999;
-    const isTop10 = rank <= 10;
+    
+    // Default Rank
+    let rank = window.currentUser.rank || 999;
+
+    // ✅ NEW: Check Saved Rank from Leaderboard Logic
+    const savedRank = localStorage.getItem('mySavedRank');
+    if(savedRank) {
+       // Agar Leaderboard ne rank calculate kar li hai, to wo use karein
+       rank = savedRank; 
+    }
+
+    // Calculate Lock Logic (Top 10 Check)
+    // Agar rank "100+" string hai, to usse bada number maano
+    let numericRank = parseInt(rank);
+    if(savedRank === "100+") numericRank = 101; 
+    
+    const isTop10 = numericRank <= 10;
     
     // Status Bar
     const rankContainer = document.getElementById('rank-card-container');
@@ -202,3 +217,4 @@ function sendToTelegram(name, upi, code, coins) {
 // ==========================================
 // Updates wallet every 1 second without user action
 setInterval(window.updateWalletUI, 1000);
+
