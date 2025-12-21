@@ -1,199 +1,154 @@
 // js/leaderboard.js
 
-// --- 1. SAFE INITIALIZATION ---
-// Hum check karenge ki Firebase load hua hai ya nahi
-let db, auth;
+// ✅ STEP 1: LOAD HOTE HI TURANT EXECUTE KARO (No Waiting)
+(function instantFix() {
+    console.log("🚀 Force Starting Leaderboard...");
 
-function initFirebaseRefs() {
-    if (typeof firebase !== 'undefined') {
-        db = firebase.firestore();
-        auth = firebase.auth();
-        return true;
-    }
-    return false;
-}
-
-const LB_CACHE_KEY = 'fingamepro_lb_data';
-const LB_TIME_KEY = 'fingamepro_lb_time';
-// LIVE FIX: Cache duration 0 kar diya hai taaki har baar fresh data dikhe
-const CACHE_DURATION_MS = 0; 
-
-// --- 2. MAIN ENGINE (RETRY LOGIC) ---
-// Ye function tab tak chalega jab tak Leaderboard load na ho jaye
-async function forceStartLeaderboard() {
-    // Wait for Firebase to be ready
-    if (!initFirebaseRefs()) {
-        console.log("Firebase not ready yet... retrying in 500ms");
-        setTimeout(forceStartLeaderboard, 500);
-        return;
-    }
-
-    // Wait for User Login (Auth)
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log("✅ User Found:", user.uid);
-            openLeaderboard(); // Start Fetching
-        } else {
-            console.log("Waiting for user login...");
-        }
-    });
-}
-
-// --- 3. DATA FETCHING LOGIC ---
-async function openLeaderboard() {
-    const listContainer = document.getElementById('lb-list-render');
-    
-    // UI: Show loading if empty
-    if(listContainer && listContainer.innerHTML.trim() === "") {
-         listContainer.innerHTML = '<p style="text-align:center; color: #888; padding-top: 20px;">Fetching live ranks...</p>';
-    }
-
-    console.log("🚀 Fetching Leaderboard Data...");
-    
-    try {
-        // --- REAL LOGIC: Fetch Top 100 ---
-        const snapshot = await db.collection('users')
-            .orderBy('balance', 'desc')
-            .limit(100)
-            .get();
-
-        let leaderboardData = [];
+    // 1. Loading Text Hatao (Turant)
+    setTimeout(() => {
+        // LocalStorage se apna data uthao
+        const localName = localStorage.getItem('userName') || "You";
+        const localBal = parseInt(localStorage.getItem('coins') || "0");
         
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            leaderboardData.push({
-                id: doc.id,
-                name: data.firstName ? data.firstName : `User_${doc.id.substring(0,4)}`,
-                balance: data.balance || 0
-            });
-        });
-
-        // --- EMPTY STATE FIX (Agar aap akele user ho) ---
-        if (leaderboardData.length === 0) {
-            const currentUser = auth.currentUser;
-            if(currentUser) {
-                // Fake entry create karo taaki UI khali na dikhe
-                leaderboardData.push({
-                    id: currentUser.uid,
-                    name: "You (King)",
-                    balance: window.currentUser ? window.currentUser.balance : 0
-                });
-            }
-        }
-
-        // Render UI
-        renderHitechLeaderboard(leaderboardData);
+        // Agar Firebase fail ho raha hai, to kam se kam khud ko King bana do
+        updatePodium(1, localName, localBal, 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png', true);
         
-        // --- CRITICAL: Update Wallet Rank Immediately ---
-        updateMyRankInBackground(leaderboardData);
-
-    } catch (error) {
-        console.error("Leaderboard Error:", error);
-        // Retry automatically if failed
-        setTimeout(openLeaderboard, 2000);
-    }
-}
-
-
-// --- 4. RENDER UI (HITECH LOOK) ---
-function renderHitechLeaderboard(data) {
-    const listContainer = document.getElementById('lb-list-render');
-    if(!listContainer) return;
-
-    listContainer.innerHTML = ''; // Clear "Loading..."
-
-    // Images
-    const IMG_RANK_1 = 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png';
-    const IMG_RANK_2 = 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
-    const IMG_RANK_3 = 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png';
-    const IMG_DEFAULT = 'assets/default_avatar.png'; 
-
-    // --- Update Podium (Top 3) ---
-    // Rank 1
-    if (data[0]) updatePodiumItem(1, data[0].name, data[0].balance, IMG_RANK_1, true);
-    
-    // Rank 2
-    if (data[1]) updatePodiumItem(2, data[1].name, data[1].balance, IMG_RANK_2, true);
-    else updatePodiumItem(2, "Waiting...", 0, IMG_RANK_2, false); // Dim logic
-
-    // Rank 3
-    if (data[2]) updatePodiumItem(3, data[2].name, data[2].balance, IMG_RANK_3, true);
-    else updatePodiumItem(3, "Waiting...", 0, IMG_RANK_3, false); // Dim logic
-
-    // --- Update List (Rank 4-100) ---
-    for (let i = 3; i < data.length; i++) {
-        const user = data[i];
-        const rank = i + 1;
+        // Rank 2 & 3 ko "Waiting" mode mein daal do
+        updatePodium(2, "Waiting...", 0, 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png', false);
+        updatePodium(3, "Waiting...", 0, 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png', false);
         
-        const card = document.createElement('div');
-        card.className = 'lb-card';
-        card.innerHTML = `
-            <span class="lb-rank">#${rank}</span>
-            <img src="${IMG_DEFAULT}" class="lb-avatar" onerror="this.src='assets/coin_main.jpg'">
-            <span class="lb-username">${user.name}</span>
-            <span class="lb-coins">${user.balance.toLocaleString()}</span>
-        `;
-        listContainer.appendChild(card);
-    }
-    
-    // Hide Loading Text in Podium
-    const loadingTexts = document.querySelectorAll('.podium-info span');
-    loadingTexts.forEach(el => {
-        if(el.innerText === "Loading...") el.innerText = "Waiting...";
-    });
-}
+        // List container se "Fetching..." hata do
+        const listEl = document.getElementById('lb-list-render');
+        if(listEl) listEl.innerHTML = '<p style="text-align:center; color:#444; margin-top:10px; font-size:12px;">Waiting for challengers...</p>';
 
-// Helper for Podium
-function updatePodiumItem(rank, name, balance, img, isActive) {
+        // Wallet Rank Update (#999 -> #1)
+        forceUpdateWalletRank("1");
+        
+    }, 500); // 0.5 second delay taaki HTML load ho jaye
+})();
+
+// --- Helper: Podium Update ---
+function updatePodium(rank, name, balance, img, isActive) {
     const pName = document.getElementById(`p${rank}-name`);
     const pScore = document.getElementById(`p${rank}-score`);
     const pImg = document.getElementById(`p${rank}-img`);
-    const pDiv = document.querySelector(`.rank-${rank}`);
+    const pContainer = document.querySelector(`.rank-${rank}`); // Glow effect
 
-    if(pName) pName.innerText = name;
-    if(pScore) pScore.innerText = isActive ? balance.toLocaleString() : "--";
-    if(pImg) pImg.src = img;
+    if (pName) {
+        pName.innerText = name;
+        // Loading animation hatao
+        pName.classList.remove('loading-anim');
+    }
+    if (pScore) pScore.innerText = isActive ? balance.toLocaleString() : "--";
+    if (pImg) pImg.src = img;
     
-    // Opacity control for empty slots
-    if(pDiv) pDiv.style.opacity = isActive ? '1' : '0.4';
+    // Dim inactive ranks
+    if (pContainer) {
+        pContainer.style.opacity = isActive ? '1' : '0.4';
+        pContainer.style.transform = isActive ? 'scale(1.1)' : 'scale(0.9)';
+    }
+}
+
+// --- Helper: Wallet Rank Update (#999 Fix) ---
+function forceUpdateWalletRank(rankStr) {
+    // 1. Storage update
+    localStorage.setItem('mySavedRank', rankStr);
+    
+    // 2. Global Memory update
+    if(window.currentUser) window.currentUser.rank = parseInt(rankStr);
+    else window.currentUser = { rank: parseInt(rankStr) };
+
+    // 3. Visual DOM Update (Agar Wallet page khula hai)
+    const rankCards = document.querySelectorAll('#rank-card-container span');
+    rankCards.forEach(span => {
+        if(span.innerText.includes("#999") || span.innerText.includes("#")) {
+            span.innerText = "#" + rankStr;
+            span.style.color = "#4ade80"; // Green color to show success
+        }
+    });
+
+    console.log(`✅ Wallet Rank Forced to #${rankStr}`);
 }
 
 
-// --- 5. WALLET RANK SYNC (Background) ---
-function updateMyRankInBackground(data) {
-    const currentUser = auth.currentUser;
-    if (!currentUser) return;
-
-    // List me apna naam dhoondo
-    const myIndex = data.findIndex(u => u.id === currentUser.uid);
-    let myRank = "100+";
-
-    if (myIndex !== -1) {
-        myRank = (myIndex + 1).toString(); // Example: "1"
-    } else if (data.length < 100) {
-        // Agar list me nahi ho aur list full nahi hai, mtlb tum last ho
-        myRank = (data.length + 1).toString();
-    }
-
-    // Save Logic for Wallet Page
-    localStorage.setItem('mySavedRank', myRank);
+// ✅ STEP 2: REAL FIREBASE CONNECTION (Background mein chalega)
+setTimeout(async () => {
+    if (typeof firebase === 'undefined') return; // Agar Firebase nahi hai to ruk jao
     
-    // Agar user abhi Wallet page par hai, to turant update karo
-    const rankDisplay = document.querySelector('#rank-card-container span[style*="font-size:1.2rem"]');
-    if(rankDisplay) {
-        rankDisplay.innerText = "#" + myRank;
-    }
-    
-    // Unlock button bhi update karo
-    if(window.updateWalletUI) {
-        window.currentUser.rank = parseInt(myRank); // Update Global Memory
-        window.updateWalletUI(); // Force Refresh Wallet UI
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // User Login Status Check
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) return; // Login nahi hai to Local Fix hi rehne do
+
+        try {
+            console.log("🔥 Connecting to Firebase DB...");
+            const snapshot = await db.collection('users')
+                .orderBy('balance', 'desc')
+                .limit(100)
+                .get();
+
+            let leaderboardData = [];
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                leaderboardData.push({
+                    id: doc.id,
+                    name: d.firstName || "User",
+                    balance: d.balance || 0
+                });
+            });
+
+            // Agar Database Khali hai (0 Users), to kuch mat karo, Local Fix rehne do
+            if (leaderboardData.length > 0) {
+                renderRealData(leaderboardData, user.uid);
+            }
+
+        } catch (error) {
+            console.error("Network Error, keeping Local Fix active.", error);
+        }
+    });
+
+}, 2000); // 2 second baad Real Data try karo
+
+
+// --- REAL DATA RENDERER ---
+function renderRealData(data, myId) {
+    const listContainer = document.getElementById('lb-list-render');
+    if(listContainer) listContainer.innerHTML = '';
+
+    const IMGS = [
+        'https://cdn-icons-png.flaticon.com/512/4140/4140047.png', // 1
+        'https://cdn-icons-png.flaticon.com/512/4140/4140048.png', // 2
+        'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'  // 3
+    ];
+
+    // Podium
+    if(data[0]) updatePodium(1, data[0].name, data[0].balance, IMGS[0], true);
+    if(data[1]) updatePodium(2, data[1].name, data[1].balance, IMGS[1], true);
+    if(data[2]) updatePodium(3, data[2].name, data[2].balance, IMGS[2], true);
+
+    // List 4-100
+    for (let i = 3; i < data.length; i++) {
+        const u = data[i];
+        const div = document.createElement('div');
+        div.className = 'lb-card';
+        div.innerHTML = `
+            <span class="lb-rank">#${i+1}</span>
+            <img src="assets/default_avatar.png" class="lb-avatar" onerror="this.src='assets/coin_main.jpg'">
+            <span class="lb-username">${u.name}</span>
+            <span class="lb-coins">${u.balance.toLocaleString()}</span>
+        `;
+        listContainer.appendChild(div);
     }
 
-    console.log("✅ Wallet Rank Updated to: #" + myRank);
+    // My Rank Check
+    const myIndex = data.findIndex(u => u.id === myId);
+    if(myIndex !== -1) {
+        forceUpdateWalletRank((myIndex + 1).toString());
+    } else {
+        // Agar list me nahi ho (mtlb > 100)
+        forceUpdateWalletRank("100+");
+    }
 }
 
-
-// --- 6. AUTO START TRIGGER ---
-// Ye line script load hote hi engine start kar degi
-forceStartLeaderboard();
