@@ -743,9 +743,7 @@
     
     <style>
         /* Metaverse Input Styling */
-        .meta-group {
-            margin-bottom: 15px;
-        }
+        .meta-group { margin-bottom: 15px; }
         .meta-label {
             font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: #94a3b8; 
             margin-bottom: 8px; display: block; letter-spacing: 1px;
@@ -757,9 +755,7 @@
             font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none;
             transition: all 0.3s;
         }
-        .meta-input:focus {
-            border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-        }
+        .meta-input:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
 
         /* Withdrawal Simulator Design */
         .sim-box {
@@ -774,9 +770,10 @@
             width: 100%; outline: none; margin-left: 10px;
         }
         
-        /* THE MAIN ACTION BUTTON (Dynamic) */
+        /* ACTION BUTTONS */
         .action-btn-wrapper { margin-top: 10px; }
         
+        /* 1. Withdraw Button (Top 10) */
         .btn-withdraw-final {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: linear-gradient(90deg, #22c55e, #10b981);
@@ -786,16 +783,18 @@
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         
+        /* 2. Locked Vault (Rank 11+) */
         .btn-locked-final {
-            width: 100%; padding: 18px; border-radius: 12px;
-            background: rgba(30, 41, 59, 0.6);
+            width: 100%; padding: 20px; border-radius: 16px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
             border: 1px dashed rgba(255, 255, 255, 0.2);
             color: #94a3b8; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem;
             text-transform: uppercase; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.3s;
+            transition: 0.3s; position: relative; overflow: hidden;
         }
-        .btn-locked-final:active { transform: scale(0.98); background: rgba(255,255,255,0.05); }
+        .btn-locked-final:active { transform: scale(0.98); }
+        .lock-icon-glow { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
     </style>
 
     <div class="wallet-meta-header">
