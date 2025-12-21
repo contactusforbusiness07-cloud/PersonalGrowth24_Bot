@@ -613,40 +613,53 @@
             </div>
 
 
-            <section id="leaderboard" class="page-section hidden">
+            <section id="leaderboard" class="page-section metaverse-container hidden">
+                
                 <div class="lb-header">
-                    <div class="lb-title">Top Earners <i class="fa-solid fa-crown text-gold"></i></div>
-                    <div class="lb-timer glass-badge">
-                        <i class="fa-solid fa-hourglass-half"></i> Resets in: <span id="countdown-timer">00:00:00</span>
-                    </div>
-                </div>
-                <p class="lb-subtitle">Leaderboard resets every 24 hours</p>
-
-                <div class="podium-container" data-aos="zoom-in">
-                    <div class="podium-card rank-2">
-                        <div class="avatar-frame silver"><img src="https://i.pravatar.cc/150?img=12" alt="User" class="avatar-img"><div class="rank-badge-circle">2</div></div>
-                        <div class="podium-name">Alex</div><div class="podium-coins">85k</div>
-                    </div>
-                    <div class="podium-card rank-1">
-                        <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
-                        <div class="avatar-frame gold"><img src="https://i.pravatar.cc/150?img=5" alt="User" class="avatar-img"><div class="rank-badge-circle">1</div></div>
-                        <div class="podium-name highlight">Sarah</div><div class="podium-coins main">92k</div>
-                    </div>
-                    <div class="podium-card rank-3">
-                        <div class="avatar-frame bronze"><img src="https://i.pravatar.cc/150?img=33" alt="User" class="avatar-img"><div class="rank-badge-circle">3</div></div>
-                        <div class="podium-name">John</div><div class="podium-coins">81k</div>
-                    </div>
+                    <h2>Top Earners 👑</h2>
+                    <p class="reset-timer">🏆 Leaderboard updates every 30 mins</p>
                 </div>
 
-                <div class="leaderboard-list" id="lb-list-container" data-aos="fade-up">
-                    <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading Ranks...</div>
+                <div class="podium-container">
+                    
+                    <div class="podium-item rank-2">
+                        <div class="crown-icon silver">🥈</div>
+                        <div class="avatar-glow silver-glow">
+                            <img id="p2-img" src="assets/default_avatar.png" alt="Rank 2">
+                        </div>
+                        <div class="podium-info">
+                            <span id="p2-name" class="p-name">Loading...</span>
+                            <span id="p2-score" class="p-score silver-txt">--</span>
+                        </div>
+                    </div>
+
+                    <div class="podium-item rank-1 main-king">
+                        <div class="crown-icon gold giant-crown">👑</div>
+                        <div class="avatar-glow gold-glow main-glow">
+                            <img id="p1-img" src="assets/default_avatar.png" alt="Rank 1">
+                        </div>
+                        <div class="podium-info">
+                            <span id="p1-name" class="p-name king-name">Loading...</span>
+                            <span id="p1-score" class="p-score gold-txt giant-score">--</span>
+                        </div>
+                    </div>
+
+                    <div class="podium-item rank-3">
+                        <div class="crown-icon bronze">🥉</div>
+                        <div class="avatar-glow bronze-glow">
+                            <img id="p3-img" src="assets/default_avatar.png" alt="Rank 3">
+                        </div>
+                        <div class="podium-info">
+                            <span id="p3-name" class="p-name">Loading...</span>
+                            <span id="p3-score" class="p-score bronze-txt">--</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="lb-rules-card">
-                    <div class="rule-row"><span class="rule-label gold-text"><i class="fa-solid fa-check-circle"></i> Rank 1-10:</span><span class="rule-val">Instant Withdraw Active</span></div>
-                    <div class="rule-row"><span class="rule-label gray-text"><i class="fa-solid fa-lock"></i> Rank 11+:</span><span class="rule-val">Month-End Withdraw Only</span></div>
-                    <div class="lb-footer-note"><i class="fa-solid fa-shield-halved"></i> Rankings update live. Fake coins removed.</div>
+                <div class="lb-list-container" id="lb-list-render">
+                    <p style="text-align:center; color: #888; padding-top: 20px;">Fetching rankings...</p>
                 </div>
+
             </section>
 
 
