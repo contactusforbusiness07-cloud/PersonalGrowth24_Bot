@@ -664,36 +664,72 @@
 
 
             <section id="tasks" class="page-section hidden">
-                <div class="section-header"><h2>Task Center</h2><p>Complete missions to earn massive coins</p></div>
+                <div class="section-header">
+                    <h2>Mission Control</h2>
+                    <p>COMPLETE TASKS TO MINE ASSETS</p>
+                </div>
                 
-                <div class="task-category-title"><i class="fa-solid fa-play-circle text-red"></i> Watch & Earn</div>
-                <div class="video-task-card" data-aos="fade-up">
-                    <div class="video-icon"><i class="fa-brands fa-youtube"></i></div>
-                    <div class="video-info">
-                        <h4>Watch Premium Ad</h4><p>Watch for 30 seconds</p>
-                        <div class="progress-bar-container hidden" id="ad-progress-container"><div class="progress-bar" id="ad-progress-bar"></div></div>
-                    </div>
-                    <button class="btn-task-action" onclick="startWatchTask(this)"><i class="fa-solid fa-coins"></i> +500</button>
+                <div class="task-category-title">
+                    <i class="fa-solid fa-play-circle" style="color:var(--neon-red)"></i> WATCH & EARN PROTOCOL
                 </div>
 
-                <div class="task-category-title mt-4"><i class="fa-brands fa-telegram text-blue"></i> Premium Channels <span class="badge-new">High Pay</span></div>
-                <div class="tasks-list" id="telegram-tasks-list"><div class="loading-spinner">Loading Tasks...</div></div>
+                <div class="video-task-card" data-aos="fade-up">
+                    <div class="video-icon">
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
+                    <div class="video-info">
+                        <h4>Premium Ad Stream</h4>
+                        <p>WATCH 30S • GUARANTEED REWARD</p>
+                        <div class="progress-bar-container hidden" id="ad-progress-container">
+                            <div class="progress-bar" id="ad-progress-bar"></div>
+                        </div>
+                    </div>
+                    <button class="btn-task-action" onclick="startWatchTask(this)">
+                        <i class="fa-solid fa-coins"></i> +500
+                    </button>
+                </div>
 
-                <div class="task-category-title mt-4"><i class="fa-solid fa-bolt text-gold"></i> Quick Actions</div>
+                <div class="task-category-title mt-4">
+                    <i class="fa-brands fa-telegram" style="color:var(--neon-blue)"></i> PRIORITY CHANNELS <span class="badge-new" style="margin-left:auto">HIGH PAY</span>
+                </div>
+
+                <div class="tasks-list" id="telegram-tasks-list">
+                    <div class="loading-spinner">
+                        <i class="fa-solid fa-satellite-dish"></i> SCANNING NETWORK...
+                    </div>
+                </div>
+
+                <div class="task-category-title mt-4">
+                    <i class="fa-solid fa-bolt" style="color:var(--neon-gold)"></i> QUICK OPS
+                </div>
+
                 <div class="tasks-list">
                     <div class="task-card">
-                        <div class="task-icon bg-green"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="task-info"><h4>Refer a Friend</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="openInternalPage('page-refer')">Start</button>
+                        <div class="task-icon bg-green">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div class="task-info">
+                            <h4>Invite New Agent</h4>
+                            <div class="coin-tag"><i class="fa-solid fa-coins"></i> +1000</div>
+                        </div>
+                        <button class="btn-task-action" onclick="openInternalPage('page-refer')">GO</button>
                     </div>
+
                     <div class="task-card">
-                        <div class="task-icon bg-purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                        <div class="task-info"><h4>Use CV Builder</h4><span class="coin-tag">+1000 Coins</span></div>
-                        <button class="btn-task-action" onclick="navigateTo('home')">Go</button>
+                        <div class="task-icon bg-purple">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div class="task-info">
+                            <h4>Create AI CV</h4>
+                            <div class="coin-tag"><i class="fa-solid fa-coins"></i> +500</div>
+                        </div>
+                        <button class="btn-task-action" onclick="navigateTo('home')">GO</button>
                     </div>
                 </div>
 
-                <div class="trust-footer"><i class="fa-solid fa-shield-halved"></i> All tasks are auto-verified.</div>
+                <div class="trust-footer" style="margin-bottom:30px;">
+                    <i class="fa-solid fa-shield-halved"></i> SECURE CONTRACT VERIFIED
+                </div>
             </section>
 
             <section id="games" class="page-section hidden">
