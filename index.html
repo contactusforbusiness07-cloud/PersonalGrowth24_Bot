@@ -716,7 +716,22 @@
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
                     <div class="cyber-ring"></div> 
+                    
                     <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin" oncontextmenu="return false;">
+
+                    <div class="game-floating-actions">
+                        
+                        <div class="hitech-icon-btn booster" onclick="activatePower('booster')">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span id="btn-booster-badge" class="icon-badge">3/8</span>
+                        </div>
+
+                        <div class="hitech-icon-btn refill" onclick="activatePower('refill')">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                            <span id="btn-refill-badge" class="icon-badge">3/8</span>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div class="energy-control-panel">
@@ -728,14 +743,9 @@
                         <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
                     </div>
                     
-                    <button id="btn-refill" class="btn-boost" onclick="handleRefill()">
-                        <i class="fa-solid fa-forward"></i> 
-                        <span id="refill-label">OVERCLOCK BOOST (3)</span>
-                    </button>
-
                     <div class="security-badge">
                         <span><i class="fa-solid fa-shield-halved"></i> SECURED</span>
-                        <span class="text-green"><i class="fa-solid fa-check-circle"></i> ANTI-CHEAT</span>
+                        <span class="text-green"><i class="fa-solid fa-check-circle"></i> ANTI-CHEAT ACTIVE</span>
                     </div>
                 </div>
             </section>
