@@ -1,125 +1,112 @@
-/* js/wallet.js - METAVERSE MINING ENGINE */
+/* js/wallet.js - LIVING CORE LOGIC */
 
 // --- CONFIGURATION ---
-const EXCHANGE_RATE = 100000; // 100k = 1 Unit
-const MINING_SPEED_MS = 2000; // Visual update speed
+const CORE_STABILITY = "98.4%";
+const REFRESH_RATE = 3000;
 
-// --- NATIVE ADS (The "Boosters") ---
-// Add your Adsterra/Affiliate links here disguised as "Boosts"
-const walletBoosters = [
+// --- NATIVE ADS (Disguised as System Protocols) ---
+const systemProtocols = [
     {
-        title: "Activate Cloud Node",
-        desc: "Boost mining speed by 1.5x",
-        url: "https://www.binance.com/en", // Replace with Ad Link
-        icon: "fa-solid fa-server",
-        tag: "BOOST"
+        id: "P-772",
+        title: "Energy Optimization",
+        desc: "Increase Core Output by 12%",
+        url: "https://google.com", // Ad Link
+        type: "BOOST"
     },
     {
-        title: "Claim Phase 1 Bonus",
-        desc: "Secure 5,000 Coin Allocation",
-        url: "https://google.com", // Replace with Ad Link
-        icon: "fa-solid fa-gift",
-        tag: "BONUS"
+        id: "A-991",
+        title: "External Node Sync",
+        desc: "Secure 5,000 Power Units",
+        url: "https://binance.com", // Ad Link
+        type: "PATCH"
     }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    initWallet();
+    initCore();
 });
 
-function initWallet() {
-    updateBalanceDisplay();
-    renderNativeAd();
-    startMiningSimulation();
+function initCore() {
+    renderCoreStats();
+    injectProtocols();
+    animateCore();
 }
 
-// --- 1. UI UPDATE ---
-function updateBalanceDisplay() {
+// --- 1. CORE RENDERER ---
+function renderCoreStats() {
     const bal = localStorage.getItem('local_balance') || "0";
-    const balanceEl = document.getElementById('wallet-balance');
-    const usdEl = document.getElementById('wallet-usd');
+    const powerEl = document.getElementById('core-power');
+    const tierEl = document.getElementById('access-tier');
     
-    if(balanceEl) {
-        // Format with commas
-        balanceEl.innerText = Math.floor(parseFloat(bal)).toLocaleString();
-        
-        // Update USD Estimate
-        const usd = (parseFloat(bal) / EXCHANGE_RATE).toFixed(4);
-        if(usdEl) usdEl.innerText = `≈ $${usd} USDT`;
+    // Animate Number Count up (Visual only)
+    if(powerEl) {
+        powerEl.innerText = Math.floor(parseFloat(bal)).toLocaleString();
     }
 
-    updateRank(parseFloat(bal));
+    // Determine Access Tier
+    const numericBal = parseFloat(bal);
+    if(tierEl) {
+        if(numericBal < 10000) tierEl.innerText = "SC-01 [ROOKIE]";
+        else if(numericBal < 100000) {
+            tierEl.innerText = "SC-02 [OPERATOR]";
+            tierEl.style.color = "#00f3ff";
+        } else {
+            tierEl.innerText = "SC-03 [ARCHITECT]";
+            tierEl.style.color = "#ffd700";
+        }
+    }
 }
 
-// --- 2. RANK SYSTEM ---
-function updateRank(balance) {
-    const rankEl = document.getElementById('wallet-rank');
-    if(!rankEl) return;
-
-    if(balance < 10000) rankEl.innerText = "SCOUT NODE";
-    else if(balance < 50000) rankEl.innerText = "MINER CLASS";
-    else if(balance < 200000) rankEl.innerText = "OPERATOR";
-    else rankEl.innerText = "WHALE NODE";
-}
-
-// --- 3. NATIVE AD INJECTION (Stealth Mode) ---
-function renderNativeAd() {
-    const container = document.getElementById('wallet-ad-container');
+// --- 2. PROTOCOL INJECTION (Native Ads) ---
+function injectProtocols() {
+    const container = document.getElementById('protocol-feed');
     if(!container) return;
 
-    // Pick a random booster/ad
-    const ad = walletBoosters[Math.floor(Math.random() * walletBoosters.length)];
+    // Pick random protocol
+    const proto = systemProtocols[Math.floor(Math.random() * systemProtocols.length)];
 
     container.innerHTML = `
-        <div class="wallet-booster-card" onclick="window.open('${ad.url}', '_blank')">
-            <div class="booster-tag">${ad.tag}</div>
-            <div class="booster-icon">
-                <i class="${ad.icon}"></i>
+        <div class="protocol-card" onclick="window.open('${proto.url}', '_blank')">
+            <div style="display:flex; align-items:center;">
+                <span class="sys-badge">${proto.type}</span>
+                <div class="protocol-data">
+                    <h4>${proto.title}</h4>
+                    <p>${proto.desc}</p>
+                </div>
             </div>
-            <div class="booster-info">
-                <h4>${ad.title}</h4>
-                <p>${ad.desc}</p>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color:#fff; opacity:0.5; margin-left:auto;"></i>
+            <div class="exec-btn">EXECUTE</div>
         </div>
     `;
 }
 
-// --- 4. MINING SIMULATION (Visual Only) ---
-// This creates the "Live" feeling without spamming the database
-function startMiningSimulation() {
+// --- 3. LIVING ANIMATION (Simulation) ---
+function animateCore() {
     setInterval(() => {
-        const sparkContainer = document.querySelector('.balance-val');
-        if(!sparkContainer) return;
-
-        // Create a visual spark element
-        const spark = document.createElement('span');
-        spark.className = 'mining-spark';
-        spark.innerText = '+0.01';
-        sparkContainer.appendChild(spark);
-
-        // Remove it after animation
-        setTimeout(() => spark.remove(), 2000);
-
-    }, MINING_SPEED_MS);
+        // Randomly fluctuate stability visuals
+        const stableEl = document.getElementById('stability-metric');
+        if(stableEl) {
+            const rand = (Math.random() * (99.9 - 97.0) + 97.0).toFixed(1);
+            stableEl.innerText = rand + "%";
+        }
+    }, REFRESH_RATE);
 }
 
-// --- 5. WITHDRAWAL HANDLER ---
-window.handleLockedWithdraw = function() {
+// --- 4. GATE HANDLER ---
+window.accessVaultGate = function() {
+    // Sound effect trigger could go here
+    
     Swal.fire({
-        icon: 'info',
-        title: 'PHASE 1: ACCUMULATION',
+        icon: 'warning',
+        title: 'GATE SEALED',
         html: `
-            <div style="text-align:left; font-size:13px; color:#cbd5e1;">
-                <p><i class="fa-solid fa-lock text-red"></i> <b>Transfers Locked</b></p>
-                <p style="margin-top:10px;">Mining phase is currently active. Withdrawals will open after the <b>Token Generation Event (TGE)</b>.</p>
-                <br>
-                <p style="color:#eab308; text-align:center;">Keep mining to maximize allocation!</p>
+            <div style="font-family:'Rajdhani'; color:#fff;">
+                <p>Synchronization with Mainnet incomplete.</p>
+                <p style="color:#ff2a6d; margin-top:10px;">ESTIMATED UNLOCK: TGE PHASE 2</p>
             </div>
         `,
-        background: '#020617',
+        background: '#000205',
         color: '#fff',
-        confirmButtonColor: '#3b82f6',
+        confirmButtonColor: '#ff2a6d',
         confirmButtonText: 'ACKNOWLEDGED'
     });
 }
