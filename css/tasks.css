@@ -1,375 +1,143 @@
-/* =========================================
-   FINGAMEPRO: TASK COMMAND CENTER UI v2.0
-   Theme: Deep Space / Cyber-Neon / Glass
-   Author: Gemini (Metaverse Architect)
-   ========================================= */
+/* css/tasks.css - METAVERSE COMMAND CENTER */
 
-:root {
-    /* --- CORE PALETTE --- */
-    --task-bg-dark: #020617;
-    --task-card-glass: rgba(30, 41, 59, 0.4);
-    --task-card-border: rgba(255, 255, 255, 0.08);
-    --task-highlight: rgba(255, 255, 255, 0.1);
-    
-    /* --- NEON ACCENTS --- */
-    --neon-blue: #3b82f6;
-    --neon-purple: #a855f7;
-    --neon-red: #ef4444;
-    --neon-gold: #eab308;
-    --neon-cyan: #06b6d4;
-
-    /* --- ANIMATION VARS --- */
-    --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* =========================================
-   1. GLOBAL SECTION CONTAINER
-   ========================================= */
-
+/* 1. GLOBAL LAYOUT */
 #tasks {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     width: 100%; height: 100%;
-    
     /* Deep Space Gradient */
-    background: radial-gradient(circle at top right, #1e1b4b 0%, #020617 60%);
-    
-    /* Scroll Handling */
+    background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #020617 80%);
     overflow-y: auto;
     overflow-x: hidden;
-    padding-top: 80px;   /* Header clearance */
-    padding-bottom: 100px; /* Nav clearance */
-    
-    /* Scrollbar Styling */
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon-blue) #0f172a;
+    padding-top: 80px; padding-bottom: 100px;
+    z-index: 10;
 }
 
-/* Background Cyber Grid */
+/* Holographic Grid Background */
 #tasks::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image: 
-        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
+        linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-    pointer-events: none;
-    z-index: -1;
+    pointer-events: none; z-index: -1;
 }
 
-/* =========================================
-   2. HEADERS & TYPOGRAPHY
-   ========================================= */
-
-.section-header {
-    text-align: center;
-    margin-bottom: 25px;
-    position: relative;
-    padding: 0 20px;
-}
-
+/* 2. SECTION HEADER */
+.section-header { text-align: center; margin-bottom: 20px; padding: 0 20px; }
 .section-header h2 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 5px;
-    letter-spacing: 1px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(165, 180, 252, 0.3); margin-bottom: 5px;
 }
+.section-header p { font-size: 12px; color: #94a3b8; font-family: 'Inter', sans-serif; }
 
-.section-header p {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 500;
-}
-
+/* 3. CATEGORY TITLE */
 .task-category-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: #e2e8f0;
-    margin: 25px 20px 15px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-family: 'Orbitron'; font-size: 13px; color: #e0e7ff;
+    margin: 25px 20px 15px 20px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+    border-left: 3px solid #6366f1; padding-left: 10px;
 }
 
-.task-category-title i {
-    filter: drop-shadow(0 0 8px currentColor);
-}
-
-/* =========================================
-   3. "WATCH & EARN" HERO CARD
-   ========================================= */
-
+/* 4. PREMIUM VIDEO CARD (Watch & Earn) */
 .video-task-card {
-    margin: 0 20px;
-    padding: 16px;
-    border-radius: 20px;
-    
-    /* Dark Glass + Red Tint */
-    background: linear-gradient(145deg, rgba(20, 20, 30, 0.9), rgba(15, 23, 42, 0.9));
+    margin: 0 20px; padding: 15px; border-radius: 20px;
+    background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    box-shadow: 
-        0 10px 30px -10px rgba(0, 0, 0, 0.8),
-        inset 0 0 20px rgba(239, 68, 68, 0.05);
-    
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s var(--ease-smooth);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.05);
+    display: flex; align-items: center; gap: 15px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
 }
-
 .video-task-card:active { transform: scale(0.98); }
 
-/* Play Button Area */
 .video-icon {
-    width: 50px; height: 50px;
-    background: rgba(239, 68, 68, 0.1);
-    border-radius: 12px;
+    width: 45px; height: 45px; border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    color: var(--neon-red);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    position: relative;
+    font-size: 20px; color: #ef4444; position: relative;
 }
-
-/* Play Button Pulse */
 .video-icon::after {
-    content: ''; position: absolute; inset: -5px;
-    border-radius: 16px;
-    border: 1px solid var(--neon-red);
-    opacity: 0;
-    animation: pulseRed 2s infinite;
+    content: ''; position: absolute; inset: -3px; border-radius: 14px;
+    border: 1px solid #ef4444; opacity: 0; animation: pulseRed 2s infinite;
 }
+@keyframes pulseRed { 0% { opacity: 0.6; transform: scale(1); } 100% { opacity: 0; transform: scale(1.4); } }
 
-.video-info h4 {
-    color: #fff; font-size: 15px; font-weight: 600; margin-bottom: 2px;
-}
-.video-info p {
-    color: #94a3b8; font-size: 11px;
-}
-
-/* =========================================
-   4. PREMIUM TASK CARDS (List Items)
-   ========================================= */
-
-.tasks-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 20px;
-}
-
-.task-card {
-    /* Glassmorphism Construction */
-    background: var(--task-card-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    border: 1px solid var(--task-card-border);
-    border-radius: 16px;
-    padding: 12px 15px;
-    
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    position: relative;
-    transition: all 0.3s var(--ease-smooth);
-    
-    /* Idle Float Animation */
-    animation: floatCard 6s ease-in-out infinite;
-}
-
-/* Hover/Active State */
-.task-card:active {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: scale(0.98);
-}
-
-/* Icon Box */
-.task-icon {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    
-    /* Neumorphic Inset */
-    background: rgba(0, 0, 0, 0.2);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-/* Icon Color Variants */
-.bg-blue { color: var(--neon-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
-.bg-green { color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.15); }
-.bg-purple { color: var(--neon-purple); box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); }
-.bg-gold { color: var(--neon-gold); box-shadow: 0 0 15px rgba(234, 179, 8, 0.15); }
-
-/* Text Content */
-.task-info {
-    flex-grow: 1;
-}
-
-.task-info h4 {
-    font-size: 14px;
-    color: #f1f5f9;
-    margin-bottom: 4px;
-    font-weight: 600;
-}
-
-/* Reward Badge (+1000) */
-.coin-tag {
-    font-size: 10px;
-    font-family: 'Orbitron', sans-serif;
-    color: var(--neon-gold);
-    background: rgba(234, 179, 8, 0.1);
-    padding: 3px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(234, 179, 8, 0.2);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.coin-tag::before {
-    content: '\f51e'; /* FontAwesome Coin */
-    font-family: "Font Awesome 6 Free"; 
-    font-weight: 900;
-    font-size: 8px;
-}
-
-/* =========================================
-   5. ACTION BUTTONS (Join / Start)
-   ========================================= */
+.video-info h4 { font-family: 'Orbitron'; color: white; font-size: 14px; margin-bottom: 4px; }
+.video-info p { font-size: 11px; color: #94a3b8; }
 
 .btn-task-action {
-    padding: 8px 20px;
-    border-radius: 30px; /* Capsule */
-    border: none;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    color: white;
-    
-    /* Futuristic Gradient */
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s;
-    min-width: 80px;
-}
-
-/* Button Hover Glow */
-.btn-task-action::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%);
-    transition: 0.5s;
-}
-
-.btn-task-action:active {
-    transform: scale(0.9);
-    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
-}
-
-.task-card:hover .btn-task-action::before {
-    transform: translateX(100%);
-}
-
-/* Specific Style for Watch Ad Button */
-.video-task-card .btn-task-action {
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-    box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+    margin-left: auto; padding: 8px 16px; border-radius: 30px; border: none;
+    font-family: 'Orbitron'; font-size: 11px; font-weight: 700; color: white; cursor: pointer;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
     display: flex; align-items: center; gap: 5px;
 }
 
-/* =========================================
-   6. MICRO-ANIMATIONS & BADGES
-   ========================================= */
+/* 5. TASK LIST ITEMS (Glassmorphism) */
+.tasks-list { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
 
-/* High Pay Badge */
-.badge-new {
-    font-size: 9px;
-    background: #eab308;
-    color: black;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 800;
-    text-transform: uppercase;
-    animation: glowGold 2s infinite alternate;
+.task-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 16px; padding: 12px;
+    display: flex; align-items: center; gap: 15px;
+    position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Hover Effect */
+.task-card:active { background: rgba(30, 41, 59, 0.8); transform: scale(0.98); }
+
+.task-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+.bg-blue { color: #60a5fa; box-shadow: 0 0 10px rgba(96, 165, 250, 0.1); }
+.bg-gold { color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.1); }
+.bg-green { color: #4ade80; box-shadow: 0 0 10px rgba(74, 222, 128, 0.1); }
+
+.task-info { flex-grow: 1; }
+.task-info h4 { font-size: 13px; color: #f1f5f9; font-weight: 600; margin-bottom: 4px; }
+.coin-tag {
+    font-size: 10px; font-family: 'Orbitron'; color: #ffd700;
+    background: rgba(234, 179, 8, 0.1); padding: 2px 8px; border-radius: 4px;
+    border: 1px solid rgba(234, 179, 8, 0.3); display: inline-flex; align-items: center; gap: 4px;
 }
 
-/* Trust Footer */
-.trust-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 10px;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+/* Join Button */
+.btn-join {
+    padding: 8px 20px; border-radius: 20px; border: none;
+    font-family: 'Orbitron'; font-size: 11px; font-weight: 700; color: white;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    position: relative; overflow: hidden;
 }
-
-/* Loading Spinner */
-.loading-spinner {
-    text-align: center; color: var(--neon-blue);
-    font-family: 'Orbitron'; font-size: 12px;
-    padding: 20px;
+.btn-join::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.5s;
 }
+.task-card:active .btn-join::before { left: 100%; transition: 0s; }
 
-/* =========================================
-   7. KEYFRAMES
-   ========================================= */
-
-@keyframes pulseRed {
-    0% { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(1.6); opacity: 0; }
-}
-
-@keyframes floatCard {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-3px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes glowGold {
-    0% { box-shadow: 0 0 5px rgba(234, 179, 8, 0.5); }
-    100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.9); }
-}
-
-/* Stagger Animations for Cards (nth-child logic) */
-.tasks-list .task-card:nth-child(1) { animation-delay: 0s; }
-.tasks-list .task-card:nth-child(2) { animation-delay: 0.2s; }
-.tasks-list .task-card:nth-child(3) { animation-delay: 0.4s; }
-.tasks-list .task-card:nth-child(4) { animation-delay: 0.6s; }
-.tasks-list .task-card:nth-child(5) { animation-delay: 0.8s; }
-
-/* Progress Bar Logic */
+/* 6. PROGRESS BAR */
 .progress-bar-container {
     height: 4px; background: rgba(255,255,255,0.1);
-    border-radius: 2px; margin-top: 8px; width: 100%;
-    overflow: hidden;
+    border-radius: 2px; margin-top: 10px; width: 100%; overflow: hidden;
 }
 .progress-bar {
-    height: 100%; background: var(--neon-red);
-    width: 0%; box-shadow: 0 0 10px var(--neon-red);
-    transition: width 1s linear;
+    height: 100%; background: #ef4444; width: 0%;
+    box-shadow: 0 0 10px #ef4444; transition: width 1s linear;
 }
+
+/* Loading */
+.loading-spinner {
+    text-align: center; color: #6366f1; font-family: 'Orbitron'; font-size: 12px; padding: 20px;
+    animation: blink 1s infinite;
+}
+@keyframes blink { 50% { opacity: 0.5; } }
