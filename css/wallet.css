@@ -1,210 +1,272 @@
-/* css/wallet.css - LIVING CORE VAULT SYSTEM */
+/* css/wallet.css - A.E.G.I.S. CORE SYSTEM */
 
 :root {
-    /* --- CORE SPECTRUM --- */
-    --core-void: #000205;
-    --core-cyan: #00f3ff;
-    --core-gold: #ffd700;
-    --core-alert: #ff2a6d;
-    --core-glass: rgba(0, 243, 255, 0.05);
-    
-    /* --- DEPTH VARIABLES --- */
-    --hud-z: 100px;
-    --core-z: 0px;
-    --bg-z: -100px;
+    --aegis-void: #000510;
+    --aegis-cyan: #00fff2;
+    --aegis-gold: #ffcc00;
+    --aegis-alert: #ff3333;
+    --hud-glass: rgba(0, 255, 242, 0.05);
+    --hud-scanline: rgba(0, 255, 242, 0.1);
 }
 
-/* 1. THE VOID CONTAINER */
+/* ================= PROJECTILE CONTAINER ================= */
 #wallet {
     position: fixed; inset: 0;
     width: 100%; height: 100%;
-    background: var(--core-void);
-    overflow: hidden; /* No scrolling, pure HUD experience */
-    perspective: 1000px; /* 3D Space */
+    background: var(--aegis-void);
+    overflow: hidden;
+    perspective: 1500px; /* Deep 3D space */
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding-top: 70px; padding-bottom: 90px;
+    font-family: 'Orbitron', sans-serif;
+    /* Hide scrollbars for pure HUD feel */
+    scrollbar-width: none; -ms-overflow-style: none;
+}
+#wallet::-webkit-scrollbar { display: none; }
+
+/* Deep Space Parallax Background */
+#wallet::before {
+    content: ''; position: absolute; inset: -50%;
+    background: radial-gradient(ellipse at center, #0a1525 0%, #000000 70%);
+    background-image: 
+        radial-gradient(white 1px, transparent 2px),
+        radial-gradient(white 1px, transparent 2px);
+    background-size: 100px 100px, 200px 200px;
+    background-position: 0 0, 40px 60px;
+    z-index: -5;
+    transform: translateZ(-500px) scale(1.5);
+    animation: spaceDrift 60s linear infinite;
+}
+
+/* Holographic Scanline Overlay */
+#wallet::after {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, var(--hud-scanline) 0px, var(--hud-scanline) 1px, transparent 1px, transparent 4px);
+    pointer-events: none; z-index: 100;
+    opacity: 0.5;
+    animation: scanlineMove 10s linear infinite;
+}
+
+/* ================= BOOT SEQUENCE OVERLAY ================= */
+#boot-sequence {
+    position: absolute; inset: 0;
+    background: var(--aegis-void);
+    z-index: 9999;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
-    padding-bottom: 80px; /* Nav clearance */
+    padding: 30px;
+}
+#boot-terminal {
+    font-family: 'monospace'; color: var(--aegis-cyan);
+    font-size: 12px; text-align: left; width: 100%;
+    height: 200px; overflow: hidden;
+    text-shadow: 0 0 5px var(--aegis-cyan);
+}
+.typing-line {
+    overflow: hidden; white-space: nowrap;
+    border-right: 2px solid var(--aegis-cyan);
+    animation: typing 3s steps(40, end), blink-caret .75s step-end infinite;
+}
+#boot-loader-bar {
+    width: 80%; height: 4px; background: rgba(255,255,255,0.1);
+    margin-top: 20px; position: relative; overflow: hidden;
+}
+#boot-loader-fill {
+    position: absolute; left: 0; top: 0; height: 100%; width: 0%;
+    background: var(--aegis-cyan);
+    box-shadow: 0 0 20px var(--aegis-cyan);
+    transition: width 3s ease-in-out;
 }
 
-/* Deep Space Parallax */
-#wallet::before {
-    content: ''; position: absolute; inset: -20%;
-    background: radial-gradient(circle at 50% 50%, #0a1020 0%, #000000 70%);
-    z-index: -2;
-    transform: translateZ(var(--bg-z));
-}
 
-/* Digital Rain / Grid */
-#wallet::after {
-    content: ''; position: absolute; inset: -50%;
-    background-image: 
-        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-    background-size: 80px 80px;
-    transform: rotateX(75deg) translateY(0);
-    animation: cyberGrid 20s linear infinite;
-    z-index: -1;
-    mask-image: linear-gradient(to bottom, transparent, black 40%, black 80%, transparent);
-}
-
-/* =========================================
-   2. THE LIVING CORE (Hero)
-   ========================================= */
-
-.core-system {
+/* ================= THE LIVING CORE (HERO) ================= */
+.aegis-core-container {
     position: relative;
     width: 280px; height: 280px;
     display: flex; justify-content: center; align-items: center;
+    margin-top: 20px;
     transform-style: preserve-3d;
-    margin-bottom: 30px;
+    animation: coreFloat 6s ease-in-out infinite;
 }
 
-/* The Gyroscope Rings */
+/* Gyroscopic Rings */
 .gyro-ring {
     position: absolute; border-radius: 50%;
-    border: 1px solid rgba(0, 243, 255, 0.15);
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.05);
+    border: 2px solid transparent;
+    box-shadow: 0 0 30px rgba(0, 255, 242, 0.1);
+}
+.ring-outer {
+    width: 100%; height: 100%;
+    border-top: 2px solid var(--aegis-cyan);
+    border-bottom: 2px solid var(--aegis-cyan);
+    animation: spin3D_Y 15s linear infinite;
+}
+.ring-mid {
+    width: 80%; height: 80%;
+    border-left: 4px solid var(--aegis-gold);
+    border-right: 4px solid var(--aegis-gold);
+    animation: spin3D_X 10s linear infinite reverse;
+}
+.ring-inner {
+    width: 60%; height: 60%;
+    border: 1px dashed var(--aegis-cyan);
+    animation: spin3D_Z 8s linear infinite;
 }
 
-.ring-1 { width: 100%; height: 100%; animation: spin1 15s linear infinite; border-color: rgba(0, 243, 255, 0.1); border-left-color: var(--core-cyan); }
-.ring-2 { width: 85%; height: 85%; animation: spin2 10s linear infinite; border-color: rgba(255, 215, 0, 0.1); border-top-color: var(--core-gold); }
-.ring-3 { width: 70%; height: 70%; animation: spin1 8s linear infinite reverse; border: 1px dashed rgba(0, 243, 255, 0.3); }
-
-/* The Central Energy Orb */
-.energy-orb {
-    width: 140px; height: 140px; border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.1), rgba(0,0,0,0) 70%);
-    box-shadow: 
-        inset 0 0 30px rgba(0, 243, 255, 0.2),
-        0 0 50px rgba(0, 243, 255, 0.1);
+/* Central Plasma Orb */
+.plasma-orb {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,242,0.8) 0%, rgba(0,0,0,0) 70%);
+    box-shadow: 0 0 60px var(--aegis-cyan), inset 0 0 30px var(--aegis-cyan);
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    backdrop-filter: blur(5px);
-    animation: orbBreathe 4s ease-in-out infinite;
-    position: relative;
     z-index: 10;
+    backdrop-filter: blur(5px);
+    animation: plasmaPulse 4s ease-in-out infinite;
 }
 
-/* Orb Data */
-.orb-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: var(--core-cyan); letter-spacing: 2px; opacity: 0.8; margin-bottom: 5px; }
-.power-value { 
-    font-family: 'Orbitron'; font-size: 32px; font-weight: 900; color: #fff;
-    text-shadow: 0 0 20px var(--core-cyan); line-height: 1;
+/* Core Typography */
+.power-label {
+    font-size: 9px; letter-spacing: 2px; color: var(--aegis-cyan);
+    margin-bottom: 5px; opacity: 0.8;
 }
-.power-unit { font-size: 10px; color: var(--core-gold); letter-spacing: 1px; margin-top: 5px; font-weight: 700; }
-
-/* =========================================
-   3. HUD ELEMENTS (Floating Stats)
-   ========================================= */
-
-.hud-layer {
-    position: absolute; width: 100%; height: 100%;
-    pointer-events: none;
+.power-val-glitch {
+    font-size: 28px; font-weight: 900; color: #fff;
+    text-shadow: 0 0 15px var(--aegis-cyan), 0 0 30px var(--aegis-cyan);
+    position: relative;
+}
+.power-unit {
+    font-size: 10px; color: var(--aegis-gold); font-weight: 700; letter-spacing: 1px;
 }
 
-/* Top Left: Access Tier */
-.access-panel {
-    position: absolute; top: 10px; left: 20px;
-    text-align: left;
-}
-.scan-line {
-    width: 2px; height: 30px; background: var(--core-gold);
-    position: absolute; left: -10px; top: 0;
-    box-shadow: 0 0 10px var(--core-gold);
-}
-.tier-label { font-family: 'Rajdhani'; font-size: 10px; color: #64748b; }
-.tier-val { font-family: 'Orbitron'; font-size: 16px; color: var(--core-gold); letter-spacing: 1px; }
 
-/* Top Right: Stability */
-.stability-panel {
-    position: absolute; top: 10px; right: 20px;
-    text-align: right;
-}
-.stable-val { font-family: 'Orbitron'; font-size: 14px; color: var(--core-cyan); }
-.pulse-dot {
-    display: inline-block; width: 6px; height: 6px; background: var(--core-cyan);
-    border-radius: 50%; margin-right: 5px;
-    box-shadow: 0 0 8px var(--core-cyan);
-    animation: blinkFast 1s infinite;
+/* ================= HUD ELEMENTS (Floating Stats) ================= */
+.hud-stats-container {
+    width: 90%;
+    display: flex; justify-content: space-between;
+    margin-top: 20px;
+    transform: translateZ(50px); /* Push forward in 3D */
 }
 
-/* =========================================
-   4. SYSTEM PROTOCOLS (Native Ads)
-   ========================================= */
-/* Styled as System Tasks */
+.hud-panel {
+    background: linear-gradient(135deg, var(--hud-glass), transparent);
+    border-left: 2px solid var(--aegis-cyan);
+    padding: 10px 15px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+/* Holographic Scan effect on panels */
+.hud-panel::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,255,242,0.2), transparent);
+    animation: panelScan 4s infinite linear;
+}
+
+.hud-label { font-size: 9px; color: #64748b; letter-spacing: 1px; }
+.hud-val { font-size: 16px; color: #fff; font-weight: 700; margin-top: 2px; }
+
+#clearance-val { color: var(--aegis-gold); text-shadow: 0 0 10px var(--aegis-gold); }
+#system-status-val { color: var(--aegis-cyan); }
+
+
+/* ================= PROTOCOL FEED (Native Ads) ================= */
+.protocol-feed-header {
+    width: 90%; margin-top: 30px; margin-bottom: 10px;
+    font-size: 10px; color: var(--aegis-cyan); letter-spacing: 2px;
+    display: flex; align-items: center; gap: 10px;
+}
+.protocol-feed-header::after { content: ''; height: 1px; flex-grow: 1; background: rgba(0,255,242,0.3); }
 
 .protocol-container {
-    width: 90%; margin-top: 20px;
-    display: flex; flex-direction: column; gap: 12px;
-    z-index: 20;
+    width: 90%; display: flex; flex-direction: column; gap: 12px;
 }
 
-.protocol-card {
-    background: linear-gradient(90deg, rgba(0, 243, 255, 0.05), transparent);
-    border-left: 2px solid var(--core-cyan);
-    padding: 12px 15px;
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative; overflow: hidden;
-}
-
-/* Hover Effect */
-.protocol-card:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
-.protocol-card:active { transform: scale(0.98); }
-
-.protocol-data h4 {
-    font-family: 'Rajdhani'; font-weight: 700; color: #fff; font-size: 14px;
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;
-}
-.protocol-data p { font-size: 10px; color: var(--core-cyan); opacity: 0.7; }
-
-.sys-badge {
-    font-size: 8px; border: 1px solid var(--core-gold); color: var(--core-gold);
-    padding: 2px 4px; border-radius: 2px; margin-right: 8px; font-family: 'Orbitron';
-}
-
-.exec-btn {
-    font-size: 10px; font-family: 'Orbitron'; color: var(--core-cyan);
-    border: 1px solid rgba(0,243,255,0.3); padding: 5px 10px;
-    background: rgba(0,0,0,0.5);
-}
-
-/* =========================================
-   5. SEALED GATE (Withdrawal)
-   ========================================= */
-
-.vault-gate {
-    margin-top: auto; /* Push to bottom */
-    width: 100%; height: 70px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* Ad Unit styled as System Task */
+.sys-protocol-card {
     position: relative;
-    cursor: pointer;
+    background: rgba(0, 10, 20, 0.6);
+    border: 1px solid rgba(0, 255, 242, 0.2);
+    padding: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: all 0.3s;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+.sys-protocol-card:hover {
+    background: rgba(0, 255, 242, 0.1);
+    border-color: var(--aegis-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 242, 0.2);
 }
 
-.gate-lock {
-    font-size: 20px; color: #64748b; margin-bottom: 5px;
-    transition: color 0.3s;
+.proto-icon {
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    color: var(--aegis-cyan); font-size: 14px;
+    border: 1px solid rgba(0, 255, 242, 0.3); margin-right: 12px;
+    background: rgba(0,0,0,0.3);
 }
-.gate-text {
-    font-family: 'Orbitron'; font-size: 10px; color: #475569; letter-spacing: 4px;
+.proto-info h4 { margin: 0; font-size: 12px; color: #fff; letter-spacing: 1px; }
+.proto-info p { margin: 2px 0 0 0; font-size: 9px; color: #94a3b8; }
+
+.proto-execute {
+    font-size: 9px; color: #000; background: var(--aegis-cyan);
+    padding: 4px 10px; font-weight: 800; letter-spacing: 1px;
+    clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
 }
-.gate-glitch {
-    position: absolute; bottom: 0; width: 100%; height: 2px;
-    background: var(--core-alert);
-    box-shadow: 0 0 10px var(--core-alert);
-    opacity: 0.3;
+.proto-badge {
+    position: absolute; top: 0; right: 0; background: var(--aegis-gold); color: #000;
+    font-size: 7px; padding: 2px 5px; font-weight: 700;
 }
 
-.vault-gate:active .gate-lock { color: var(--core-alert); text-shadow: 0 0 10px var(--core-alert); }
 
-/* =========================================
-   6. ANIMATIONS
-   ========================================= */
+/* ================= THE VAULT GATE (Withdrawal) ================= */
+.vault-gate-container {
+    margin-top: auto; /* Push to bottom */
+    width: 95%; height: 90px;
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+    border-top: 2px solid var(--aegis-alert);
+    background: linear-gradient(to top, rgba(255, 51, 51, 0.1), transparent);
+    cursor: not-allowed;
+}
 
-@keyframes spin1 { 0% { transform: rotateX(60deg) rotateZ(0deg); } 100% { transform: rotateX(60deg) rotateZ(360deg); } }
-@keyframes spin2 { 0% { transform: rotateY(60deg) rotateZ(0deg); } 100% { transform: rotateY(60deg) rotateZ(-360deg); } }
-@keyframes cyberGrid { 0% { transform: rotateX(75deg) translateY(0); } 100% { transform: rotateX(75deg) translateY(80px); } }
-@keyframes orbBreathe { 0%, 100% { box-shadow: inset 0 0 30px rgba(0, 243, 255, 0.2), 0 0 50px rgba(0, 243, 255, 0.1); } 50% { box-shadow: inset 0 0 50px rgba(0, 243, 255, 0.4), 0 0 80px rgba(0, 243, 255, 0.2); } }
-@keyframes blinkFast { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* Gate Doors */
+.gate-door {
+    position: absolute; top: 0; width: 50%; height: 100%;
+    background:
+        repeating-linear-gradient(45deg, 
+            rgba(0,0,0,0.8), 
+            rgba(0,0,0,0.8) 10px, 
+            rgba(20,20,20,0.8) 10px, 
+            rgba(20,20,20,0.8) 20px);
+    border-bottom: 3px solid var(--aegis-alert);
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
+    transition: transform 0.5s ease-out;
+    z-index: 1;
+}
+.gate-left { left: 0; transform: skewX(10deg) translateX(-5px); border-right: 2px solid var(--aegis-alert); }
+.gate-right { right: 0; transform: skewX(-10deg) translateX(5px); border-left: 2px solid var(--aegis-alert); }
+
+/* Gate Content (Behind Doors) */
+.gate-content {
+    z-index: 5; text-align: center;
+    text-shadow: 0 0 10px var(--aegis-alert);
+}
+.gate-lock-icon { font-size: 24px; color: var(--aegis-alert); margin-bottom: 5px; animation: alertPulse 2s infinite; }
+.gate-title { font-size: 12px; color: #fff; letter-spacing: 3px; }
+.gate-subtitle { font-size: 8px; color: var(--aegis-alert); margin-top: 5px; }
+
+
+/* ================= ANIMATIONS ================= */
+@keyframes spin3D_Y { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+@keyframes spin3D_X { 0% { transform: rotateX(0deg); } 100% { transform: rotateX(360deg); } }
+@keyframes spin3D_Z { 0% { transform: rotateZ(0deg); } 100% { transform: rotateZ(360deg); } }
+@keyframes plasmaPulse { 0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 60px var(--aegis-cyan); } 50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 100px var(--aegis-cyan), inset 0 0 50px var(--aegis-cyan); } }
+@keyframes coreFloat { 0%, 100% { transform: translateY(0px) rotateX(10deg); } 50% { transform: translateY(-15px) rotateX(15deg); } }
+@keyframes spaceDrift { 0% { background-position: 0 0, 40px 60px; } 100% { background-position: 1000px 500px, 1040px 560px; } }
+@keyframes scanlineMove { 0% { background-position: 0 0; } 100% { background-position: 0 100px; } }
+@keyframes panelScan { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes alertPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; text-shadow: 0 0 20px var(--aegis-alert); } }
+/* Boot animations */
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--aegis-cyan); } }
