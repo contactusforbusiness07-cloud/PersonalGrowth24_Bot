@@ -1,153 +1,223 @@
+/* arena.css */
 :root {
-    --bg-dark: #080a12; /* Very deep dark blue/black */
-    --card-bg: #121420;
-    --neon-gold: #FFD700;
-    --neon-silver: #C0C0C0;
-    --neon-bronze: #CD7F32;
-    --neon-blue: #00f3ff;
-    --text-primary: #ffffff;
-    --text-secondary: #8a8a9b;
+    --void-bg: #010a15;
+    --neon-cyan: #00ffe7;
+    --neon-blue: #0077ff;
+    --neon-purple: #bd00ff;
+    --neon-gold: #ffd700;
+    --neon-alert: #ff3c00; /* For "Challenger" Ads */
+    
+    --orbital-speed: 20s;
 }
 
-/* Container Setup */
-.metaverse-container {
-    background-color: var(--bg-dark);
-    min-height: 100vh;
-    padding: 20px 15px 80px 15px; /* Padding bottom for nav bar */
-    color: var(--text-primary);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* Header */
-.lb-header h2 {
-    font-size: 24px;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-.reset-timer {
-    color: var(--text-secondary);
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-}
-
-/* --- PODIUM STYLES (Top 3) --- */
-.podium-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    margin-top: 30px;
-    margin-bottom: 40px;
-    height: 200px; /* Fixed height for alignment */
-}
-
-.podium-item {
-    text-align: center;
-    position: relative;
-    flex: 1;
-}
-
-/* Positioning ranks */
-.rank-2 { z-index: 2; transform: translateY(20px); }
-.rank-1 { z-index: 3; /* King is highest */ }
-.rank-3 { z-index: 1; transform: translateY(40px); }
-
-/* Crowns */
-.crown-icon { font-size: 20px; margin-bottom: -10px; position: relative; z-index: 4;}
-.giant-crown { font-size: 32px; margin-bottom: -15px; text-shadow: 0 0 15px var(--neon-gold); }
-
-/* Avatars with Neon Glows */
-.avatar-glow {
-    width: 70px; height: 70px;
-    border-radius: 50%;
-    padding: 3px;
-    margin: 0 auto;
-    background-clip: content-box;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-.avatar-glow img {
-    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-}
-
-.main-glow { width: 100px; height: 100px; } /* Rank 1 bigger */
-
-/* Glow Colors based on the image */
-.gold-glow { border: 3px solid var(--neon-gold); box-shadow: 0 0 25px var(--neon-gold); }
-.silver-glow { border: 3px solid var(--neon-silver); box-shadow: 0 0 15px var(--neon-silver); }
-.bronze-glow { border: 3px solid var(--neon-bronze); box-shadow: 0 0 15px var(--neon-bronze); }
-
-/* Text Info */
-.podium-info { margin-top: 10px; display: flex; flex-direction: column; }
-.p-name { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
-.king-name { font-size: 18px; color: var(--neon-gold); }
-.p-score { font-weight: 800; font-size: 14px; }
-.giant-score { font-size: 20px; }
-
-.gold-txt { color: var(--neon-gold); text-shadow: 0 0 5px var(--neon-gold); }
-.silver-txt { color: var(--neon-silver); }
-.bronze-txt { color: var(--neon-bronze); }
-
-
-/* --- LIST STYLES (Ranks 4+) --- */
-.lb-list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.lb-card {
-    display: flex;
-    align-items: center;
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-    /* Hitech subtle glow border */
-    position: relative;
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--void-bg);
+    font-family: 'Orbitron', sans-serif; /* Use a sci-fi font if available */
     overflow: hidden;
 }
 
-.lb-card:before {
-    content: '';
+.metaverse-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    perspective: 1000px;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #1a2a40 0%, #010a15 80%);
+}
+
+/* --- Background Atmosphere --- */
+.cosmos-grid {
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+    width: 200%; height: 200%;
+    top: -50%; left: -50%;
+    background-image: 
+        linear-gradient(rgba(0, 255, 231, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 231, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: rotateX(70deg);
+    animation: gridScroll var(--orbital-speed) linear infinite;
     opacity: 0.3;
+    z-index: 0;
 }
 
-.lb-rank {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--text-secondary);
-    width: 40px;
+.energy-fog {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 40%, var(--void-bg) 90%);
+    z-index: 1;
 }
 
-.lb-avatar {
-    width: 45px; height: 45px;
+/* --- HUD --- */
+.arena-hud {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 10;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 12px;
+}
+.pulse-text { animation: textPulse 1.5s infinite alternate; }
+
+
+/* --- The Arena Stage --- */
+.arena-stage {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -40%); /* Centered but slightly high */
+    width: 80%;
+    height: 60%;
+    transform-style: preserve-3d;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* --- Shared Avatar Styling (Users AND Ads) --- */
+.arena-node {
+    position: relative;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Smooth snappy movement */
+}
+
+.node-ring-container {
+    position: relative;
+    width: 80px; height: 80px;
+    display: flex; justify-content: center; align-items: center;
+}
+
+/* The spinning energy ring */
+.energy-ring {
+    position: absolute;
+    inset: -5px;
     border-radius: 50%;
-    margin-right: 15px;
-    border: 2px solid rgba(255,255,255,0.1);
+    border: 2px solid transparent;
+    border-top-color: var(--neon-cyan);
+    border-left-color: var(--neon-blue);
+    animation: spinRing 4s linear infinite;
+    box-shadow: 0 0 15px var(--neon-cyan), inset 0 0 10px var(--neon-blue);
 }
 
-.lb-username {
-    font-weight: 500;
-    flex-grow: 1; /*Pushes score to the right*/
+.avatar-core {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.2);
+    background: #000;
+    position: relative;
+    z-index: 2;
+}
+.avatar-core img { width: 100%; height: 100%; object-fit: cover; }
+
+.node-data {
+    text-align: center;
+    margin-top: 15px;
+    position: relative;
+}
+.rank-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neon-blue);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+.user-name {
+    color: #fff; font-size: 12px; letter-spacing: 1px; margin-bottom: 4px;
+    text-shadow: 0 0 5px var(--neon-cyan);
+}
+.user-score {
+    color: var(--neon-cyan); font-size: 14px; font-weight: bold;
 }
 
-.lb-coins {
-    font-weight: 800;
-    font-size: 18px;
+/* --- ALPHA ZONE (Rank 1 Special Styling) --- */
+.arena-node.alpha-rank {
+    transform: scale(1.3) translateZ(50px) translateY(-30px) !important; /* Popped out and bigger */
+    z-index: 20;
+}
+
+.alpha-rank .energy-ring {
+    border-top-color: var(--neon-gold);
+    border-left-color: #ff9100;
+    box-shadow: 0 0 30px var(--neon-gold), inset 0 0 20px var(--neon-gold);
+    animation: spinRing 2s linear infinite; /* Faster spin */
+}
+
+.crown-holo {
+    position: absolute;
+    top: -35px;
     color: var(--neon-gold);
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    font-size: 24px;
+    filter: drop-shadow(0 0 10px var(--neon-gold));
+    animation: hoverCrown 2s ease-in-out infinite alternate;
 }
 
-/* Helper for hidden state */
-.hidden { display: none; }
+.alpha-aura {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 200%; height: 200%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+    animation: auraPulse 3s infinite;
+    z-index: -1;
+    pointer-events: none;
+}
+
+
+/* --- INVISIBLE NATIVE ADS (System Challengers) --- */
+/* These classes are applied to ad nodes to make them blend in */
+
+.arena-node.system-challenger .energy-ring {
+    border-top-color: var(--neon-alert);
+    border-left-color: #ff0055;
+    box-shadow: 0 0 20px var(--neon-alert);
+}
+
+.arena-node.system-challenger .user-name {
+    color: var(--neon-alert);
+    text-shadow: 0 0 5px var(--neon-alert);
+}
+
+.boost-btn {
+    background: linear-gradient(45deg, var(--neon-alert), #ff0055);
+    border: none;
+    color: #fff;
+    font-size: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--neon-alert);
+    animation: pulseBtn 1s infinite alternate;
+    font-family: inherit; letter-spacing: 1px;
+}
+
+/* --- Animations --- */
+@keyframes gridScroll { 100% { background-position: 0 50px, 50px 50px; } }
+@keyframes spinRing { 100% { transform: rotate(360deg); } }
+@keyframes textPulse { 100% { opacity: 0.5; } }
+@keyframes hoverCrown { 100% { transform: translateY(-10px); } }
+@keyframes auraPulse { 0%, 100% { opacity: 0.5; scale: 1; } 50% { opacity: 1; scale: 1.1; } }
+@keyframes pulseBtn { 100% { box-shadow: 0 0 25px var(--neon-alert); scale: 1.05; } }
+
+/* --- Positioning Helpers for Depth --- */
+/* Pushing lower ranks back in 3D space */
+.rank-pos-2, .rank-pos-3 { transform: translateZ(20px); }
+.rank-pos-4, .rank-pos-5, .rank-pos-6 { transform: translateZ(0px) scale(0.9); opacity: 0.9; }
+.rank-pos-7, .rank-pos-8, .rank-pos-9 { transform: translateZ(-30px) scale(0.8); opacity: 0.8; }
