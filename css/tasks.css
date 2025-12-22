@@ -1,376 +1,263 @@
-/* =========================================
-   FINGAMEPRO: TASK COMMAND CENTER UI v2.0
-   Theme: Deep Space / Cyber-Neon / Glass
-   Author: Gemini (Metaverse Architect)
-   ========================================= */
+/* css/tasks.css - METAVERSE & AD OPTIMIZED UI v3.0 */
 
 :root {
-    /* --- CORE PALETTE --- */
-    --task-bg-dark: #020617;
-    --task-card-glass: rgba(30, 41, 59, 0.4);
-    --task-card-border: rgba(255, 255, 255, 0.08);
-    --task-highlight: rgba(255, 255, 255, 0.1);
+    /* --- COSMIC PALETTE --- */
+    --void-dark: #030712;
+    --deep-space: #0f172a;
+    --nebula-blue: #3b82f6;
+    --cyber-purple: #a855f7;
+    --toxic-green: #22c55e;
+    --alert-red: #ef4444;
+    --luxury-gold: #eab308;
     
-    /* --- NEON ACCENTS --- */
-    --neon-blue: #3b82f6;
-    --neon-purple: #a855f7;
-    --neon-red: #ef4444;
-    --neon-gold: #eab308;
-    --neon-cyan: #06b6d4;
+    /* --- GLASS ENGINE --- */
+    --glass-surface: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shine: rgba(255, 255, 255, 0.03);
+    --glass-blur: 16px;
 
-    /* --- ANIMATION VARS --- */
-    --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    /* --- AD PSYCHOLOGY --- */
+    --ad-glow: rgba(234, 179, 8, 0.15); /* Gold glow for premium feel */
+    --ad-border: rgba(234, 179, 8, 0.3);
 }
 
 /* =========================================
-   1. GLOBAL SECTION CONTAINER
+   1. GLOBAL ATMOSPHERE (The "Void")
    ========================================= */
 
 #tasks {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    position: fixed; inset: 0;
     width: 100%; height: 100%;
-    
-    /* Deep Space Gradient */
-    background: radial-gradient(circle at top right, #1e1b4b 0%, #020617 60%);
-    
-    /* Scroll Handling */
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-top: 80px;   /* Header clearance */
-    padding-bottom: 100px; /* Nav clearance */
-    
-    /* Scrollbar Styling */
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon-blue) #0f172a;
+    /* Deep Z-Axis Gradient */
+    background: radial-gradient(circle at 50% -20%, #172554 0%, #020617 60%);
+    overflow-y: auto; overflow-x: hidden;
+    padding-top: 80px; padding-bottom: 110px;
+    z-index: 10;
+    /* Font Smoothing */
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Background Cyber Grid */
+/* Holographic Grid Floor */
 #tasks::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    content: ''; position: fixed; inset: 0;
     background-image: 
-        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(500px) rotateX(20deg);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
+    pointer-events: none; z-index: -1;
+}
+
+/* Floating Particles Overlay */
+#tasks::after {
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(white 1px, transparent 0);
     background-size: 40px 40px;
-    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-    pointer-events: none;
-    z-index: -1;
+    opacity: 0.05;
+    animation: spaceDust 60s linear infinite;
+    pointer-events: none; z-index: -1;
 }
 
 /* =========================================
-   2. HEADERS & TYPOGRAPHY
+   2. TYPOGRAPHY & HEADERS
    ========================================= */
 
-.section-header {
-    text-align: center;
-    margin-bottom: 25px;
-    position: relative;
-    padding: 0 20px;
-}
+.section-header { text-align: center; margin-bottom: 30px; padding: 0 20px; position: relative; }
 
 .section-header h2 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 5px;
-    letter-spacing: 1px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900;
+    background: linear-gradient(180deg, #fff, #94a3b8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    letter-spacing: 2px; margin-bottom: 5px;
 }
 
 .section-header p {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 500;
+    font-family: 'Inter'; font-size: 11px; color: #64748b;
+    letter-spacing: 3px; text-transform: uppercase;
 }
 
-.task-category-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: #e2e8f0;
-    margin: 25px 20px 15px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+/* Divider Line */
+.task-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 25px 20px 15px; font-family: 'Orbitron'; 
+    font-size: 10px; color: #94a3b8; letter-spacing: 1px;
 }
-
-.task-category-title i {
-    filter: drop-shadow(0 0 8px currentColor);
+.task-divider::after {
+    content: ''; flex-grow: 1; height: 1px;
+    background: linear-gradient(90deg, #334155, transparent);
 }
 
 /* =========================================
-   3. "WATCH & EARN" HERO CARD
+   3. HERO: WATCH & EARN (The "Red" Zone)
    ========================================= */
 
-.video-task-card {
-    margin: 0 20px;
-    padding: 16px;
-    border-radius: 20px;
-    
-    /* Dark Glass + Red Tint */
-    background: linear-gradient(145deg, rgba(20, 20, 30, 0.9), rgba(15, 23, 42, 0.9));
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    box-shadow: 
-        0 10px 30px -10px rgba(0, 0, 0, 0.8),
-        inset 0 0 20px rgba(239, 68, 68, 0.05);
-    
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.watch-earn-hero {
+    margin: 0 20px; padding: 2px; /* For Gradient Border */
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(239,68,68,0.5), rgba(168,85,247,0.5));
     position: relative;
-    overflow: hidden;
-    transition: transform 0.2s var(--ease-smooth);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+    animation: floatHero 6s ease-in-out infinite;
 }
 
-.video-task-card:active { transform: scale(0.98); }
+.we-card-inner {
+    background: rgba(10, 10, 15, 0.9);
+    border-radius: 22px; padding: 20px;
+    display: flex; align-items: center; gap: 15px;
+    backdrop-filter: blur(20px);
+}
 
-/* Play Button Area */
-.video-icon {
-    width: 50px; height: 50px;
+.play-icon-box {
+    width: 50px; height: 50px; border-radius: 50%;
     background: rgba(239, 68, 68, 0.1);
-    border-radius: 12px;
+    border: 1px solid rgba(239, 68, 68, 0.4);
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    color: var(--neon-red);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    position: relative;
-}
-
-/* Play Button Pulse */
-.video-icon::after {
-    content: ''; position: absolute; inset: -5px;
-    border-radius: 16px;
-    border: 1px solid var(--neon-red);
-    opacity: 0;
+    font-size: 20px; color: #ef4444;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
     animation: pulseRed 2s infinite;
 }
 
-.video-info h4 {
-    color: #fff; font-size: 15px; font-weight: 600; margin-bottom: 2px;
+.we-content h4 { font-family: 'Orbitron'; color: white; font-size: 14px; margin-bottom: 4px; }
+.we-content p { font-size: 10px; color: #ef4444; font-weight: 700; letter-spacing: 1px; }
+
+/* The +500 Reward Pill */
+.reward-pill {
+    margin-left: auto;
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+    padding: 8px 16px; border-radius: 20px;
+    font-family: 'Orbitron'; font-size: 12px; font-weight: 800; color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: transform 0.1s;
 }
-.video-info p {
-    color: #94a3b8; font-size: 11px;
+.reward-pill:active { transform: scale(0.95); }
+.reward-pill::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shine 3s infinite;
 }
 
 /* =========================================
-   4. PREMIUM TASK CARDS (List Items)
+   4. NATIVE AD CARDS (Stealth Wealth)
+   ========================================= */
+/* Strategy: Looks like a "Bonus Task" but is an Ad */
+
+.native-ad-card {
+    margin: 15px 20px;
+    border-radius: 18px;
+    padding: 16px;
+    /* Gold/Yellow Tint for "Premium" feel, not "Ad" feel */
+    background: linear-gradient(145deg, rgba(234, 179, 8, 0.05), rgba(15, 23, 42, 0.8));
+    border: 1px solid var(--ad-border);
+    box-shadow: 0 4px 20px var(--ad-glow);
+    display: flex; align-items: center; gap: 15px;
+    position: relative; overflow: hidden;
+    transition: all 0.3s var(--ease-smooth);
+    cursor: pointer;
+}
+
+.native-ad-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--ad-glow); }
+.native-ad-card:active { transform: scale(0.98); }
+
+/* "Sponsored" Tag but made to look like "Bonus" */
+.ad-badge {
+    position: absolute; top: 0; right: 0;
+    background: var(--luxury-gold); color: black;
+    font-size: 8px; font-weight: 800; padding: 2px 8px;
+    border-bottom-left-radius: 8px; font-family: 'Orbitron';
+    z-index: 2;
+}
+
+.ad-icon-box {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--luxury-gold);
+}
+
+.ad-content h4 { font-family: 'Inter'; font-weight: 700; font-size: 13px; color: #fff; margin-bottom: 2px; }
+.ad-content p { font-size: 10px; color: #cbd5e1; opacity: 0.8; }
+
+.ad-action-btn {
+    padding: 6px 12px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+    font-size: 10px; color: var(--luxury-gold); font-weight: 600;
+}
+
+/* =========================================
+   5. STANDARD TASKS (Glassmorphism)
    ========================================= */
 
-.tasks-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 20px;
-}
+.tasks-list { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
 
 .task-card {
-    /* Glassmorphism Construction */
-    background: var(--task-card-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    border: 1px solid var(--task-card-border);
-    border-radius: 16px;
-    padding: 12px 15px;
-    
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    position: relative;
-    transition: all 0.3s var(--ease-smooth);
-    
-    /* Idle Float Animation */
-    animation: floatCard 6s ease-in-out infinite;
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: 18px; padding: 14px;
+    display: flex; align-items: center; gap: 15px;
+    transition: all 0.2s; position: relative;
 }
 
-/* Hover/Active State */
-.task-card:active {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: scale(0.98);
-}
+.task-card:active { background: rgba(30, 41, 59, 0.9); transform: scale(0.98); }
 
-/* Icon Box */
+/* Task Icons */
 .task-icon {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    
-    /* Neumorphic Inset */
-    background: rgba(0, 0, 0, 0.2);
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    background: rgba(255, 255, 255, 0.03); 
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.05);
+}
+.tg-blue { color: var(--neon-blue); text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+
+/* Task Info */
+.task-info { flex-grow: 1; }
+.task-info h4 { font-family: 'Inter'; font-weight: 600; font-size: 13px; color: #f1f5f9; margin-bottom: 4px; }
+
+.reward-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'Orbitron'; font-size: 9px; color: var(--luxury-gold);
+    background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.2);
+    padding: 2px 8px; border-radius: 4px;
 }
 
-/* Icon Color Variants */
-.bg-blue { color: var(--neon-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
-.bg-green { color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.15); }
-.bg-purple { color: var(--neon-purple); box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); }
-.bg-gold { color: var(--neon-gold); box-shadow: 0 0 15px rgba(234, 179, 8, 0.15); }
-
-/* Text Content */
-.task-info {
-    flex-grow: 1;
+/* Join Button (Psychology Optimized) */
+.btn-join {
+    padding: 8px 20px; border-radius: 20px; border: none;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    color: white; font-family: 'Orbitron'; font-size: 10px; font-weight: 800;
+    letter-spacing: 1px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+    position: relative; overflow: hidden;
 }
+/* Click Depth Illusion */
+.btn-join:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(124, 58, 237, 0.2); }
 
-.task-info h4 {
-    font-size: 14px;
-    color: #f1f5f9;
-    margin-bottom: 4px;
-    font-weight: 600;
-}
-
-/* Reward Badge (+1000) */
-.coin-tag {
-    font-size: 10px;
-    font-family: 'Orbitron', sans-serif;
-    color: var(--neon-gold);
-    background: rgba(234, 179, 8, 0.1);
-    padding: 3px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(234, 179, 8, 0.2);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.coin-tag::before {
-    content: '\f51e'; /* FontAwesome Coin */
-    font-family: "Font Awesome 6 Free"; 
-    font-weight: 900;
-    font-size: 8px;
-}
+/* Completed State */
+.completed-task { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
 
 /* =========================================
-   5. ACTION BUTTONS (Join / Start)
+   6. ANIMATIONS & MICRO-INTERACTIONS
    ========================================= */
 
-.btn-task-action {
-    padding: 8px 20px;
-    border-radius: 30px; /* Capsule */
-    border: none;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    color: white;
-    
-    /* Futuristic Gradient */
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s;
-    min-width: 80px;
-}
+@keyframes spaceDust { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
+@keyframes floatHero { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+@keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
 
-/* Button Hover Glow */
-.btn-task-action::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%);
-    transition: 0.5s;
-}
-
-.btn-task-action:active {
-    transform: scale(0.9);
-    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
-}
-
-.task-card:hover .btn-task-action::before {
-    transform: translateX(100%);
-}
-
-/* Specific Style for Watch Ad Button */
-.video-task-card .btn-task-action {
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-    box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
-    display: flex; align-items: center; gap: 5px;
-}
-
-/* =========================================
-   6. MICRO-ANIMATIONS & BADGES
-   ========================================= */
-
-/* High Pay Badge */
-.badge-new {
-    font-size: 9px;
-    background: #eab308;
-    color: black;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 800;
-    text-transform: uppercase;
-    animation: glowGold 2s infinite alternate;
-}
-
-/* Trust Footer */
-.trust-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 10px;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-    text-align: center; color: var(--neon-blue);
-    font-family: 'Orbitron'; font-size: 12px;
-    padding: 20px;
-}
-
-/* =========================================
-   7. KEYFRAMES
-   ========================================= */
-
-@keyframes pulseRed {
-    0% { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(1.6); opacity: 0; }
-}
-
-@keyframes floatCard {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-3px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes glowGold {
-    0% { box-shadow: 0 0 5px rgba(234, 179, 8, 0.5); }
-    100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.9); }
-}
-
-/* Stagger Animations for Cards (nth-child logic) */
-.tasks-list .task-card:nth-child(1) { animation-delay: 0s; }
-.tasks-list .task-card:nth-child(2) { animation-delay: 0.2s; }
-.tasks-list .task-card:nth-child(3) { animation-delay: 0.4s; }
-.tasks-list .task-card:nth-child(4) { animation-delay: 0.6s; }
-.tasks-list .task-card:nth-child(5) { animation-delay: 0.8s; }
-
-/* Progress Bar Logic */
+/* Ad/Video Progress Bar */
 .progress-bar-container {
-    height: 4px; background: rgba(255,255,255,0.1);
-    border-radius: 2px; margin-top: 8px; width: 100%;
-    overflow: hidden;
+    height: 3px; background: rgba(255,255,255,0.1);
+    border-radius: 2px; margin-top: 8px; width: 100%; overflow: hidden;
 }
 .progress-bar {
-    height: 100%; background: var(--neon-red);
-    width: 0%; box-shadow: 0 0 10px var(--neon-red);
-    transition: width 1s linear;
+    height: 100%; background: var(--alert-red); width: 0%;
+    box-shadow: 0 0 10px var(--alert-red); transition: width 1s linear;
 }
 
+.loading-spinner { 
+    text-align: center; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 10px; padding: 20px; 
+}
