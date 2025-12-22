@@ -1,220 +1,122 @@
-// js/leaderboard.js
+// arena.js
 
-// --- ⚙️ PRODUCTION CONFIGURATION ---
-// 15 Minutes Cache (Quota Safety Active ✅)
-const CACHE_DURATION_MS = 15 * 60 * 1000; 
-const LB_CACHE_KEY = 'fingamepro_lb_data';
-const LB_TIME_KEY = 'fingamepro_lb_time';
+// 1. MOCK USER DATA (The "Real" Players)
+let users = [
+    { id: 'u1', name: 'CyberWolf', score: 95020, avatar: 'https://i.pravatar.cc/150?img=1' },
+    { id: 'u2', name: 'PixelHunt_x', score: 88400, avatar: 'https://i.pravatar.cc/150?img=2' },
+    { id: 'u3', name: 'NeonSamurai', score: 82100, avatar: 'https://i.pravatar.cc/150?img=3' },
+    { id: 'u4', name: 'CryptoWraith', score: 75000, avatar: 'https://i.pravatar.cc/150?img=4' },
+    { id: 'u5', name: 'StarGlider', score: 69500, avatar: 'https://i.pravatar.cc/150?img=5' },
+    { id: 'u6', name: 'QuantumKate', score: 62000, avatar: 'https://i.pravatar.cc/150?img=6' },
+    { id: 'u7', name: 'Vector_Zero', score: 58000, avatar: 'https://i.pravatar.cc/150?img=7' },
+];
 
-// --- HELPER: Get Max Local Balance ---
-function getLocalSmartBalance() {
-    const keys = ['local_balance', 'coins', 'mining_balance', 'userBalance'];
-    let maxBal = 0;
-    keys.forEach(k => {
-        const val = parseInt(localStorage.getItem(k) || "0");
-        if (val > maxBal) maxBal = val;
-    });
-    return maxBal;
-}
-
-// ✅ STEP 1: INSTANT LOCAL LOAD (Visual Fix - Runs Immediately)
-(function instantFix() {
-    console.log("🚀 Force Starting Leaderboard...");
-
-    setTimeout(() => {
-        const localName = localStorage.getItem('userName') || "You";
-        const localBal = getLocalSmartBalance(); // Use Smart Balance
-        
-        // Khud ko King banao local data ke saath (Visual only)
-        updatePodium(1, localName, localBal, 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png', true);
-        
-        // Rank 2 & 3 Waiting
-        updatePodium(2, "Waiting...", 0, 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png', false);
-        updatePodium(3, "Waiting...", 0, 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png', false);
-        
-        // List clear
-        const listEl = document.getElementById('lb-list-render');
-        if(listEl) listEl.innerHTML = '<p style="text-align:center; color:#444; margin-top:10px; font-size:12px;">Waiting for challengers...</p>';
-
-        // Wallet Rank Update
-        forceUpdateWalletRank("1");
-        
-    }, 500); 
-})();
-
-// --- Helper: Podium Update ---
-function updatePodium(rank, name, balance, img, isActive) {
-    const pName = document.getElementById(`p${rank}-name`);
-    const pScore = document.getElementById(`p${rank}-score`);
-    const pImg = document.getElementById(`p${rank}-img`);
-    const pContainer = document.querySelector(`.rank-${rank}`); 
-
-    if (pName) {
-        pName.innerText = name;
-        pName.classList.remove('loading-anim');
+// 2. NATIVE AD CONFIGURATION (The "System Challengers")
+// Designed to share the EXACT same data structure as users
+const nativeAds = [
+    {
+        id: 'ad1',
+        isAd: true,
+        name: 'SYSTEM CHALLENGER',
+        avatar: 'https://cdn-icons-png.flaticon.com/512/9647/9647221.png', // AI icon
+        ctaText: 'ENGAGE BOOST',
+        ctaUrl: 'https://google.com' // Replace with actual ad link
+    },
+    {
+        id: 'ad2',
+        isAd: true,
+        name: 'NEXUS EVENT',
+        avatar: 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png', // Event icon
+        ctaText: 'JOIN PROTOCOL',
+        ctaUrl: 'https://bing.com'
     }
-    // Format Score (e.g. 1.2k)
-    if (pScore) pScore.innerText = isActive ? formatNumber(balance) : "--";
-    if (pImg) pImg.src = img;
-    
-    if (pContainer) {
-        pContainer.style.opacity = isActive ? '1' : '0.4';
-        pContainer.style.transform = isActive ? 'scale(1.1)' : 'scale(0.9)';
-    }
-}
+];
 
-// --- Helper: Format Numbers ---
-function formatNumber(num) {
-    if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
-    if(num >= 1000) return (num/1000).toFixed(1) + 'k';
-    return num.toLocaleString();
-}
+// 3. THE RENDERING ENGINE
+const arenaStage = document.getElementById('arena-stage');
 
-// --- Helper: Wallet Rank Update ---
-function forceUpdateWalletRank(rankStr) {
-    localStorage.setItem('mySavedRank', rankStr);
-    
-    if(window.currentUser) window.currentUser.rank = parseInt(rankStr);
-    else window.currentUser = { rank: parseInt(rankStr) };
+function renderArena() {
+    // Sort users by score desc
+    users.sort((a, b) => b.score - a.score);
 
-    const rankCards = document.querySelectorAll('#rank-card-container span');
-    rankCards.forEach(span => {
-        if(span.innerText.includes("#")) {
-            span.innerText = "#" + rankStr;
-            span.style.color = "#4ade80"; 
-        }
-    });
-}
+    // Combine users and ads for rendering
+    let displayList = [...users];
 
+    // INVISIBLE AD INJECTION:
+    // Insert ads at specific "rank positions" so they feel natural.
+    // E.g., Insert an ad at position 3 (after top 3) and position 7.
+    displayList.splice(3, 0, nativeAds[0]);
+    displayList.splice(7, 0, nativeAds[1]);
+    // Slice to keep the arena clean (e.g., top 9 nodes total)
+    displayList = displayList.slice(0, 9);
 
-// ✅ STEP 2: REAL FIREBASE SYNC (With Smart Merge & Caching)
-setTimeout(async () => {
-    if (typeof firebase === 'undefined') return;
-    
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+    arenaStage.innerHTML = ''; // Clear current stage
 
-    auth.onAuthStateChanged(async (user) => {
-        if (!user) return; 
+    displayList.forEach((node, index) => {
+        const rank = index + 1;
+        const isAlpha = rank === 1;
+        const isAd = node.isAd;
 
-        // --- 💾 CACHE CHECK LOGIC START ---
-        const cachedTime = localStorage.getItem(LB_TIME_KEY);
-        const now = Date.now();
+        // Determine classes based on node type
+        let nodeClasses = `arena-node rank-pos-${rank}`;
+        if (isAlpha && !isAd) nodeClasses += ' alpha-rank';
+        if (isAd) nodeClasses += ' system-challenger';
 
-        // Agar Cache exist karta hai aur 15 min purana nahi hai
-        if (cachedTime && (now - parseInt(cachedTime) < CACHE_DURATION_MS)) {
-            console.log("⚡ Using Cached Leaderboard Data (Quota Saved)");
-            const cachedData = JSON.parse(localStorage.getItem(LB_CACHE_KEY));
-            
-            // Render Cache directly
-            renderRealData(cachedData, user.uid);
-            return; // STOP HERE (Do not read Firebase)
-        }
-        // --- 💾 CACHE CHECK LOGIC END ---
+        // Dynamic HTML generation based on whether it's a user or an ad
+        let nodeHTML = `
+            <div class="${nodeClasses}" style="z-index: ${100 - rank}">
+                ${isAlpha && !isAd ? '<div class="crown-holo"><i class="fa-solid fa-crown"></i></div><div class="alpha-aura"></div>' : ''}
+                
+                <div class="node-ring-container">
+                    <div class="energy-ring"></div>
+                    <div class="avatar-core">
+                        <img src="${node.avatar}" alt="${node.name}">
+                    </div>
+                </div>
 
-        try {
-            console.log("🔥 Fetching Fresh Global Ranks...");
-            const snapshot = await db.collection('users')
-                .orderBy('balance', 'desc')
-                .limit(100)
-                .get();
-
-            let leaderboardData = [];
-            const localSmartBal = getLocalSmartBalance();
-
-            snapshot.forEach(doc => {
-                const d = doc.data();
-                let finalBal = d.balance || 0;
-
-                // 🧠 SMART MERGE: Agar ye 'Main' hu, to Highest Balance dikhao
-                if(doc.id === user.uid) {
-                    if(localSmartBal > finalBal) {
-                        finalBal = localSmartBal; // Local zyada hai to wo dikhao
-                        console.log("⚡ Updated Leaderboard with Local Balance:", finalBal);
+                <div class="node-data">
+                    ${!isAd ? `<div class="rank-badge">RANK ${rank}</div>` : ''}
+                    <div class="user-name">${node.name}</div>
+                    
+                    ${isAd ? 
+                        `<button class="boost-btn" onclick="window.open('${node.ctaUrl}')">${node.ctaText}</button>` : 
+                        `<div class="user-score">${node.score.toLocaleString()}</div>`
                     }
-                }
-
-                leaderboardData.push({
-                    id: doc.id,
-                    name: d.firstName || "User",
-                    balance: finalBal
-                });
-            });
-
-            // Handle Empty / Solo Case
-            if (leaderboardData.length === 0) {
-                // Agar DB khali hai, to Local Data daal do
-                leaderboardData.push({
-                    id: user.uid,
-                    name: localStorage.getItem('userName') || "You",
-                    balance: localSmartBal
-                });
-            } else {
-                // Check if I am in the list. If not (and list is small), add me.
-                const myEntry = leaderboardData.find(u => u.id === user.uid);
-                if (!myEntry && leaderboardData.length < 100) {
-                     leaderboardData.push({
-                        id: user.uid,
-                        name: localStorage.getItem('userName') || "You",
-                        balance: localSmartBal
-                    });
-                }
-            }
-
-            // Re-Sort (Kyunki humne local balance update kiya hai)
-            leaderboardData.sort((a, b) => b.balance - a.balance);
-
-            // 💾 SAVE TO CACHE
-            localStorage.setItem(LB_CACHE_KEY, JSON.stringify(leaderboardData));
-            localStorage.setItem(LB_TIME_KEY, now.toString());
-
-            renderRealData(leaderboardData, user.uid);
-
-        } catch (error) {
-            console.error("Network Error, sticking to Local Fix.", error);
-        }
-    });
-
-}, 2000); 
-
-
-// --- REAL DATA RENDERER ---
-function renderRealData(data, myId) {
-    const listContainer = document.getElementById('lb-list-render');
-    if(listContainer) listContainer.innerHTML = '';
-
-    const IMGS = [
-        'https://cdn-icons-png.flaticon.com/512/4140/4140047.png', // King
-        'https://cdn-icons-png.flaticon.com/512/4140/4140048.png', // Silver
-        'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'  // Bronze
-    ];
-
-    // Podium Render
-    if(data[0]) updatePodium(1, data[0].name, data[0].balance, IMGS[0], true);
-    if(data[1]) updatePodium(2, data[1].name, data[1].balance, IMGS[1], true);
-    if(data[2]) updatePodium(3, data[2].name, data[2].balance, IMGS[2], true);
-
-    // List Render (Rank 4+)
-    for (let i = 3; i < data.length; i++) {
-        const u = data[i];
-        const isMe = (u.id === myId);
-        
-        const div = document.createElement('div');
-        div.className = `lb-card ${isMe ? 'highlight-me' : ''}`;
-        div.innerHTML = `
-            <span class="lb-rank">#${i+1}</span>
-            <img src="assets/default_avatar.png" class="lb-avatar" onerror="this.src='assets/coin_main.jpg'">
-            <span class="lb-username">${u.name} ${isMe ? '(You)' : ''}</span>
-            <span class="lb-coins">${u.balance.toLocaleString()}</span>
+                </div>
+            </div>
         `;
-        listContainer.appendChild(div);
-    }
-
-    // Wallet Rank Logic
-    const myIndex = data.findIndex(u => u.id === myId);
-    if(myIndex !== -1) {
-        forceUpdateWalletRank((myIndex + 1).toString());
-    } else {
-        forceUpdateWalletRank("100+");
-    }
+        
+        arenaStage.innerHTML += nodeHTML;
+    });
 }
+
+
+// 4. LIVE SIMULATION LOOP
+// Randomly update scores to show live movement and re-render
+function simulateLiveActivity() {
+    users.forEach(user => {
+        // Random score fluctuation (+/- 500 points)
+        const change = Math.floor(Math.random() * 1000) - 500;
+        user.score = Math.max(0, user.score + change); // Ensure score isn't negative
+    });
+    renderArena();
+    resetSyncTimer();
+}
+
+// Update timer visual
+function resetSyncTimer() {
+    let sec = 5;
+    const timerEl = document.getElementById('sync-timer');
+    const countdown = setInterval(() => {
+        sec--;
+        timerEl.innerText = `00:0${sec}`;
+        if(sec <= 0) clearInterval(countdown);
+    }, 1000);
+}
+
+// Initialize
+renderArena();
+resetSyncTimer();
+
+// Start the live simulation every 5 seconds
+setInterval(simulateLiveActivity, 5000);
