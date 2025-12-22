@@ -665,8 +665,8 @@
 
             <section id="tasks" class="page-section hidden">
                 <div class="section-header">
-                    <h2>TASK CENTER</h2>
-                    <p>COMPLETE OPS • EARN CRYPTO</p>
+                    <h2>Mission Control</h2>
+                    <p>COMPLETE TASKS TO MINE ASSETS</p>
                 </div>
                 
                 <div class="watch-earn-hero">
@@ -799,134 +799,73 @@
 
 
             <section id="wallet" class="page-section hidden">
-    
-                <style>
-                    /* Metaverse Input Styling */
-                    .meta-group { margin-bottom: 15px; }
-                    .meta-label {
-                        font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: #94a3b8; 
-                        margin-bottom: 8px; display: block; letter-spacing: 1px;
-                    }
-                    .meta-input {
-                        width: 100%; background: rgba(2, 6, 23, 0.8); 
-                        border: 1px solid rgba(6, 182, 212, 0.3);
-                        color: #fff; padding: 14px; border-radius: 12px;
-                        font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none;
-                        transition: all 0.3s;
-                    }
-                    .meta-input:focus { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
-            
-                    /* Withdrawal Simulator Design */
-                    .sim-box {
-                        background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 1) 100%);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                        border-radius: 16px; padding: 20px; margin-bottom: 20px;
-                        position: relative; overflow: hidden;
-                    }
-                    .sim-input {
-                        background: transparent; border: none; color: white;
-                        font-size: 2.2rem; font-family: 'Orbitron', sans-serif; font-weight: 700;
-                        width: 100%; outline: none; margin-left: 10px;
-                    }
-                    
-                    /* ACTION BUTTONS */
-                    .action-btn-wrapper { margin-top: 10px; }
-                    
-                    /* 1. Withdraw Button (Top 10) */
-                    .btn-withdraw-final {
-                        width: 100%; padding: 16px; border-radius: 12px; border: none;
-                        background: linear-gradient(90deg, #22c55e, #10b981);
-                        color: #020617; font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 1rem;
-                        text-transform: uppercase; cursor: pointer;
-                        box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
-                        display: flex; align-items: center; justify-content: center; gap: 10px;
-                    }
-                    
-                    /* 2. Locked Vault (Rank 11+) */
-                    .btn-locked-final {
-                        width: 100%; padding: 20px; border-radius: 16px;
-                        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-                        border: 1px dashed rgba(255, 255, 255, 0.2);
-                        color: #94a3b8; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem;
-                        text-transform: uppercase; cursor: pointer;
-                        display: flex; align-items: center; justify-content: center; gap: 10px;
-                        transition: 0.3s; position: relative; overflow: hidden;
-                    }
-                    .btn-locked-final:active { transform: scale(0.98); }
-                    .lock-icon-glow { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
-                </style>
-            
-                <div class="wallet-meta-header">
-                    <div class="wm-title">
-                        <i class="fa-solid fa-vault text-cyan"></i> <span>GAME REWARD WALLET</span>
-                    </div>
-                    <div class="wm-network"><span class="pulse-dot"></span> In-App Network</div>
-                </div>
-            
-                <div class="wallet-hero-meta">
-                    <div class="holo-glow"></div>
-                    <div class="balance-label">TOTAL ASSETS</div>
-                    <div class="balance-meta-row">
-                        <img src="assets/coin_main.jpg" class="coin-3d-icon">
-                        <span id="wallet-coins" class="glitch-number">0</span>
-                    </div>
-                    <div class="balance-sub-info">
-                        <span><i class="fa-solid fa-infinity"></i> Non-Expiring</span><span class="divider">|</span><span><i class="fa-solid fa-shield-halved"></i> Safe Storage</span>
-                    </div>
-                </div>
                 
-                <div class="rank-status-card" id="rank-card-container" style="margin-bottom: 25px;"></div>
-            
-                <div id="payment-form-area">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
-                        <i class="fa-solid fa-money-bill-transfer text-cyan"></i>
-                        <span style="font-family:'Orbitron'; color:white; font-size:0.9rem;">PAYMENT GATEWAY</span>
+                <div class="wallet-hero">
+                    <div class="hero-label">TOTAL ASSET VALUE</div>
+                    <div class="asset-row">
+                        <img src="assets/coin_main.jpg" class="coin-3d">
+                        <span id="wallet-coins" class="balance-text">0</span>
                     </div>
-            
-                    <div class="meta-group">
-                        <label class="meta-label">LEGAL NAME</label>
-                        <input type="text" id="pay-name" class="meta-input" placeholder="Account Holder Name">
-                    </div>
-            
-                    <div class="meta-group">
-                        <label class="meta-label">UPI ID (Unified Payment Interface)</label>
-                        <input type="text" id="pay-upi" class="meta-input" placeholder="e.g. name@okhdfcbank">
-                    </div>
-            
-                    <div class="meta-group">
-                        <label class="meta-label">ACCESS CODE (Referral Code)</label>
-                        <input type="text" id="pay-code" class="meta-input" placeholder="Enter Unique Code">
+                    
+                    <div class="trust-row">
+                        <div class="trust-badge"><i class="fa-solid fa-shield-halved"></i> SECURE</div>
+                        <div class="trust-badge"><i class="fa-solid fa-infinity"></i> NO EXPIRY</div>
                     </div>
                 </div>
-            
-                <div class="sim-box">
-                    <label class="meta-label">WITHDRAWAL SIMULATOR</label>
-                    <div style="display: flex; align-items: center;">
-                        <i class="fa-solid fa-coins text-gold" style="font-size: 24px;"></i>
-                        <input type="number" id="calc-input" class="sim-input" placeholder="Enter Coins" oninput="window.calculateRealMoney(this.value)">
+
+                <div class="rank-card">
+                    <div class="rank-info">
+                        <h4>CURRENT CLEARANCE</h4>
+                        <span id="user-rank-name">IDENTIFYING...</span>
                     </div>
-                    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px; padding-top: 10px; display: flex; justify-content: space-between;">
-                        <span style="font-size: 0.75rem; color: #94a3b8;">Rate: 100k Coins = ₹1.00</span>
-                        <span id="calc-result" style="color: #4ade80; font-weight: bold; font-family: 'Orbitron'; font-size: 1.1rem;">₹0.00</span>
+                    <div class="rank-icon-box" id="user-rank-icon">
+                        <i class="fa-solid fa-trophy"></i>
                     </div>
                 </div>
-            
-                <div id="action-btn-container" class="action-btn-wrapper">
+
+                <div class="wallet-ad-card" onclick="window.open('https://google.com', '_blank')">
+                    <div class="ad-tag">RECOMMENDED</div>
+                    <div class="ad-icon-glow">
+                        <i class="fa-solid fa-bolt-lightning"></i>
                     </div>
-            
-                <div class="future-rewards-panel" style="margin-top: 25px; border-left: 3px solid #a855f7; background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent); padding: 15px; border-radius: 0 12px 12px 0;">
-                    <div class="fr-header" style="font-size: 0.8rem; font-weight: 700; color: #e9d5ff; margin-bottom: 5px;">
-                        <i class="fa-solid fa-gift text-purple"></i> UPCOMING UTILITY
+                    <div class="ad-content">
+                        <h4>Claim Wallet Boost</h4>
+                        <p>Register to activate 2x Mining Speed</p>
                     </div>
-                    <div class="fr-content">
-                        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0 0 10px 0;">Your coins are accumulating for future platform events.</p>
-                        <div class="tags-row">
-                            <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); margin-right: 5px;">Loyalty Points</span>
-                            <span class="tag-meta" style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3);">Special Events</span>
-                        </div>
+                    <i class="fa-solid fa-chevron-right" style="color:#eab308; margin-left:auto;"></i>
+                </div>
+
+                <div class="payment-vault">
+                    <div class="vault-header">
+                        <i class="fa-solid fa-file-contract"></i> PAYMENT PROTOCOL
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Beneficiary Name</label>
+                        <input type="text" id="pay-name" class="vault-input" placeholder="AS PER BANK RECORDS">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">UPI / Wallet Address</label>
+                        <input type="text" id="pay-upi" class="vault-input" placeholder="username@upi">
                     </div>
                 </div>
-            
+
+                <div class="calc-box">
+                    <div class="rate-info">
+                        <span>CONVERTER</span>
+                        <span>100k = ₹1.00</span>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <i class="fa-solid fa-coins" style="color:#eab308; margin-right:10px;"></i>
+                        <input type="number" id="calc-input" class="calc-input" placeholder="0" oninput="window.calculateRealMoney(this.value)">
+                    </div>
+                    <div style="text-align:right; font-family:'Orbitron'; color:#22c55e; font-weight:700;" id="calc-result">₹0.00</div>
+                </div>
+
+                <div id="action-btn-container" style="margin: 0 20px;"></div>
+
+                <div style="height:40px;"></div>
             </section>
 
         </main> 
