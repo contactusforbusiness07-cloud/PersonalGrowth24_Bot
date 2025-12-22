@@ -1,160 +1,265 @@
-/* Metaverse Wallet Styles */
+/* css/wallet.css - METAVERSE VAULT & MONETIZATION UI */
+
+:root {
+    /* --- VAULT PALETTE --- */
+    --vault-bg: #020617;
+    --vault-glass: rgba(15, 23, 42, 0.6);
+    --vault-border: rgba(255, 255, 255, 0.08);
+    --vault-highlight: rgba(255, 255, 255, 0.1);
+    
+    /* --- NEON ACCENTS --- */
+    --cyan-flux: #06b6d4;
+    --gold-flux: #eab308;
+    --purple-flux: #a855f7;
+    --success-flux: #22c55e;
+    
+    /* --- AD PSYCHOLOGY --- */
+    --ad-premium-bg: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(15, 23, 42, 0.8));
+    --ad-premium-border: rgba(234, 179, 8, 0.4);
+}
+
+/* =========================================
+   1. GLOBAL WALLET CONTAINER
+   ========================================= */
+
 #wallet {
-    background: radial-gradient(circle at top center, #1e293b 0%, #020617 70%);
-    padding: 20px;
-    min-height: 100vh;
-    box-sizing: border-box;
-    padding-bottom: 100px;
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    /* Deep Cosmic Void */
+    background: radial-gradient(circle at 50% 90%, #1e1b4b 0%, #020617 70%);
+    overflow-y: auto; overflow-x: hidden;
+    padding-top: 80px; padding-bottom: 110px;
+    z-index: 10;
 }
 
-/* Header */
-.wallet-meta-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-.wm-title {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    color: #fff;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.text-cyan { color: #06b6d4; text-shadow: 0 0 10px rgba(6, 182, 212, 0.6); }
-.text-purple { color: #a855f7; text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
-
-.wm-network {
-    font-size: 0.65rem;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.pulse-dot {
-    width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
-    box-shadow: 0 0 8px #22c55e;
+/* Digital Grid Floor */
+#wallet::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: 
+        linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+    transform: perspective(800px) rotateX(20deg);
+    pointer-events: none; z-index: -1;
 }
 
-/* Hero Card (Holographic) */
-.wallet-hero-meta {
-    position: relative;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
-    border: 1px solid rgba(6, 182, 212, 0.3);
+/* =========================================
+   2. HERO: TOTAL ASSETS (The Core)
+   ========================================= */
+
+.wallet-hero {
+    margin: 0 20px 20px;
+    padding: 25px 20px;
     border-radius: 24px;
-    padding: 30px 20px;
-    text-align: center;
-    margin-bottom: 20px;
+    position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 30px rgba(6, 182, 212, 0.05);
+    
+    /* Premium Glass */
+    background: var(--vault-glass);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--vault-border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    animation: floatVault 6s ease-in-out infinite;
 }
-.holo-glow {
-    position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 60%);
-    animation: rotateHolo 10s linear infinite; pointer-events: none;
-}
-@keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.balance-label {
-    font-size: 0.7rem; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+/* Holographic Shine */
+.wallet-hero::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    transform: rotate(45deg); pointer-events: none;
 }
-.balance-meta-row {
-    display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px;
-}
-.coin-3d-icon { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-.glitch-number {
-    font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-}
-.balance-sub-info {
-    display: flex; justify-content: center; gap: 15px; font-size: 0.75rem; color: #94a3b8; position: relative; z-index: 2;
-}
-.divider { color: #334155; }
 
-/* Rank & Status Cards */
-.rank-status-card {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
+.hero-label {
+    font-family: 'Inter'; font-size: 10px; color: #94a3b8; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 10px;
+}
+
+/* The Main Coin */
+.asset-row {
+    display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
+}
+.coin-3d {
+    width: 60px; height: 60px; filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.4));
+    animation: spinCoin 10s linear infinite;
+}
+
+.balance-text {
+    font-family: 'Orbitron'; font-size: 36px; font-weight: 800; color: #fff;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+    letter-spacing: 1px;
+}
+
+/* Trust Badges */
+.trust-row {
+    display: flex; gap: 15px;
+}
+.trust-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9px; color: var(--cyan-flux);
+    background: rgba(6, 182, 212, 0.1); padding: 4px 10px; border-radius: 20px;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    text-transform: uppercase; font-weight: 700;
+}
+
+/* =========================================
+   3. RANK & STATUS (Hologram)
+   ========================================= */
+
+.rank-card {
+    margin: 0 20px 20px;
     padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-.r-info { display: flex; flex-direction: column; }
-.r-label { font-size: 0.7rem; color: #64748b; }
-.r-val { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #fff; font-weight: bold; }
-.status-badge {
-    padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-}
-.status-badge.unlocked { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
-.status-badge.locked { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
-
-/* Input & Vault Areas */
-.meta-input-group {
-    background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 15px;
-}
-.meta-input-label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; }
-.meta-input-wrapper { display: flex; align-items: center; gap: 10px; }
-.currency-symbol { font-size: 1.2rem; color: #4ade80; }
-.meta-input {
-    background: transparent; border: none; color: #fff; font-size: 1.4rem; font-family: 'Orbitron', sans-serif; width: 100%; outline: none;
-}
-.conversion-preview {
-    font-size: 0.75rem; color: #fbbf24; text-align: right; margin-top: 5px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--vault-border);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: space-between;
 }
 
-.btn-withdraw-meta {
-    width: 100%; padding: 16px;
-    background: linear-gradient(90deg, #22c55e, #10b981);
-    border: none; border-radius: 12px;
-    color: #020617; font-weight: 800; font-family: 'Orbitron', sans-serif; text-transform: uppercase;
-    cursor: pointer; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
-    transition: all 0.2s;
+.rank-info h4 {
+    font-family: 'Orbitron'; font-size: 12px; color: #cbd5e1; margin-bottom: 4px;
 }
-.btn-withdraw-meta:active { transform: scale(0.98); }
+.rank-info span {
+    font-size: 14px; color: var(--success-flux); font-weight: 700;
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+}
 
-.vault-message {
-    text-align: center; padding: 20px;
-    background: rgba(255, 255, 255, 0.02); border-radius: 16px; border: 1px dashed rgba(255, 255, 255, 0.1);
+.rank-icon-box {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(34, 197, 94, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--success-flux);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
 }
-.vault-icon { font-size: 2rem; color: #64748b; margin-bottom: 10px; display: block; }
-.vault-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
 
-/* Future Rewards */
-.future-rewards-panel {
-    border-left: 3px solid #a855f7;
-    background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent);
-    padding: 15px; border-radius: 0 12px 12px 0; margin-bottom: 25px;
-}
-.fr-header { font-size: 0.8rem; font-weight: 700; color: #e9d5ff; margin-bottom: 5px; }
-.fr-content p { font-size: 0.75rem; color: #94a3b8; margin: 0 0 10px 0; }
-.tag-meta { font-size: 0.65rem; background: rgba(168, 85, 247, 0.2); padding: 3px 8px; border-radius: 4px; color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); margin-right: 5px; }
+/* =========================================
+   4. NATIVE AD: "THE BOOSTER CARD" (Critical)
+   ========================================= */
+/* Looks like a "Bonus Feature" not an Ad */
 
-/* History */
-.meta-history { margin-top: 10px; }
-.mh-header { font-size: 0.75rem; color: #64748b; margin-bottom: 15px; font-weight: 700; display: flex; justify-content: space-between; }
-.mh-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.wallet-ad-card {
+    margin: 0 20px 25px;
+    padding: 18px;
+    border-radius: 20px;
+    background: var(--ad-premium-bg);
+    border: 1px solid var(--ad-premium-border);
+    box-shadow: 0 0 25px rgba(234, 179, 8, 0.1);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex; align-items: center; gap: 15px;
 }
-.mh-left { display: flex; align-items: center; gap: 12px; }
-.mh-icon {
-    width: 32px; height: 32px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.8rem;
+
+.wallet-ad-card:active { transform: scale(0.98); }
+
+/* Scanline Effect on Ad */
+.wallet-ad-card::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(234, 179, 8, 0.1), transparent);
+    transform: translateY(-100%);
+    animation: scanline 4s infinite;
 }
-.mh-info h5 { margin: 0; color: #e2e8f0; font-size: 0.85rem; font-weight: 500; }
-.mh-info span { font-size: 0.7rem; color: #64748b; }
-.mh-val { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; }
-.mh-val.plus { color: #fbbf24; }
-.mh-val.minus { color: #f43f5e; }
+
+.ad-icon-glow {
+    width: 45px; height: 45px; border-radius: 12px;
+    background: rgba(234, 179, 8, 0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #ffd700;
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+    animation: pulseGold 2s infinite;
+}
+
+.ad-content h4 { font-family: 'Orbitron'; font-size: 13px; color: #fff; margin-bottom: 2px; }
+.ad-content p { font-size: 10px; color: #e2e8f0; opacity: 0.9; }
+
+.ad-tag {
+    position: absolute; top: 0; right: 0;
+    background: #eab308; color: black;
+    font-size: 8px; font-weight: 800; padding: 2px 8px;
+    border-bottom-left-radius: 8px; font-family: 'Orbitron';
+}
+
+/* =========================================
+   5. PAYMENT FORM (The Vault)
+   ========================================= */
+
+.payment-vault {
+    margin: 0 20px;
+}
+
+.vault-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 15px;
+    font-family: 'Orbitron'; font-size: 12px; color: var(--cyan-flux); letter-spacing: 1px;
+}
+
+.input-group { margin-bottom: 15px; }
+.input-label {
+    display: block; font-size: 10px; color: #64748b; margin-bottom: 8px;
+    font-family: 'Inter'; font-weight: 600; text-transform: uppercase;
+}
+
+.vault-input {
+    width: 100%; padding: 14px;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid var(--vault-border);
+    border-radius: 12px;
+    color: #fff; font-family: 'Inter'; font-size: 14px;
+    transition: all 0.3s;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.vault-input:focus {
+    border-color: var(--cyan-flux);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2), inset 0 2px 5px rgba(0,0,0,0.5);
+    outline: none;
+}
+
+/* =========================================
+   6. CALCULATOR & BUTTONS
+   ========================================= */
+
+.calc-box {
+    margin: 25px 20px; padding: 15px;
+    background: rgba(255,255,255,0.03); border-radius: 16px;
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+
+.calc-input {
+    background: transparent; border: none; width: 100%;
+    font-family: 'Orbitron'; font-size: 24px; color: #fff;
+    outline: none; margin-bottom: 10px;
+}
+
+.rate-info {
+    font-size: 10px; color: #64748b; display: flex; justify-content: space-between;
+}
+
+.btn-withdraw {
+    width: 100%; padding: 16px; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+    color: white; font-family: 'Orbitron'; font-size: 14px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+    position: relative; overflow: hidden;
+    margin-top: 10px; transition: transform 0.1s;
+}
+.btn-withdraw:active { transform: scale(0.98); }
+
+/* Locked State */
+.btn-locked {
+    background: linear-gradient(135deg, #334155, #1e293b);
+    color: #94a3b8; box-shadow: none; border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* =========================================
+   7. ANIMATIONS
+   ========================================= */
+
+@keyframes floatVault { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); } 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); } }
+@keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+@keyframes spinCoin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
 
