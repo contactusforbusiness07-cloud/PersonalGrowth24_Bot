@@ -800,47 +800,54 @@
 
             <section id="wallet" class="page-section hidden">
                 
-                <div class="mining-core-card">
-                    <div class="core-label">
-                        <div class="live-dot"></div> SYSTEM ONLINE • MINING ACTIVE
+                <div id="boot-sequence" class="hidden">
+                    <i class="fa-solid fa-microchip" style="font-size: 40px; color: var(--aegis-cyan); margin-bottom: 20px; animation: plasmaPulse 2s infinite;"></i>
+                    <div id="boot-terminal">
+                        <div id="boot-terminal-text"></div>
                     </div>
+                    <div id="boot-loader-bar">
+                        <div id="boot-loader-fill"></div>
+                    </div>
+                </div>
+
+                <div class="aegis-core-container">
+                    <div class="gyro-ring ring-outer"></div>
+                    <div class="gyro-ring ring-mid"></div>
+                    <div class="gyro-ring ring-inner"></div>
                     
-                    <div class="asset-display">
-                        <img src="assets/coin_main.jpg" class="coin-holo">
-                        <span id="wallet-balance" class="balance-val">0</span>
-                    </div>
-                    <div id="wallet-usd" class="usd-approx">≈ $0.0000 USDT</div>
-
-                    <div class="mining-wave-bar">
-                        <div class="wave-fill"></div>
+                    <div class="plasma-orb">
+                        <span class="power-label">POWER LEVEL</span>
+                        <span class="power-val-glitch" id="core-power-val">--</span>
+                        <span class="power-unit">UNITS</span>
                     </div>
                 </div>
 
-                <div class="status-chip">
-                    <div class="chip-info">
-                        <h4>CURRENT CLEARANCE</h4>
-                        <span id="wallet-rank">CALCULATING...</span>
+                <div class="hud-stats-container">
+                    <div class="hud-panel">
+                        <div class="hud-label">ACCESS CLEARANCE</div>
+                        <div class="hud-val" id="clearance-val">CALCULATING...</div>
                     </div>
-                    <div class="chip-icon">
-                        <i class="fa-solid fa-microchip"></i>
+                    <div class="hud-panel" style="text-align: right;">
+                        <div class="hud-label">SYSTEM STATUS</div>
+                        <div class="hud-val" id="system-status-val">STANDING BY</div>
                     </div>
                 </div>
 
-                <div id="wallet-ad-container"></div>
-
-                <div class="vault-lock-section">
-                    <div class="lock-icon">
-                        <i class="fa-solid fa-fingerprint"></i>
-                    </div>
-                    <div class="vault-status">VAULT LOCKED</div>
-                    <div class="vault-desc">Transfers enabled after TGE snapshot</div>
-                    
-                    <button class="btn-locked" onclick="handleLockedWithdraw()">
-                        <i class="fa-solid fa-lock"></i> WITHDRAWAL PAUSED
-                    </button>
+                <div class="protocol-feed-header">
+                    <i class="fa-solid fa-list-check"></i> AVAILABLE PROTOCOLS
                 </div>
+                <div id="protocol-feed-container" class="protocol-container">
+                    </div>
 
-                <div style="height: 50px;"></div>
+                <div class="vault-gate-container" onclick="handleVaultAccess()">
+                    <div class="gate-door gate-left"></div>
+                    <div class="gate-door gate-right"></div>
+                    <div class="gate-content">
+                        <i class="fa-solid fa-lock gate-lock-icon"></i>
+                        <div class="gate-title">VAULT SEALED</div>
+                        <div class="gate-subtitle">AWAITING PHASE 2 UNLOCK PROTOCOL</div>
+                    </div>
+                </div>
 
             </section>
 
