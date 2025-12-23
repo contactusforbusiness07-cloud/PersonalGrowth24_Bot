@@ -23,18 +23,14 @@ window.currentUser = null; // Global State
 console.log("🔥 Firebase Connected & Ready!");
 
 // --- ✅ HELPER: Smart Balance Logic (The Fix) ---
-// Ye function ensure karega ki agar Local Storage me coins jyada hain, to wo delete na hon.
 function getSmartBalance(serverData) {
     const serverBal = serverData.balance || 0;
     const localBal = parseFloat(localStorage.getItem('local_balance'));
     
     // Agar Local Balance number hai aur Server se bada hai, to Local hi sahi hai
     if (!isNaN(localBal) && localBal > serverBal) {
-        // console.log(`🛡️ Protecting Local Coins: ${localBal} (Server: ${serverBal})`);
         return localBal;
     }
-    
-    // Agar Server bada hai (Referral bonus mila ho), to Server sahi hai
     return serverBal;
 }
 
@@ -48,14 +44,16 @@ window.syncUserWithFirebase = function(userId) {
         if (docSnap.exists()) {
             const data = docSnap.data();
             
-            // 🔥 SMART LOGIC: Apply protection
+            // Smart Logic
             const finalBalance = getSmartBalance(data);
             
             // Update Global State
             window.currentUser = { ...data, id: String(userId), balance: finalBalance };
             
-            // Force Update Local Storage
+            // Sync Local Storage
             localStorage.setItem('local_balance', finalBalance);
+            if(data.name) localStorage.setItem('user_name', data.name);
+            if(data.profileImg) localStorage.setItem('user_avatar', data.profileImg);
 
             // Update UI
             updateUIWithData(window.currentUser);
@@ -66,7 +64,7 @@ window.syncUserWithFirebase = function(userId) {
 
 // --- 2. STARTUP LOGIC ---
 document.addEventListener('DOMContentLoaded', async () => {
-    // 🚀 INSTANT UI RESTORE (Login ka wait kiye bina purana balance dikhao)
+    // 🚀 INSTANT UI RESTORE
     const savedBal = localStorage.getItem('local_balance');
     if(savedBal) {
         const balNum = Math.floor(parseFloat(savedBal));
@@ -87,17 +85,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const user = window.Telegram.WebApp.initDataUnsafe.user;
         
         if (user) {
-            // Sync start turant kar do
             if(window.syncUserWithFirebase) window.syncUserWithFirebase(user.id);
             await loginUser(user);
         } else {
             console.log("Running in Browser Mode (No Telegram User)");
-            // Testing ke liye niche wali line uncomment kar sakte hain
-            // await loginUser({ id: "1078605976", first_name: "Test User" });
+            // Testing ke liye:
+            // await loginUser({ id: "1078605976", first_name: "Admin" });
         }
     }
     
-    // Default Navigation
     if(window.navigateTo) window.navigateTo('home');
 });
 
@@ -105,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loginUser(tgUser) {
     console.log("👤 Logging in:", tgUser.id);
     
-    // UI Update (Profile Name)
     if(document.getElementById('display-name')) document.getElementById('display-name').innerText = tgUser.first_name;
     if(document.getElementById('display-id')) document.getElementById('display-id').innerText = tgUser.id;
 
@@ -115,30 +110,30 @@ async function loginUser(tgUser) {
         const snap = await getDoc(userRef);
 
         if (snap.exists()) {
-            // OLD USER FOUND
+            // OLD USER
             const data = snap.data();
-            
-            // 🔥 Apply Smart Balance Protection Here Too
             const finalBalance = getSmartBalance(data);
             
             window.currentUser = { ...data, balance: finalBalance };
-            localStorage.setItem('local_balance', finalBalance); // Sync Local
+            localStorage.setItem('local_balance', finalBalance);
+            
+            // Sync Profile Image if saved on Server
+            if(data.profileImg) {
+                localStorage.setItem('user_avatar', data.profileImg);
+                if(document.getElementById('profile-img')) document.getElementById('profile-img').src = data.profileImg;
+            }
             
             console.log("✅ User Loaded:", window.currentUser);
-            
-            // Start Game Engine
             if (typeof window.initGame === "function") window.initGame(); 
             
-            // Pending Referral Check
             if (data.referralStatus === 'pending' && data.joined_via) {
                 await verifyReferral(String(tgUser.id), data.joined_via, tgUser.first_name);
             }
-            
             updateUIWithData(window.currentUser);
             passDataToReferralPage(window.currentUser, String(tgUser.id));
 
         } else {
-            // NEW USER CREATION
+            // NEW USER
             console.log("🆕 Creating New User...");
             const newUser = {
                 id: String(tgUser.id),
@@ -149,14 +144,13 @@ async function loginUser(tgUser) {
                 totalEarnings: 0,
                 energy: 1000,
                 referralStatus: 'none',
+                profileImg: "assets/default-avatar.png", // Default for new
                 joinedAt: serverTimestamp()
             };
             
             await setDoc(userRef, newUser);
             window.currentUser = newUser;
-            localStorage.setItem('local_balance', 0); // Reset local for new user
-            
-            if (typeof window.initGame === "function") window.initGame(); 
+            localStorage.setItem('local_balance', 0); 
             
             updateUIWithData(newUser);
             passDataToReferralPage(newUser, String(tgUser.id));
@@ -177,14 +171,12 @@ async function verifyReferral(userId, referrerId, userName) {
             const rDoc = await transaction.get(refRef);
             if (!rDoc.exists()) return;
 
-            // Update Referrer (Server Side Instant Update)
             transaction.update(refRef, { 
                 balance: increment(100), 
                 referralCount: increment(1),
                 totalEarnings: increment(100)
             });
 
-            // Add to Team
             transaction.set(teamRef, { 
                 id: userId, 
                 name: userName, 
@@ -192,7 +184,6 @@ async function verifyReferral(userId, referrerId, userName) {
                 joinedAt: serverTimestamp() 
             });
 
-            // Mark User Verified
             transaction.update(userRef, { referralStatus: 'verified' });
         });
         console.log("🎉 Referral Verified!");
@@ -208,66 +199,52 @@ window.saveUserData = async function(uid, dataToUpdate) {
         const userRef = doc(db, "users", String(uid));
         await updateDoc(userRef, dataToUpdate);
         
-        // Update Local State Global
         if(window.currentUser) {
             Object.assign(window.currentUser, dataToUpdate);
-            // Ensure LocalStorage stays synced
-            if(dataToUpdate.balance !== undefined) {
-                localStorage.setItem('local_balance', dataToUpdate.balance);
-            }
+            if(dataToUpdate.balance !== undefined) localStorage.setItem('local_balance', dataToUpdate.balance);
+            if(dataToUpdate.profileImg !== undefined) localStorage.setItem('user_avatar', dataToUpdate.profileImg);
         }
     } catch(e) {
         console.error("Save Error:", e);
     }
 };
 
-// --- 6. UI & DATA PASSING ---
+// --- 6. UI & HELPER ---
 function updateUIWithData(data) {
-    // Round down balance for display
     const bal = Math.floor(data.balance).toLocaleString();
-    
-    if(document.getElementById('home-balance-display')) 
-        document.getElementById('home-balance-display').innerText = bal;
-    if(document.getElementById('header-coin-balance')) 
-        document.getElementById('header-coin-balance').innerText = bal;
+    if(document.getElementById('home-balance-display')) document.getElementById('home-balance-display').innerText = bal;
+    if(document.getElementById('header-coin-balance')) document.getElementById('header-coin-balance').innerText = bal;
 }
 
 async function passDataToReferralPage(userData, userId) {
-    // Fetch Team Data
     let team = [];
     try {
         const teamRef = collection(db, "users", userId, "my_team");
         const snapshot = await getDocs(teamRef);
         snapshot.forEach(d => team.push(d.data()));
-    } catch (e) {
-        console.log("No team yet.");
-    }
+    } catch (e) { console.log("No team yet."); }
 
     setTimeout(() => {
         if (window.updateReferralUI) window.updateReferralUI(userData, team);
     }, 500);
 }
 
-// --- 7. NAVIGATION SYSTEM ---
+// --- 7. NAVIGATION & LOGOUT ---
 window.navigateTo = function(sectionId) {
-    // Hide Sections
     document.querySelectorAll('.page-section').forEach(sec => {
         sec.classList.add('hidden');
         sec.classList.remove('active');
     });
-    // Hide Internal Pages
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
     
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 
-    // Show Target
     const target = document.getElementById(sectionId);
     if (target) {
         target.classList.remove('hidden');
         target.classList.add('active');
     }
 
-    // Update Bottom Nav
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         if(item.getAttribute('onclick') && item.getAttribute('onclick').includes(sectionId)) {
@@ -279,16 +256,13 @@ window.navigateTo = function(sectionId) {
 window.openInternalPage = function(pageId) {
     document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
     document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
-    
     const target = document.getElementById(pageId);
     if(target) target.classList.remove('hidden');
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 }
 
-// --- 8. LOGOUT LOGIC ---
 window.handleLogout = function() {
     if(window.toggleProfileMenu) window.toggleProfileMenu(false);
-    
     setTimeout(() => {
         Swal.fire({
             title: 'Exit App?',
@@ -302,12 +276,8 @@ window.handleLogout = function() {
             color: '#fff'
         }).then((result) => {
             if (result.isConfirmed) {
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.close();
-                } else {
-                    window.close();
-                    window.location.href = "about:blank"; 
-                }
+                if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.close();
+                else window.location.href = "about:blank"; 
             }
         });
     }, 100);
