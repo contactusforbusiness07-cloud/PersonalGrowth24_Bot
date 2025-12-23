@@ -618,32 +618,35 @@
                     <div class="live-badge">
                         <div class="live-dot"></div> LIVE ARENA
                     </div>
-                    <div class="sync-timer">SYNC IN 04:59</div>
+                    <div class="sync-timer">SYNC IN <span id="sync-countdown">05:00</span></div>
                 </div>
 
                 <div class="podium-stage">
                     <div class="podium-player p-rank-2">
-                        <div class="p-avatar">
-                            <img src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
+                        <div class="p-avatar-box">
+                            <img id="podium-p2-img" src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge">#2</div>
                         </div>
-                        <div class="p-name" id="podium-p2-name">--</div>
+                        <div class="p-name" id="podium-p2-name">Loading...</div>
                         <div class="p-score" id="podium-p2-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-1">
                         <div class="p-crown"><i class="fa-solid fa-crown"></i></div>
-                        <div class="p-avatar">
-                            <img src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140037.png'">
+                        <div class="p-avatar-box main-glitch">
+                            <img id="podium-p1-img" src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge gold">#1</div>
                         </div>
-                        <div class="p-name" id="podium-p1-name" style="color:var(--arena-gold)">--</div>
-                        <div class="p-score" id="podium-p1-score">0</div>
+                        <div class="p-name gold-text" id="podium-p1-name">Loading...</div>
+                        <div class="p-score gold-text" id="podium-p1-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-3">
-                        <div class="p-avatar">
-                            <img src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140047.png'">
+                        <div class="p-avatar-box">
+                            <img id="podium-p3-img" src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge">#3</div>
                         </div>
-                        <div class="p-name" id="podium-p3-name">--</div>
+                        <div class="p-name" id="podium-p3-name">Loading...</div>
                         <div class="p-score" id="podium-p3-score">0</div>
                     </div>
                 </div>
@@ -652,12 +655,17 @@
                     </div>
 
                 <div class="user-sticky-rank">
-                    <div class="my-rank-info">
-                        <h4 id="my-rank-val">#--</h4>
-                        <p>CURRENT RANK</p>
+                    <div class="usr-left">
+                        <img id="sticky-user-img" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                        <div class="my-rank-info">
+                            <h4 id="my-rank-val">#--</h4>
+                            <p>YOU</p>
+                        </div>
                     </div>
-                    <div class="gap-indicator" id="gap-val">CALCULATING...</div>
-                    <button class="btn-sm" style="background:var(--arena-cyan); color:#000; font-weight:800;" onclick="navigateTo('tasks')">BOOST</button>
+                    <div class="usr-right">
+                        <div class="gap-indicator" id="gap-val">CALCULATING...</div>
+                        <i class="fa-solid fa-caret-up" style="color:#00f260"></i>
+                    </div>
                 </div>
             </section>
 
