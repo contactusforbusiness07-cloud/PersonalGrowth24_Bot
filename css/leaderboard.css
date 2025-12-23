@@ -1,161 +1,120 @@
-/* css/leaderboard.css - NEON NEXUS ARENA */
+/* --- NEON NEXUS ARENA --- */
 
-:root {
-    --arena-void: #020617;
-    --arena-cyan: #00f3ff;
-    --arena-gold: #ffd700;
-    --arena-purple: #bd00ff;
-    --arena-silver: #e2e8f0;
-    --arena-bronze: #cd7f32;
-    --glass-panel: rgba(15, 23, 42, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
-}
-
-/* ================= ARENA CONTAINER ================= */
-#leaderboard {
-    position: fixed; inset: 0;
-    width: 100%; height: 100%;
-    background: var(--arena-void);
-    overflow: hidden;
-    display: flex; flex-direction: column;
-    padding-top: 60px; /* Header Space */
-    padding-bottom: 80px; /* Bottom Nav Space */
-}
-
-/* Background Grid */
-#leaderboard::before {
-    content: ''; position: absolute; inset: -50%;
-    background-image: 
-        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
-    transform: perspective(500px) rotateX(60deg);
-    animation: gridFloor 20s linear infinite;
-    z-index: -1;
-}
-
-/* ================= 1. LIVE HUD HEADER ================= */
+/* 1. Arena Header */
 .arena-header {
-    padding: 0 20px;
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 15px; z-index: 10;
+    padding: 0 20px; margin-bottom: 20px;
+    margin-top: 10px;
 }
 .live-badge {
-    font-family: 'Orbitron'; font-size: 10px; color: var(--arena-cyan);
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(0, 243, 255, 0.1); padding: 4px 8px; border-radius: 4px;
-    border: 1px solid rgba(0, 243, 255, 0.3);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 800; color: #ff3333;
+    letter-spacing: 1px;
+    background: rgba(255, 51, 51, 0.1); padding: 4px 10px; border-radius: 20px;
+    border: 1px solid rgba(255, 51, 51, 0.2);
 }
 .live-dot {
-    width: 6px; height: 6px; background: var(--arena-cyan); border-radius: 50%;
-    box-shadow: 0 0 8px var(--arena-cyan); animation: blink 1s infinite;
+    width: 6px; height: 6px; background: #ff3333; border-radius: 50%;
+    box-shadow: 0 0 10px #ff3333; animation: pulseRed 1s infinite;
 }
-.sync-timer {
-    font-family: 'monospace'; font-size: 10px; color: #64748b;
-}
+.sync-timer { font-family: 'monospace'; color: #64748b; font-size: 11px; }
 
-/* ================= 2. THE PODIUM (TOP 3) ================= */
+/* 2. 3D Podium Stage */
 .podium-stage {
     display: flex; justify-content: center; align-items: flex-end;
-    height: 160px; margin-bottom: 20px;
-    position: relative; z-index: 5;
+    gap: 15px; margin-bottom: 30px; padding: 0 10px;
+    perspective: 1000px;
 }
 
 .podium-player {
     display: flex; flex-direction: column; align-items: center;
-    position: relative; transition: all 0.3s;
+    text-align: center; width: 30%; position: relative;
+    transition: transform 0.3s;
 }
 
-/* Rank 1 (Center) */
-.p-rank-1 { z-index: 10; transform: translateY(-10px) scale(1.1); margin: 0 15px; }
-.p-rank-1 .p-avatar { border-color: var(--arena-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
-.p-rank-1 .p-crown { opacity: 1; transform: translateY(-35px); }
-
-/* Rank 2 & 3 (Sides) */
-.p-rank-2 { z-index: 5; transform: scale(0.9); }
-.p-rank-2 .p-avatar { border-color: var(--arena-silver); }
-.p-rank-3 { z-index: 5; transform: scale(0.9); }
-.p-rank-3 .p-avatar { border-color: var(--arena-bronze); }
-
-.p-avatar {
-    width: 70px; height: 70px; 
-    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-    background: #000; border: 2px solid #fff;
-    position: relative;
+.p-avatar-box {
+    width: 60px; height: 60px; position: relative;
+    margin-bottom: 8px;
 }
-.p-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-.p-crown {
-    position: absolute; top: 0; color: var(--arena-gold); font-size: 20px;
-    filter: drop-shadow(0 0 10px var(--arena-gold));
-    animation: floatCrown 2s ease-in-out infinite;
+.p-avatar-box img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-.p-name { font-family: 'Rajdhani'; font-weight: 700; font-size: 12px; color: #fff; margin-top: 5px; }
-.p-score { font-family: 'Orbitron'; font-size: 10px; color: var(--arena-cyan); }
+.p-badge {
+    position: absolute; bottom: -5px; width: 20px; height: 20px;
+    background: #1e293b; color: #fff; font-size: 10px; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 1px solid #333; left: 50%; transform: translateX(-50%);
+}
 
-/* ================= 3. THE LIST (SCROLLABLE) ================= */
+.p-name { font-size: 11px; color: #cbd5e1; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.p-score { font-family: 'Orbitron', sans-serif; font-size: 10px; color: #64748b; margin-top: 2px; }
+
+/* Rank 1 Specifics */
+.p-rank-1 { transform: scale(1.2) translateY(-10px); z-index: 10; }
+.p-rank-1 .p-avatar-box img { border: 2px solid #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4); }
+.p-rank-1 .p-badge.gold { background: #ffd700; color: #000; border: none; }
+.p-crown { font-size: 18px; color: #ffd700; margin-bottom: 5px; animation: floatCrown 3s ease-in-out infinite; text-shadow: 0 0 10px #ffd700; }
+.gold-text { color: #ffd700 !important; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+/* Rank 2 & 3 Specifics */
+.p-rank-2 { transform: translateY(5px); }
+.p-rank-3 { transform: translateY(10px); }
+
+/* 3. List & Glass Cards */
 .rank-list-container {
-    flex: 1; overflow-y: auto; padding: 0 15px;
-    scrollbar-width: none; /* Hide scrollbar */
-    mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    padding: 0 20px 100px; /* Padding for sticky footer */
+    display: flex; flex-direction: column; gap: 10px;
 }
 
 .rank-card {
-    display: flex; align-items: center;
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.4));
-    border: 1px solid var(--glass-border);
-    margin-bottom: 10px; padding: 12px;
-    border-radius: 12px; position: relative;
-    backdrop-filter: blur(5px);
-    transition: transform 0.2s;
+    display: flex; align-items: center; padding: 12px 15px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px); border-radius: 12px;
 }
-/* Micro-interaction */
-.rank-card:active { transform: scale(0.98); background: rgba(255,255,255,0.05); }
+.rank-card.user-highlight {
+    background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.3);
+}
 
-.r-pos {
-    font-family: 'Orbitron'; font-size: 14px; color: #64748b; width: 30px;
-    text-align: center; font-weight: 700;
-}
-.r-avatar {
-    width: 40px; height: 40px; border-radius: 50%; margin: 0 12px;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-.r-info { flex: 1; }
-.r-name { font-family: 'Inter'; font-size: 13px; color: #fff; font-weight: 600; }
-.r-score { font-family: 'Orbitron'; font-size: 12px; color: var(--arena-gold); }
+.r-pos { width: 25px; font-family: 'Orbitron'; font-size: 12px; color: #64748b; font-weight: bold; }
+.r-avatar { width: 35px; height: 35px; border-radius: 50%; margin: 0 12px; object-fit: cover; }
+.r-info { flex-grow: 1; }
+.r-name { font-size: 13px; color: #f1f5f9; font-weight: 500; }
+.r-score { font-size: 11px; color: #94a3b8; font-family: 'monospace'; }
 
-/* ================= 4. NATIVE AD (STEALTH MODE) ================= */
-/* Looks exactly like a rank card, but highlights slightly */
+/* 4. Native Ad Protocol */
 .rank-card.native-ad {
-    background: linear-gradient(90deg, rgba(189, 0, 255, 0.1), rgba(15, 23, 42, 0.4));
-    border-left: 3px solid var(--arena-purple);
-    animation: adPulse 4s infinite;
+    background: linear-gradient(90deg, rgba(234, 179, 8, 0.1), rgba(15, 23, 42, 0.8));
+    border: 1px dashed rgba(234, 179, 8, 0.3);
+    cursor: pointer;
 }
-.rank-card.native-ad .r-pos { color: var(--arena-purple); font-size: 10px; } /* Shows "PRO" instead of number */
-.rank-card.native-ad .r-score { color: #fff; font-size: 10px; opacity: 0.8; } 
+.btn-boost-ad {
+    background: #eab308; color: #000; font-size: 10px; font-weight: 800;
+    padding: 4px 10px; border-radius: 4px; border: none; font-family: 'Orbitron';
+}
 
-/* ================= 5. STICKY USER FOOTER ================= */
+/* 5. Sticky Footer */
 .user-sticky-rank {
-    position: absolute; bottom: 80px; left: 10px; right: 10px;
+    position: fixed; bottom: 85px; left: 20px; right: 20px;
     background: rgba(2, 6, 23, 0.95);
-    border: 1px solid var(--arena-cyan);
+    border: 1px solid #00f3ff;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
     border-radius: 16px; padding: 12px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0, 243, 255, 0.1);
-    z-index: 50;
-    backdrop-filter: blur(10px);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 999; backdrop-filter: blur(20px);
 }
-.my-rank-info h4 { margin: 0; font-family: 'Orbitron'; font-size: 12px; color: var(--arena-cyan); }
-.my-rank-info p { margin: 0; font-size: 10px; color: #94a3b8; }
-.gap-indicator {
-    font-size: 10px; color: var(--arena-gold); font-weight: 700;
-    animation: slideUp 2s infinite;
-}
+.usr-left { display: flex; align-items: center; gap: 12px; }
+.usr-left img { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #00f3ff; object-fit: cover; }
+.my-rank-info h4 { font-family: 'Orbitron'; color: #00f3ff; margin: 0; font-size: 14px; }
+.my-rank-info p { font-size: 9px; color: #64748b; margin: 0; letter-spacing: 1px; }
 
-/* ================= ANIMATIONS ================= */
-@keyframes gridFloor { 0% { background-position: 0 0; } 100% { background-position: 0 40px; } }
-@keyframes floatCrown { 0%, 100% { transform: translateY(-35px); } 50% { transform: translateY(-40px); } }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-@keyframes adPulse { 0%, 100% { box-shadow: inset 0 0 0 transparent; } 50% { box-shadow: inset 0 0 20px rgba(189, 0, 255, 0.1); } }
-@keyframes slideUp { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-2px); opacity: 1; } }
+.usr-right { text-align: right; }
+.gap-indicator { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
+
+/* Animations */
+@keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+@keyframes floatCrown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
