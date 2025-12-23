@@ -14,7 +14,7 @@ const PROMO_CONFIG = {
     reward: 500
 };
 
-// --- 2. TASK LIST (Telegram, Insta, etc.) ---
+// --- 2. TASK LIST (All 8 Channels + Extras) ---
 // Telegram Tasks ke liye 'channel_id' wo username hai jisme Bot Admin hai.
 const ALL_TASKS = [
     { 
@@ -33,6 +33,55 @@ const ALL_TASKS = [
         url: 'https://t.me/English_Speaking_Grammar_Shots', 
         reward: 1000 
     },
+    { 
+        id: 'tg_upsc_notes', 
+        type: 'telegram',
+        name: 'UPSC Notes Official', 
+        channel_id: '@UPSC_Notes_Official', 
+        url: 'https://t.me/UPSC_Notes_Official', 
+        reward: 1000 
+    },
+    { 
+        id: 'tg_upsc_quiz', 
+        type: 'telegram',
+        name: 'UPSC Quiz Vault', 
+        channel_id: '@UPSC_Quiz_Vault', 
+        url: 'https://t.me/UPSC_Quiz_Vault', 
+        reward: 1000 
+    },
+    { 
+        id: 'tg_ias_prep', 
+        type: 'telegram',
+        name: 'IAS Prep Quiz Zone', 
+        channel_id: '@IAS_PrepQuiz_Zone', 
+        url: 'https://t.me/IAS_PrepQuiz_Zone', 
+        reward: 1000 
+    },
+    { 
+        id: 'tg_tourism', 
+        type: 'telegram',
+        name: 'Ministry of Tourism', 
+        channel_id: '@MinistryOfTourism', 
+        url: 'https://t.me/MinistryOfTourism', 
+        reward: 1000 
+    },
+    { 
+        id: 'tg_finance', 
+        type: 'telegram',
+        name: 'Personal Finance', 
+        channel_id: '@PersonalFinanceWithShiv', 
+        url: 'https://t.me/PersonalFinanceWithShiv', 
+        reward: 1000 
+    },
+    { 
+        id: 'tg_schemes', 
+        type: 'telegram',
+        name: 'Govt Schemes India', 
+        channel_id: '@GovernmentSchemesIndia', 
+        url: 'https://t.me/GovernmentSchemesIndia', 
+        reward: 1000 
+    },
+    // --- Additional Promo Tasks (Instagram/Posts) ---
     { 
         id: 'insta_follow', 
         type: 'instagram',
@@ -110,8 +159,8 @@ function renderTasks() {
         `;
         listContainer.appendChild(card);
 
-        // Inject Native Ad after 2nd item
-        if (index === 1) {
+        // Inject Native Ad after 4th item (Beech mein natural lagega)
+        if (index === 3) {
             renderNativeAd(listContainer);
         }
     });
@@ -329,4 +378,3 @@ function completeTask(taskId, reward, btn) {
         showConfirmButton: false, background: '#020617', color: '#fff'
     });
 }
-
