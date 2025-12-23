@@ -1,17 +1,17 @@
-/* css/games.css - FULL CODE WITH IMAGE CENTERING */
+/* css/games.css - ORIGINAL DESIGN RESTORED */
 
-/* 1. Games Container */
+/* 1. Games Container Spacing */
 #games {
     padding-top: 20px;
-    padding-bottom: 90px;
+    padding-bottom: 90px; /* Space for bottom nav */
     display: flex;
     flex-direction: column;
     height: 100vh;
     box-sizing: border-box;
-    overflow: hidden; /* Prevent scrolling within game */
+    overflow: hidden; 
 }
 
-/* 2. Native Ad Placeholder */
+/* 2. Native Ad Placeholder (Top) */
 .native-ad-placeholder {
     margin: 0 20px 15px;
     background: linear-gradient(90deg, rgba(234, 179, 8, 0.15), rgba(2, 6, 23, 0.8));
@@ -55,15 +55,17 @@
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-/* 4. TAP ARENA (The Circle) */
+/* 4. TAP ARENA (The Main Circle Area) */
 .tap-arena {
     position: relative;
     width: 280px;
     height: 280px;
-    margin: 20px auto;
-    display: flex;             /* Centering Magic */
-    justify-content: center;   /* Horizontal Center */
-    align-items: center;       /* Vertical Center */
+    margin: 20px auto; /* Auto margin centers it horizontally */
+    border-radius: 50%;
+    /* Critical for centering the coin inside */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* 5. CYBER RING (Background Animation) */
@@ -78,13 +80,22 @@
     z-index: 1;
 }
 
-/* 6. MAIN COIN (Fixed Alignment) */
-.main-coin {
-    width: 80%;       /* Circle ke andar fit hoga */
-    height: 80%;
-    border-radius: 50%;
-    object-fit: cover;
+/* 6. COIN CONTAINER & MAIN COIN (Critical Fix) */
+.coin-container {
+    position: relative;
+    width: 85%; /* Slightly smaller than arena */
+    height: 85%;
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-coin {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover; /* Ensures image fills circle without stretching */
     cursor: pointer;
     transition: transform 0.1s;
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
@@ -101,7 +112,7 @@
     justify-content: space-between;
     padding: 0 10px;
     z-index: 20;
-    pointer-events: none; /* Let clicks pass through container */
+    pointer-events: none; 
 }
 .hitech-icon-btn {
     width: 50px; height: 50px;
@@ -112,7 +123,7 @@
     color: #fff;
     font-size: 18px;
     position: relative;
-    pointer-events: auto; /* Enable clicks on buttons */
+    pointer-events: auto;
     transition: transform 0.2s;
 }
 .hitech-icon-btn:active { transform: scale(0.9); }
@@ -130,9 +141,9 @@
     border: 1px solid #333;
 }
 
-/* 8. Energy Control Panel */
+/* 8. Energy Control Panel (Bottom) */
 .energy-control-panel {
-    margin-top: auto; /* Push to bottom */
+    margin-top: auto; /* Pushes it to the bottom */
     padding: 0 25px;
 }
 .energy-info {
@@ -171,7 +182,7 @@
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Floating Score */
+/* Floating Score Animation */
 .floating-score {
     position: fixed;
     color: #fff;
@@ -186,4 +197,3 @@
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-50px); }
 }
-
