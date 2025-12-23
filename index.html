@@ -614,17 +614,50 @@
 
 
             <section id="leaderboard" class="page-section hidden">
-                <div class="metaverse-container">
-                    <div class="cosmos-grid"></div>
-                    <div class="energy-fog"></div>
+                <div class="arena-header">
+                    <div class="live-badge">
+                        <div class="live-dot"></div> LIVE ARENA
+                    </div>
+                    <div class="sync-timer">SYNC IN 04:59</div>
+                </div>
 
-                    <div class="arena-hud">
-                        <div class="hud-title">LIVE COMPETITION PROTOCOL // <span class="pulse-text">ACTIVE</span></div>
-                        <div class="hud-timer">NEXT SYNC: <span id="sync-timer">03:45</span></div>
+                <div class="podium-stage">
+                    <div class="podium-player p-rank-2">
+                        <div class="p-avatar">
+                            <img src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
+                        </div>
+                        <div class="p-name" id="podium-p2-name">--</div>
+                        <div class="p-score" id="podium-p2-score">0</div>
                     </div>
 
-                    <div id="arena-stage" class="arena-stage">
+                    <div class="podium-player p-rank-1">
+                        <div class="p-crown"><i class="fa-solid fa-crown"></i></div>
+                        <div class="p-avatar">
+                            <img src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140037.png'">
                         </div>
+                        <div class="p-name" id="podium-p1-name" style="color:var(--arena-gold)">--</div>
+                        <div class="p-score" id="podium-p1-score">0</div>
+                    </div>
+
+                    <div class="podium-player p-rank-3">
+                        <div class="p-avatar">
+                            <img src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140047.png'">
+                        </div>
+                        <div class="p-name" id="podium-p3-name">--</div>
+                        <div class="p-score" id="podium-p3-score">0</div>
+                    </div>
+                </div>
+
+                <div class="rank-list-container" id="rank-list-feed">
+                    </div>
+
+                <div class="user-sticky-rank">
+                    <div class="my-rank-info">
+                        <h4 id="my-rank-val">#--</h4>
+                        <p>CURRENT RANK</p>
+                    </div>
+                    <div class="gap-indicator" id="gap-val">CALCULATING...</div>
+                    <button class="btn-sm" style="background:var(--arena-cyan); color:#000; font-weight:800;" onclick="navigateTo('tasks')">BOOST</button>
                 </div>
             </section>
 
@@ -880,7 +913,9 @@
     <script src="js/wallet.js"></script>
     <script src="js/tasks.js"></script>
     <script src="js/games.js"></script>
-    <script src="js/leaderboard.js"></script> <script src="js/pro-profile.js"></script>
+    <script src="js/leaderboard.js"></script>
+
+    <script src="js/pro-profile.js"></script>
     <script src="js/pro-refer.js"></script>
     <script src="js/pro-brand.js"></script>
     <script src="js/pro-contact.js"></script>
