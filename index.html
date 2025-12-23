@@ -95,8 +95,16 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
+
+        /* Ban Overlay Style */
+        #ban-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.98); z-index: 999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; backdrop-filter: blur(10px);
+        }
     </style>
-    </head>
+</head>
 
 <body>
 
@@ -139,6 +147,7 @@
             }
         })();
     </script>
+
     <div id="app-container">
         
         <header class="app-header glass-effect">
@@ -208,7 +217,6 @@
                 </div>
             </div>
 
-
             <div id="page-refer" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
                 
@@ -267,7 +275,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div id="page-brand" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
@@ -388,7 +395,6 @@
                 </div>
             </div>
 
-
             <div id="page-contact" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
                 
@@ -507,7 +513,6 @@
                 </div>
             </div>
 
-
             <div id="page-info" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 50px;">
                 
@@ -527,7 +532,6 @@
                     </div>
                 </div>
             </div>
-
 
             <section id="home" class="page-section active">
                 
@@ -612,7 +616,6 @@
                 </div>
             </div>
 
-
             <section id="leaderboard" class="page-section hidden">
                 <div class="arena-header">
                     <div class="live-badge">
@@ -669,7 +672,6 @@
                 </div>
             </section>
 
-
             <section id="tasks" class="page-section hidden">
                 <div class="section-header">
                     <h2>Mission Control</h2>
@@ -677,34 +679,7 @@
                 </div>
                 
                 <div class="watch-earn-hero">
-                    <div class="we-card-inner">
-                        <div class="play-icon-box">
-                            <i class="fa-brands fa-youtube"></i>
-                        </div>
-                        <div class="we-content">
-                            <h4>Watch Premium Stream</h4>
-                            <p>30 SECONDS • HIGH PRIORITY</p>
-                            <div class="progress-bar-container hidden" id="ad-progress-container">
-                                <div class="progress-bar" id="ad-progress-bar"></div>
-                            </div>
-                        </div>
-                        <div class="reward-pill" onclick="startWatchTask(this)">
-                            +500 <i class="fa-solid fa-coins"></i>
-                        </div>
                     </div>
-                </div>
-
-                <div class="native-ad-card" onclick="window.open('https://google.com', '_blank')">
-                    <div class="ad-badge">RECOMMENDED</div>
-                    <div class="ad-icon-box">
-                        <i class="fa-solid fa-gift"></i>
-                    </div>
-                    <div class="ad-content">
-                        <h4>Daily Bonus Mission</h4>
-                        <p>Register to unlock VIP status</p>
-                    </div>
-                    <div class="ad-action-btn">OPEN</div>
-                </div>
 
                 <div class="task-divider">AVAILABLE CHANNELS</div>
 
@@ -714,36 +689,11 @@
                     </div>
                 </div>
 
-                <div class="task-divider">SYSTEM OPERATIONS</div>
-
-                <div class="tasks-list">
-                    <div class="task-card">
-                        <div class="task-icon">
-                            <i class="fa-solid fa-users" style="color:#22c55e"></i>
-                        </div>
-                        <div class="task-info">
-                            <h4>Invite New Agent</h4>
-                            <div class="reward-badge">+1000 Coins</div>
-                        </div>
-                        <button class="btn-join" onclick="openInternalPage('page-refer')">START</button>
-                    </div>
-
-                    <div class="task-card">
-                        <div class="task-icon">
-                            <i class="fa-solid fa-file-invoice" style="color:#a855f7"></i>
-                        </div>
-                        <div class="task-info">
-                            <h4>Generate AI CV</h4>
-                            <div class="reward-badge">+500 Coins</div>
-                        </div>
-                        <button class="btn-join" onclick="navigateTo('home')">OPEN</button>
-                    </div>
-                </div>
-
-                <div style="height: 40px;"></div> </section>
+                <div style="height: 40px;"></div> 
+            </section>
 
             <section id="games" class="page-section hidden">
-                <div class="native-ad-placeholder">
+                <div id="game-native-ad" class="native-ad-placeholder" onclick="window.open('https://www.binance.com', '_blank')">
                     <span><i class="fa-solid fa-ad"></i> SPONSORED SYSTEM</span>
                 </div>
 
@@ -761,20 +711,23 @@
                 
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
+                    
                     <div class="cyber-ring"></div> 
                     
-                    <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin" oncontextmenu="return false;">
+                    <div class="coin-container">
+                        <img src="assets/coin_main.jpg" alt="Tap Coin" id="tap-coin" class="main-coin" draggable="false" oncontextmenu="return false;">
+                    </div>
 
                     <div class="game-floating-actions">
                         
-                        <div class="hitech-icon-btn booster" onclick="activatePower('booster')">
+                        <div class="hitech-icon-btn booster" onclick="handlePowerUp('booster')">
                             <i class="fa-solid fa-rocket"></i>
-                            <span id="btn-booster-badge" class="icon-badge">3/8</span>
+                            <span id="btn-booster-badge" class="icon-badge">--/9</span>
                         </div>
 
-                        <div class="hitech-icon-btn refill" onclick="activatePower('refill')">
+                        <div class="hitech-icon-btn refill" onclick="handlePowerUp('refill')">
                             <i class="fa-solid fa-bolt-lightning"></i>
-                            <span id="btn-refill-badge" class="icon-badge">3/8</span>
+                            <span id="btn-refill-badge" class="icon-badge">--/9</span>
                         </div>
 
                     </div>
@@ -790,9 +743,19 @@
                     </div>
                     
                     <div class="security-badge">
-                        <span><i class="fa-solid fa-shield-halved"></i> SECURED</span>
+                        <span id="security-status"><i class="fa-solid fa-shield-halved"></i> SECURED</span>
                         <span class="text-green"><i class="fa-solid fa-check-circle"></i> ANTI-CHEAT ACTIVE</span>
                     </div>
+                </div>
+
+                <div id="ban-overlay" class="hidden">
+                    <i class="fa-solid fa-ban" style="font-size:50px; color:#ef4444; margin-bottom:15px;"></i>
+                    <h2 style="color:#ef4444; font-family:'Orbitron'; margin-bottom: 5px;">ACCESS DENIED</h2>
+                    <p style="color:#cbd5e1; padding:0 30px; font-size:12px; margin-bottom: 15px;">
+                        Suspicious activity detected (Auto-Clicker/Script).<br>
+                        Your mining protocol is temporarily disabled.
+                    </p>
+                    <div id="ban-timer" style="font-size:24px; font-weight:bold; color:#fff;">05:00</div>
                 </div>
             </section>
 
@@ -803,7 +766,6 @@
                 </div>
                 <div class="gm-iframe-container"><iframe id="game-frame" src="" frameborder="0"></iframe></div>
             </div>
-
 
             <section id="wallet" class="page-section hidden">
                 
