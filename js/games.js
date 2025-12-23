@@ -1,223 +1,87 @@
-/* js/games.js - Protected Game Engine with Dual Boosters */
+/* js/games.js - TAP TAP ENGINE (Instant Wallet Update) */
 
-const EARN_PER_TAP = 2;
+let energy = 1000;
 const MAX_ENERGY = 1000;
-const REFILL_RATE = 3; 
-
-// Anti-Cheat Limits
-const MAX_CPS = 14; 
-const WARNING_THRESHOLD = 3;  
-const BAN_DURATION_MS = 5 * 60 * 1000; 
-
-let currentEnergy = MAX_ENERGY;
-let tapTimestamps = [];
-let warningCount = 0;
-let isBanned = false;
-let banEndTime = 0;
-
-// Boost State
-let activeMultiplier = 1; 
-let boostEndTime = 0;
-
-// Limits (3 Free + 5 Ads)
-const LIMITS = {
-    booster: { free: 3, ad: 5 },
-    refill: { free: 3, ad: 5 }
-};
+const RECHARGE_RATE = 2; // Energy per second
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadGameState();
-    updateBoosterUI(); // Init buttons
-    
-    const coinBtn = document.getElementById('tap-coin');
-    if(coinBtn) {
-        coinBtn.addEventListener('contextmenu', (e) => e.preventDefault());
-        coinBtn.setAttribute('draggable', 'false');
-        coinBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleTap(e); });
-        coinBtn.addEventListener('pointermove', handleTilt);
-        coinBtn.addEventListener('pointerup', resetTilt);
-        coinBtn.addEventListener('pointerleave', resetTilt);
-    }
-    setInterval(gameLoop, 1000);
+    initTapGame();
 });
 
-function gameLoop() {
-    if (isBanned) {
-        const remaining = banEndTime - Date.now();
-        if (remaining <= 0) liftBan();
-        else updateBanUI(remaining);
-        return;
+function initTapGame() {
+    const coin = document.getElementById('tap-coin');
+    if(coin) {
+        // Fix: Remove old listeners to prevent duplicates if any
+        const newCoin = coin.cloneNode(true);
+        coin.parentNode.replaceChild(newCoin, coin);
+        
+        // Multi-touch support
+        newCoin.addEventListener('pointerdown', handleTap);
     }
     
-    // Check Turbo Boost Expiry
-    if (activeMultiplier > 1 && Date.now() > boostEndTime) {
-        activeMultiplier = 1;
-        Swal.fire({ toast: true, position: 'top', icon: 'info', title: 'Turbo Ended', timer: 1500, showConfirmButton: false, background: '#0f172a', color:'#fff' });
-    }
-
-    if (currentEnergy < MAX_ENERGY) {
-        currentEnergy = Math.min(MAX_ENERGY, currentEnergy + REFILL_RATE);
-        updateEnergyUI();
-        saveGameState();
-    }
+    setInterval(rechargeEnergy, 1000);
 }
 
 function handleTap(e) {
-    if (isBanned) return;
+    if (energy <= 0) return;
 
-    // Anti-Cheat
-    const now = Date.now();
-    tapTimestamps = tapTimestamps.filter(t => now - t < 1000);
-    tapTimestamps.push(now);
-    if (tapTimestamps.length > MAX_CPS) { triggerWarning(); return; }
-
-    if (currentEnergy < EARN_PER_TAP) { hapticFeedback('error'); return; }
-
-    // Success
-    currentEnergy -= EARN_PER_TAP;
+    // 1. Calculate Earnings (Rank based multiplier logic can be added here)
+    const earnings = 5; 
+    energy -= 2;
     updateEnergyUI();
 
-    // CALC EARNINGS (With Multiplier)
-    const finalEarn = EARN_PER_TAP * activeMultiplier;
+    // 2. 🔥 INSTANT WALLET UPDATE
+    if(window.addCoins) window.addCoins(earnings);
 
-    let bal = parseFloat(localStorage.getItem('local_balance') || "0");
-    bal += finalEarn;
-    localStorage.setItem('local_balance', bal);
-    if(window.currentUser) window.currentUser.balance = bal;
-    
-    updateDisplay();
-    spawnFloatingText(e.clientX, e.clientY, finalEarn);
-    hapticFeedback('light');
-    tiltCoin(e);
+    // 3. Visual Effects
+    showFloatingText(e.clientX, e.clientY, `+${earnings}`);
+    animateCoinPress(e.target);
 }
 
-// ... [Keep Anti-Cheat & Tilt Functions SAME as previous] ...
-function triggerWarning() {
-    warningCount++; hapticFeedback('heavy');
-    if (warningCount >= WARNING_THRESHOLD) activateBan();
-    else Swal.fire({ icon: 'warning', title: 'SLOW DOWN!', toast: true, position: 'top', timer: 1500, showConfirmButton: false, background: '#ef4444', color: '#fff' });
+function showFloatingText(x, y, text) {
+    const el = document.createElement('div');
+    el.innerText = text;
+    el.className = 'floating-score';
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    document.body.appendChild(el);
+
+    setTimeout(() => { el.remove(); }, 800);
 }
-function activateBan() {
-    isBanned = true; banEndTime = Date.now() + BAN_DURATION_MS; localStorage.setItem('banEndTime', banEndTime);
-    const coin = document.getElementById('tap-coin'); if(coin) coin.classList.add('coin-banned');
-    let overlay = document.getElementById('ban-msg');
-    if(!overlay) { overlay = document.createElement('div'); overlay.id = 'ban-msg'; overlay.className = 'ban-overlay'; document.querySelector('.tap-arena').appendChild(overlay); overlay.style.display = 'block'; }
+
+function animateCoinPress(coin) {
+    coin.style.transform = "scale(0.95)";
+    setTimeout(() => coin.style.transform = "scale(1)", 50);
 }
-function liftBan() {
-    isBanned = false; warningCount = 0; localStorage.removeItem('banEndTime');
-    const coin = document.getElementById('tap-coin'); if(coin) coin.classList.remove('coin-banned');
-    const overlay = document.getElementById('ban-msg'); if(overlay) overlay.style.display = 'none';
-}
-function updateBanUI(ms) {
-    const overlay = document.getElementById('ban-msg');
-    if(overlay) { const mins = Math.floor(ms / 60000); const secs = Math.floor((ms % 60000) / 1000); overlay.innerHTML = `<i class="fa-solid fa-ban"></i> SYSTEM LOCK<br>${mins}:${secs < 10 ? '0'+secs : secs}`; }
-}
-function tiltCoin(e) {
-    const coin = e.target; const rect = coin.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2;
-    const rotateX = (y / rect.height) * -25; const rotateY = (x / rect.width) * 25;
-    coin.style.transform = `perspective(500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.95)`;
-    setTimeout(() => coin.style.transform = `perspective(500px) rotateX(0) rotateY(0) scale(1)`, 100);
-}
-function handleTilt(e) { if(isBanned) return; const coin = e.target; const rect = coin.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; const rotateX = (y / rect.height) * -15; const rotateY = (x / rect.width) * 15; coin.style.transform = `perspective(500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`; }
-function resetTilt(e) { e.target.style.transform = `perspective(500px) rotateX(0) rotateY(0)`; }
-function loadGameState() {
-    const saved = localStorage.getItem('gameEnergy'); const time = localStorage.getItem('lastEnergyTime');
-    if (saved && time) { const diff = Math.floor((Date.now() - parseInt(time)) / 1000); currentEnergy = Math.min(MAX_ENERGY, parseInt(saved) + (diff * REFILL_RATE)); }
-    const savedBan = localStorage.getItem('banEndTime'); if (savedBan && parseInt(savedBan) > Date.now()) { activateBan(); banEndTime = parseInt(savedBan); }
-    
-    // Load Counts
-    const savedLimits = localStorage.getItem('boostLimits');
-    if(savedLimits) {
-        const parsed = JSON.parse(savedLimits);
-        LIMITS.booster = parsed.booster;
-        LIMITS.refill = parsed.refill;
+
+function rechargeEnergy() {
+    if (energy < MAX_ENERGY) {
+        energy += RECHARGE_RATE;
+        if(energy > MAX_ENERGY) energy = MAX_ENERGY;
+        updateEnergyUI();
     }
-    updateBoosterUI();
-    updateDisplay(); updateEnergyUI();
 }
-function saveGameState() { localStorage.setItem('gameEnergy', currentEnergy); localStorage.setItem('lastEnergyTime', Date.now()); }
-function updateDisplay() { const el = document.getElementById('display-balance'); const bal = localStorage.getItem('local_balance') || "0"; if(el) el.innerText = Math.floor(parseFloat(bal)).toLocaleString(); }
-function updateEnergyUI() { const txt = document.getElementById('energy-text'); const bar = document.getElementById('energy-fill'); if(txt) txt.innerText = `${Math.floor(currentEnergy)} / ${MAX_ENERGY}`; if(bar) bar.style.width = `${(currentEnergy / MAX_ENERGY) * 100}%`; }
-function spawnFloatingText(x, y, amount) {
-    const el = document.createElement('div'); el.className = 'floating-text'; el.innerText = `+${amount}`;
-    if(activeMultiplier > 1) { el.style.color = "#4ade80"; el.innerText += " 🚀"; } // Visual for Turbo
-    if(!x) { const rect = document.getElementById('tap-coin').getBoundingClientRect(); x = rect.left + rect.width/2; y = rect.top + rect.height/2; }
-    el.style.left = `${x}px`; el.style.top = `${y}px`; document.body.appendChild(el); setTimeout(() => el.remove(), 800);
-}
-function hapticFeedback(style) { if (window.Telegram?.WebApp?.HapticFeedback) { if(style === 'error') window.Telegram.WebApp.HapticFeedback.notificationOccurred('error'); else window.Telegram.WebApp.HapticFeedback.impactOccurred(style); } else if (navigator.vibrate) { if(style === 'heavy') navigator.vibrate(200); else navigator.vibrate(10); } }
 
-// ============================
-// 🚀 NEW BOOSTER LOGIC
-// ============================
-
-// 1. Trigger Function (Called from HTML)
-window.activatePower = function(type) {
-    const limitObj = LIMITS[type];
+function updateEnergyUI() {
+    const fill = document.getElementById('energy-fill');
+    const text = document.getElementById('energy-text');
     
-    // Check Free
-    if (limitObj.free > 0) {
-        limitObj.free--;
-        saveLimits();
-        applyEffect(type);
-        updateBoosterUI();
-    } 
-    // Check Ads
-    else if (limitObj.ad > 0) {
-        watchAdForPower(type);
-    } 
-    // None Left
-    else {
-        Swal.fire({ icon: 'error', title: 'Daily Limit Reached', text: 'Come back tomorrow!', background: '#0f172a', color: '#fff' });
+    if(fill) fill.style.width = `${(energy / MAX_ENERGY) * 100}%`;
+    if(text) text.innerText = `${Math.floor(energy)} / ${MAX_ENERGY}`;
+}
+
+// Power Ups (Placeholder Logic)
+window.activatePower = function(type) {
+    Swal.fire({
+        title: 'Activated!',
+        text: type === 'booster' ? '2x Multiplier Active' : 'Energy Refilled',
+        icon: 'success',
+        background: '#020617', color: '#fff',
+        timer: 1500, showConfirmButton: false
+    });
+    
+    if(type === 'refill') {
+        energy = MAX_ENERGY;
+        updateEnergyUI();
     }
 };
-
-function watchAdForPower(type) {
-    // Ad Simulation
-    const div = document.createElement('div'); div.className = 'ad-overlay';
-    div.innerHTML = `<div style="text-align:center; color:white;"><div class="ad-timer-circle" id="ad-spinner">15</div><h3>LOADING POWER...</h3><button id="claim-btn" style="display:none; margin-top:20px; padding:10px 20px; background:#22c55e; border:none; border-radius:5px;" onclick="finishPowerAd('${type}')">CLAIM</button></div>`;
-    document.body.appendChild(div);
-    let t = 15;
-    const interval = setInterval(() => { t--; div.querySelector('#ad-spinner').innerText = t; if(t<=0) { clearInterval(interval); div.querySelector('#claim-btn').style.display = 'inline-block'; }}, 1000);
-    
-    window.finishPowerAd = function(tType) {
-        div.remove();
-        LIMITS[tType].ad--;
-        saveLimits();
-        applyEffect(tType);
-        updateBoosterUI();
-    };
-}
-
-function applyEffect(type) {
-    if (type === 'booster') {
-        activeMultiplier = 5; // 5x Points
-        boostEndTime = Date.now() + 20000; // 20 Seconds
-        Swal.fire({ icon: 'success', title: '🚀 TURBO ACTIVE!', text: '5x Points for 20s', timer: 1500, showConfirmButton: false, background: '#0f172a', color: '#fff' });
-    } 
-    else if (type === 'refill') {
-        currentEnergy = MAX_ENERGY;
-        updateEnergyUI();
-        Swal.fire({ icon: 'success', title: '🔋 REFILLED!', timer: 1500, showConfirmButton: false, background: '#0f172a', color: '#fff' });
-    }
-}
-
-function saveLimits() {
-    localStorage.setItem('boostLimits', JSON.stringify(LIMITS));
-}
-
-function updateBoosterUI() {
-    const bBtn = document.getElementById('btn-booster-badge');
-    const rBtn = document.getElementById('btn-refill-badge');
-    
-    if(bBtn) {
-        const bCount = LIMITS.booster.free > 0 ? LIMITS.booster.free : LIMITS.booster.ad;
-        const bIcon = LIMITS.booster.free > 0 ? '' : '📺 ';
-        bBtn.innerText = bIcon + bCount + "/8";
-    }
-    if(rBtn) {
-        const rCount = LIMITS.refill.free > 0 ? LIMITS.refill.free : LIMITS.refill.ad;
-        const rIcon = LIMITS.refill.free > 0 ? '' : '📺 ';
-        rBtn.innerText = rIcon + rCount + "/8";
-    }
-}
