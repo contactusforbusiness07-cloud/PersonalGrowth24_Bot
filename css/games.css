@@ -1,4 +1,4 @@
-/* css/games.css - LOCKED METAVERSE DESIGN + BIG COIN SIZE */
+/* css/games.css - LOCKED METAVERSE DESIGN + BIG COIN + RED GLOW */
 
 /* 1. GLOBAL LAYOUT LOCK */
 #games {
@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     padding-top: 60px;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
     box-sizing: border-box;
     z-index: 1;
     -webkit-user-select: none; user-select: none;
@@ -39,30 +39,26 @@
 }
 
 /* 3. DIGITAL HUD */
-.game-header { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 5px; z-index: 5; }
+.game-header { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 10px; z-index: 5; }
 .user-rank-badge { background: linear-gradient(90deg, #334155, #1e293b); padding: 4px 12px; border-radius: 20px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 5px; color: #cbd5e1; }
 .mining-hud { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 5px auto; padding: 5px 40px; background: linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(6,182,212,0.1) 100%); border-bottom: 2px solid rgba(6, 182, 212, 0.3); border-radius: 0 0 20px 20px; position: relative; }
 .mining-hud::before { content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 100%; border-left: 2px solid rgba(6, 182, 212, 0.3); border-top: 2px solid rgba(6, 182, 212, 0.3); border-top-left-radius: 10px; }
 .mining-hud::after { content: ''; position: absolute; top: 0; right: 0; width: 10px; height: 100%; border-right: 2px solid rgba(6, 182, 212, 0.3); border-top: 2px solid rgba(6, 182, 212, 0.3); border-top-right-radius: 10px; }
 .current-mining-label { font-family: 'Orbitron', sans-serif; font-size: 9px; color: #06b6d4; letter-spacing: 3px; margin-bottom: 5px; text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); }
-.big-gold-text { font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 30px rgba(6, 182, 212, 0.4); line-height: 1; }
+.big-gold-text { font-family: 'Orbitron', sans-serif; font-size: 52px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 30px rgba(6, 182, 212, 0.4); line-height: 1; }
 
-/* 4. TAP ARENA (SIZE INCREASED) */
+/* 4. TAP ARENA (SIZE BADA KIYA HAI) */
 .tap-arena { 
     flex-grow: 1; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    position: relative; 
-    z-index: 5; 
-    margin-bottom: 10px;
-    /* Removed max-height constraint to allow big size */
+    display: flex; justify-content: center; align-items: center; 
+    position: relative; z-index: 5; 
+    margin-bottom: 10px; 
 }
 
-/* Cyber Ring - BIG SIZE */
+/* Cyber Ring - INCREASED SIZE */
 .cyber-ring { 
     position: absolute; 
-    width: 310px; height: 310px; /* 🔥 INCREASED SIZE */
+    width: 340px; height: 340px; /* Bada kiya (Pehle 320px tha) */
     border-radius: 50%; 
     border: 1px dashed rgba(6, 182, 212, 0.2); 
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.05); 
@@ -72,32 +68,38 @@
 }
 .cyber-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 10px #06b6d4; }
 
-/* 🚨 RED GLOW STATE (For Ban) */
-.cyber-ring.danger-state {
-    border-color: #ef4444;
-    box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), inset 0 0 30px rgba(239, 68, 68, 0.4);
-    animation: pulseRed 0.8s ease-in-out infinite alternate;
-}
-.cyber-ring.danger-state::before { background: #ef4444; box-shadow: 0 0 20px #ef4444; }
-
 @keyframes spinSlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes pulseRed { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.03); } }
 
-/* Coin Image - BIG SIZE */
-.coin-container { 
-    width: 270px; height: 270px; /* 🔥 INCREASED SIZE */
-    display: flex; justify-content: center; align-items: center; z-index: 10; position: relative; 
-}
+/* Main Coin - INCREASED SIZE */
 .main-coin { 
-    width: 100%; height: 100%; 
+    width: 290px; height: 290px; /* Bada kiya (Pehle 270px tha) */
     border-radius: 50%; 
     filter: drop-shadow(0 0 35px rgba(234, 179, 8, 0.25)); 
     cursor: pointer; 
     transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    object-fit: cover; -webkit-user-drag: none; 
+    z-index: 10; 
+    -webkit-user-drag: none; 
+    object-fit: cover;
 }
 .main-coin:active { transform: scale(0.92); filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.6)); }
+
+/* Coin Container */
+.coin-container {
+    width: 290px; height: 290px;
+    display: flex; justify-content: center; align-items: center;
+    position: relative; z-index: 10;
+}
+
+/* 🚨 BAN EFFECTS (RED GLOW) */
+.cyber-ring.danger-state {
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), inset 0 0 30px rgba(239, 68, 68, 0.4);
+    animation: pulseRed 0.8s ease-in-out infinite alternate;
+}
+.cyber-ring.danger-state::before { background: #ef4444; box-shadow: 0 0 20px #ef4444; }
 .main-coin.banned { filter: grayscale(100%) brightness(0.4); pointer-events: none; }
+
+@keyframes pulseRed { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.03); } }
 
 /* 5. FLOATING NUMBERS */
 .floating-text { position: absolute; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 36px; color: #fff; -webkit-text-stroke: 1px #06b6d4; pointer-events: none; animation: floatUp 0.7s ease-out forwards; z-index: 20; }
@@ -113,23 +115,70 @@
 .text-green { color: #4ade80 !important; text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 .text-red-alert { color: #ef4444 !important; text-shadow: 0 0 15px red; animation: blink 0.5s infinite; }
 
-/* 7. FLOATING ICONS (Position Adjusted Downwards) */
-.game-floating-actions { 
-    position: absolute; 
-    bottom: 10px; /* 🔥 Moved lower as requested */
-    left: 20px; right: 20px; 
-    display: flex; justify-content: space-between; 
-    pointer-events: none; z-index: 15; 
+/* 7. NEW FLOATING ICONS (MOVED DOWN) */
+.game-floating-actions {
+    position: absolute;
+    bottom: 10px; /* 🔥 Thoda aur niche kar diya (Pehle 20px tha) */
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none; /* Let clicks pass through empty space */
+    z-index: 15;
 }
-.hitech-icon-btn { pointer-events: auto; width: 55px; height: 55px; border-radius: 50%; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: transform 0.1s; }
-.hitech-icon-btn:active { transform: scale(0.9); }
-.hitech-icon-btn.booster { border-color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
-.hitech-icon-btn.booster i { font-size: 20px; color: #4ade80; }
-.hitech-icon-btn.refill { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
-.hitech-icon-btn.refill i { font-size: 20px; color: #fbbf24; }
-.icon-badge { position: absolute; bottom: -8px; background: #0f172a; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 10px; font-family: 'Orbitron'; }
 
-/* 8. DYNAMIC TIMER OVERLAY (Injected by JS) */
+.hitech-icon-btn {
+    pointer-events: auto; /* Enable clicking on buttons */
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+}
+
+.hitech-icon-btn:active { transform: scale(0.9); }
+
+/* Left - Booster (Rocket) */
+.hitech-icon-btn.booster {
+    border-color: #4ade80; /* Green */
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+    animation: pulseGreen 2s infinite;
+}
+.hitech-icon-btn.booster i { font-size: 20px; color: #4ade80; }
+
+/* Right - Refill (Lightning) */
+.hitech-icon-btn.refill {
+    border-color: #fbbf24; /* Gold/Yellow */
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+    animation: pulseGold 2s infinite;
+}
+.hitech-icon-btn.refill i { font-size: 20px; color: #fbbf24; }
+
+/* Count Badge */
+.icon-badge {
+    position: absolute;
+    bottom: -8px;
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-family: 'Orbitron';
+}
+
+@keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+@keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
+@keyframes blink { 50% { opacity: 0.5; } }
+
+/* 8. TIMER STYLING (JS Inject karega) */
 .ban-timer-overlay {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     z-index: 25; text-align: center; pointer-events: none;
@@ -137,7 +186,5 @@
 .ban-icon { font-size: 40px; color: #ef4444; margin-bottom: 5px; text-shadow: 0 0 20px red; }
 .ban-countdown { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 0 15px #ef4444; letter-spacing: 2px; }
 .ban-text { font-family: 'Inter', sans-serif; font-size: 10px; color: #ef4444; letter-spacing: 2px; font-weight: 700; margin-top: 5px; }
+.hidden { display: none !important; }
 
-/* 9. OVERLAYS */
-#ban-overlay { display: none !important; }
-@keyframes blink { 50% { opacity: 0.5; } }
