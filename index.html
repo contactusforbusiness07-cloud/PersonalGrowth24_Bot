@@ -618,32 +618,35 @@
                     <div class="live-badge">
                         <div class="live-dot"></div> LIVE ARENA
                     </div>
-                    <div class="sync-timer">SYNC IN 04:59</div>
+                    <div class="sync-timer">SYNC IN <span id="sync-countdown">05:00</span></div>
                 </div>
 
                 <div class="podium-stage">
                     <div class="podium-player p-rank-2">
-                        <div class="p-avatar">
-                            <img src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
+                        <div class="p-avatar-box">
+                            <img id="podium-p2-img" src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge">#2</div>
                         </div>
-                        <div class="p-name" id="podium-p2-name">--</div>
+                        <div class="p-name" id="podium-p2-name">Loading...</div>
                         <div class="p-score" id="podium-p2-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-1">
                         <div class="p-crown"><i class="fa-solid fa-crown"></i></div>
-                        <div class="p-avatar">
-                            <img src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140037.png'">
+                        <div class="p-avatar-box main-glitch">
+                            <img id="podium-p1-img" src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge gold">#1</div>
                         </div>
-                        <div class="p-name" id="podium-p1-name" style="color:var(--arena-gold)">--</div>
-                        <div class="p-score" id="podium-p1-score">0</div>
+                        <div class="p-name gold-text" id="podium-p1-name">Loading...</div>
+                        <div class="p-score gold-text" id="podium-p1-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-3">
-                        <div class="p-avatar">
-                            <img src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140047.png'">
+                        <div class="p-avatar-box">
+                            <img id="podium-p3-img" src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="p-badge">#3</div>
                         </div>
-                        <div class="p-name" id="podium-p3-name">--</div>
+                        <div class="p-name" id="podium-p3-name">Loading...</div>
                         <div class="p-score" id="podium-p3-score">0</div>
                     </div>
                 </div>
@@ -652,12 +655,17 @@
                     </div>
 
                 <div class="user-sticky-rank">
-                    <div class="my-rank-info">
-                        <h4 id="my-rank-val">#--</h4>
-                        <p>CURRENT RANK</p>
+                    <div class="usr-left">
+                        <img id="sticky-user-img" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                        <div class="my-rank-info">
+                            <h4 id="my-rank-val">#--</h4>
+                            <p>YOU</p>
+                        </div>
                     </div>
-                    <div class="gap-indicator" id="gap-val">CALCULATING...</div>
-                    <button class="btn-sm" style="background:var(--arena-cyan); color:#000; font-weight:800;" onclick="navigateTo('tasks')">BOOST</button>
+                    <div class="usr-right">
+                        <div class="gap-indicator" id="gap-val">CALCULATING...</div>
+                        <i class="fa-solid fa-caret-up" style="color:#00f260"></i>
+                    </div>
                 </div>
             </section>
 
@@ -735,8 +743,7 @@
                 <div style="height: 40px;"></div> </section>
 
             <section id="games" class="page-section hidden">
-                
-                <div id="game-native-ad" class="native-ad-placeholder" onclick="window.open('https://www.binance.com', '_blank')">
+                <div class="native-ad-placeholder">
                     <span><i class="fa-solid fa-ad"></i> SPONSORED SYSTEM</span>
                 </div>
 
@@ -754,22 +761,22 @@
                 
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
-                    
                     <div class="cyber-ring"></div> 
                     
-                    <div class="coin-container">
-                        <img src="assets/coin_main.jpg" alt="Tap Coin" id="tap-coin" class="main-coin" draggable="false" oncontextmenu="return false;">
-                    </div>
+                    <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin" oncontextmenu="return false;">
 
                     <div class="game-floating-actions">
-                        <div class="hitech-icon-btn booster" onclick="handlePowerUp('booster')">
+                        
+                        <div class="hitech-icon-btn booster" onclick="activatePower('booster')">
                             <i class="fa-solid fa-rocket"></i>
-                            <span id="btn-booster-badge" class="icon-badge">--/9</span>
+                            <span id="btn-booster-badge" class="icon-badge">3/8</span>
                         </div>
-                        <div class="hitech-icon-btn refill" onclick="handlePowerUp('refill')">
+
+                        <div class="hitech-icon-btn refill" onclick="activatePower('refill')">
                             <i class="fa-solid fa-bolt-lightning"></i>
-                            <span id="btn-refill-badge" class="icon-badge">--/9</span>
+                            <span id="btn-refill-badge" class="icon-badge">3/8</span>
                         </div>
+
                     </div>
                 </div>
 
@@ -783,19 +790,9 @@
                     </div>
                     
                     <div class="security-badge">
-                        <span id="security-status"><i class="fa-solid fa-shield-halved"></i> SECURED</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> SECURED</span>
                         <span class="text-green"><i class="fa-solid fa-check-circle"></i> ANTI-CHEAT ACTIVE</span>
                     </div>
-                </div>
-
-                <div id="ban-overlay" class="hidden">
-                    <i class="fa-solid fa-ban" style="font-size:50px; color:#ef4444; margin-bottom:15px;"></i>
-                    <h2 style="color:#ef4444; font-family:'Orbitron'; margin-bottom: 5px;">ACCESS DENIED</h2>
-                    <p style="color:#cbd5e1; padding:0 30px; font-size:12px; margin-bottom: 15px;">
-                        Suspicious activity detected (Auto-Clicker/Script).<br>
-                        Your mining protocol is temporarily disabled.
-                    </p>
-                    <div id="ban-timer" style="font-size:24px; font-weight:bold; color:#fff;">05:00</div>
                 </div>
             </section>
 
@@ -984,3 +981,4 @@
     </script>
 </body>
 </html>
+
