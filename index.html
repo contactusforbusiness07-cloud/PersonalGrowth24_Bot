@@ -743,7 +743,8 @@
                 <div style="height: 40px;"></div> </section>
 
             <section id="games" class="page-section hidden">
-                <div class="native-ad-placeholder">
+                
+                <div id="game-native-ad" class="native-ad-placeholder" onclick="window.open('https://www.binance.com', '_blank')">
                     <span><i class="fa-solid fa-ad"></i> SPONSORED SYSTEM</span>
                 </div>
 
@@ -761,22 +762,24 @@
                 
                 <div class="tap-arena">
                     <div id="click-effects-layer"></div>
-                    <div class="cyber-ring"></div> 
                     
-                    <img src="assets/coin_main.jpg" alt="Tap" id="tap-coin" class="main-coin" oncontextmenu="return false;">
+                    <div class="cyber-ring"></div> 
+
+                    <div id="coin-ban-timer" class="ban-timer-overlay hidden">05:00</div>
+                    
+                    <div class="coin-container">
+                        <img src="assets/coin_main.jpg.png" alt="Tap Coin" id="tap-coin" class="main-coin" draggable="false" oncontextmenu="return false;">
+                    </div>
 
                     <div class="game-floating-actions">
-                        
-                        <div class="hitech-icon-btn booster" onclick="activatePower('booster')">
+                        <div class="hitech-icon-btn booster" id="btn-booster-action">
                             <i class="fa-solid fa-rocket"></i>
-                            <span id="btn-booster-badge" class="icon-badge">3/8</span>
+                            <span id="btn-booster-badge" class="icon-badge">--/9</span>
                         </div>
-
-                        <div class="hitech-icon-btn refill" onclick="activatePower('refill')">
+                        <div class="hitech-icon-btn refill" id="btn-refill-action">
                             <i class="fa-solid fa-bolt-lightning"></i>
-                            <span id="btn-refill-badge" class="icon-badge">3/8</span>
+                            <span id="btn-refill-badge" class="icon-badge">--/9</span>
                         </div>
-
                     </div>
                 </div>
 
@@ -790,12 +793,13 @@
                     </div>
                     
                     <div class="security-badge">
-                        <span><i class="fa-solid fa-shield-halved"></i> SECURED</span>
+                        <span id="security-status"><i class="fa-solid fa-shield-halved"></i> SECURED</span>
                         <span class="text-green"><i class="fa-solid fa-check-circle"></i> ANTI-CHEAT ACTIVE</span>
                     </div>
                 </div>
-            </section>
 
+                <div id="ban-overlay" class="hidden" style="display:none;"> </div>
+            </section>
             <div id="game-modal" class="game-modal hidden">
                 <div class="gm-header">
                     <div class="gm-timer"><i class="fa-solid fa-clock"></i> Play for <span id="game-timer">15</span>s to earn</div>
@@ -981,4 +985,3 @@
     </script>
 </body>
 </html>
-
