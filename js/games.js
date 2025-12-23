@@ -1,19 +1,17 @@
-/* js/games.js - SECURE MINING ENGINE (Strict Anti-Cheat + Ads) */
+/* js/games.js - FINAL SECURE ENGINE */
 
 // --- CONFIGURATION ---
 const MAX_ENERGY = 1000;
-const RECHARGE_RATE = 3; // Energy per second
-const ADSTERRA_LINK = "https://www.google.com"; // CHANGE THIS TO YOUR LINK
-const NATIVE_AD_LINK = "https://www.binance.com"; // Top "Sponsored System" Link
+const RECHARGE_RATE = 3; 
+const ADSTERRA_LINK = "https://www.google.com"; // Apna link dalein
+const NATIVE_AD_LINK = "https://www.binance.com"; 
 
-const DAILY_LIMIT_FREE = 3;
-const DAILY_LIMIT_ADS = 6;
-const TOTAL_LIMIT = 9;
-
-// Anti-Cheat Settings
-const CPS_WARNING_THRESHOLD = 12; // Warn at 12 clicks/sec
-const CPS_BAN_THRESHOLD = 15;     // Ban at 15 clicks/sec
-const BAN_DURATION_MS = 5 * 60 * 1000; // 5 Minutes
+const LIMITS = { FREE: 3, ADS: 6, TOTAL: 9 };
+const ANTI_CHEAT = {
+    WARN_CPS: 12, // Warning at 12 clicks/sec
+    BAN_CPS: 16,  // Ban at 16 clicks/sec
+    BAN_TIME: 5 * 60 * 1000 // 5 Minutes
+};
 
 // State
 let energy = 1000;
@@ -22,153 +20,175 @@ let isBanned = false;
 let boostMultiplier = 1;
 let boostTimer = null;
 
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     initGameEngine();
 });
 
 function initGameEngine() {
-    // 1. Check Previous Ban
+    // 1. FIX IMAGE PATH (HTML change mana hai, JS se fix kar rahe hain)
+    const coinImg = document.getElementById('tap-coin');
+    if(coinImg) {
+        coinImg.src = "assets/coin_main.jpg.png"; // 🔥 FIXED PATH
+        
+        // Remove old listeners & Add New
+        const newCoin = coinImg.cloneNode(true);
+        coinImg.parentNode.replaceChild(newCoin, coinImg);
+        newCoin.addEventListener('pointerdown', handleSecureTap);
+        // Disable drag/context
+        newCoin.oncontextmenu = () => false;
+        newCoin.ondragstart = () => false;
+    }
+
+    // 2. RESTORE BAN STATE
     checkBanStatus();
 
-    // 2. Setup Click Listener & Image Fix
-    const coin = document.getElementById('tap-coin');
-    if(coin) {
-        // Ensure image source is correct
-        coin.src = "assets/coin_main.jpg"; 
-        const newCoin = coin.cloneNode(true);
-        coin.parentNode.replaceChild(newCoin, coin);
-        newCoin.addEventListener('pointerdown', handleSecureTap);
-    }
-
-    // 3. Start Energy Recharge
+    // 3. START LOOPS
     setInterval(rechargeLoop, 1000);
+    updatePowerUpUI();
 
-    // 4. Init UI
-    updatePowerUpBadges();
-    
-    // 5. Native Ad Click Listener
-    const nativeAd = document.getElementById('game-native-ad');
-    if(nativeAd) {
-        nativeAd.onclick = () => window.open(NATIVE_AD_LINK, '_blank');
-    }
+    // 4. AD LISTENER
+    const adBanner = document.getElementById('game-native-ad');
+    if(adBanner) adBanner.onclick = () => window.open(NATIVE_AD_LINK, '_blank');
 }
 
-// --- CORE: SECURE TAP LOGIC ---
+// --- SECURE TAP SYSTEM ---
 function handleSecureTap(e) {
-    if (isBanned) return;
+    if (isBanned) {
+        // Haptic Error Feedback
+        if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        return;
+    }
 
     const now = Date.now();
     
-    // A. ANTI-CHEAT: Calculate Clicks Per Second
+    // 1. ANTI-CHEAT CALCULATIONS
     clickTimes.push(now);
-    clickTimes = clickTimes.filter(t => now - t < 1000); // Keep last 1 sec
+    clickTimes = clickTimes.filter(t => now - t < 1000); // Only keep last 1 sec
     
     const cps = clickTimes.length;
 
-    if (cps >= CPS_BAN_THRESHOLD) {
+    // Strict Ban Trigger
+    if (cps >= ANTI_CHEAT.BAN_CPS) {
         triggerBanSystem();
         return;
     }
     
-    if (cps >= CPS_WARNING_THRESHOLD) {
-        showSecurityWarning();
+    // Warning Trigger
+    if (cps >= ANTI_CHEAT.WARN_CPS) {
+        showRedWarning();
     }
 
-    // B. GAMEPLAY
+    // 2. GAMEPLAY
     if (energy <= 0) {
-        if(window.navigator.vibrate) window.navigator.vibrate(50); // Error vibe
+        if(navigator.vibrate) navigator.vibrate(50);
         return;
     }
 
-    // Earn Logic
-    const earnings = 2 * boostMultiplier;
-    energy -= 2;
+    // Process Tap
+    const earned = 2 * boostMultiplier;
+    energy = Math.max(0, energy - 2);
     updateEnergyUI();
 
-    // Global Wallet Update
-    if(window.addCoins) window.addCoins(earnings);
+    // Global Sync
+    if(window.addCoins) window.addCoins(earned);
 
     // Visuals
-    showFloatingText(e.clientX, e.clientY, `+${earnings}`);
-    animateCoinPress(e.target);
-
-    // Good Vibe
-    if(window.navigator.vibrate) window.navigator.vibrate(10);
+    showFloatingText(e.clientX, e.clientY, `+${earned}`);
+    animateCoin(e.target);
+    if(navigator.vibrate) navigator.vibrate(10);
 }
 
-// --- ANTI-CHEAT ACTIONS ---
-function showSecurityWarning() {
-    const badge = document.getElementById('security-status');
-    if(badge) {
-        badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> WARNING`;
-        badge.className = "text-gold blink-anim";
+// --- PROFESSIONAL WARNING SYSTEM ---
+function showRedWarning() {
+    // UI Feedback: Make text flash RED
+    const statusText = document.getElementById('security-status');
+    if(statusText) {
+        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> HIGH TRAFFIC DETECTED`;
+        statusText.className = "text-red-glow";
+        
+        // Reset after 2 sec
+        setTimeout(() => {
+            statusText.className = "";
+            statusText.innerHTML = `<i class="fa-solid fa-shield-halved"></i> SECURED`;
+        }, 2000);
     }
 
+    // Red Toast
     Swal.fire({
-        toast: true, position: 'top', icon: 'warning',
-        title: 'TAP SLOWER!',
-        text: 'System detects inhuman speed. Ban imminent.',
-        background: '#330000', color: '#ff4444',
-        showConfirmButton: false, timer: 1500
+        toast: true, position: 'top', icon: 'error',
+        title: '⚠️ SYSTEM ALERT',
+        text: 'Tapping speed exceeding human limits. Slow down to avoid ban.',
+        background: '#450a0a', color: '#ff4444', // Dark Red Background
+        showConfirmButton: false, timer: 2000
     });
 }
 
+// --- BAN SYSTEM (Red Glow + Timer) ---
 function triggerBanSystem() {
     isBanned = true;
-    const banEndTime = Date.now() + BAN_DURATION_MS;
-    localStorage.setItem('game_ban_end', banEndTime);
-
-    showBanOverlay(banEndTime);
+    const banEnd = Date.now() + ANTI_CHEAT.BAN_TIME;
+    localStorage.setItem('game_ban_end', banEnd);
     
-    const badge = document.getElementById('security-status');
-    if(badge) {
-        badge.innerHTML = `<i class="fa-solid fa-lock"></i> ACCOUNT FLAGGED`;
-        badge.className = "text-red";
-    }
+    applyBanVisuals(banEnd);
 }
 
 function checkBanStatus() {
-    const savedBanEnd = localStorage.getItem('game_ban_end');
-    if (savedBanEnd) {
-        const timeLeft = parseInt(savedBanEnd) - Date.now();
-        if (timeLeft > 0) {
+    const savedEnd = localStorage.getItem('game_ban_end');
+    if (savedEnd) {
+        const remaining = parseInt(savedEnd) - Date.now();
+        if (remaining > 0) {
             isBanned = true;
-            showBanOverlay(parseInt(savedBanEnd));
+            applyBanVisuals(parseInt(savedEnd));
         } else {
-            // Unban
-            localStorage.removeItem('game_ban_end');
-            isBanned = false;
-            document.getElementById('ban-overlay').classList.add('hidden');
+            liftBan();
         }
     }
 }
 
-function showBanOverlay(endTime) {
+function applyBanVisuals(endTime) {
+    // 1. Show Overlay
     const overlay = document.getElementById('ban-overlay');
-    const timerEl = document.getElementById('ban-timer');
-    if(!overlay) return;
+    const timerText = document.getElementById('ban-timer');
+    if(overlay) {
+        overlay.classList.remove('hidden'); 
+        overlay.classList.add('active'); // CSS Force show
+    }
 
-    overlay.classList.remove('hidden');
+    // 2. Red Glow Effect on Ring
+    const ring = document.querySelector('.cyber-ring');
+    if(ring) ring.classList.add('danger-state');
 
+    // 3. Timer Loop
     const interval = setInterval(() => {
         const left = endTime - Date.now();
         if (left <= 0) {
             clearInterval(interval);
-            checkBanStatus(); // Reload state
+            liftBan();
             return;
         }
         
         const m = Math.floor(left / 60000);
         const s = Math.floor((left % 60000) / 1000);
-        if (timerEl) timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        if(timerText) timerText.innerText = `${m}:${s < 10 ? '0'+s : s}`;
     }, 1000);
 }
 
-// --- POWER UP SYSTEM (3 Free -> 6 Ads) ---
+function liftBan() {
+    isBanned = false;
+    localStorage.removeItem('game_ban_end');
+    
+    document.getElementById('ban-overlay').classList.add('hidden');
+    document.getElementById('ban-overlay').classList.remove('active');
+    
+    const ring = document.querySelector('.cyber-ring');
+    if(ring) ring.classList.remove('danger-state');
+}
+
+// --- POWER UP SYSTEM (FIXED) ---
 window.handlePowerUp = function(type) {
     if (isBanned) return;
 
-    // Reset Daily
     const today = new Date().toDateString();
     if (localStorage.getItem(`pwr_${type}_date`) !== today) {
         localStorage.setItem(`pwr_${type}_date`, today);
@@ -177,130 +197,115 @@ window.handlePowerUp = function(type) {
 
     let count = parseInt(localStorage.getItem(`pwr_${type}_count`) || "0");
 
-    // 1. Check Total Limit (9)
-    if (count >= TOTAL_LIMIT) {
+    if (count >= LIMITS.TOTAL) {
         Swal.fire({
-            icon: 'error', title: 'Daily Limit Reached',
-            text: 'Come back tomorrow for more!',
+            icon: 'error', title: 'Limit Reached',
+            text: 'Daily limit exhausted. Reset at 00:00 UTC.',
             background: '#020617', color: '#fff'
         });
         return;
     }
 
-    // 2. Logic: Free vs Ad
-    if (count < DAILY_LIMIT_FREE) {
-        // FREE (0, 1, 2)
-        activateEffect(type);
-        incrementCount(type, count);
+    if (count < LIMITS.FREE) {
+        activatePowerUp(type);
+        incrementPowerUp(type, count);
     } else {
-        // ADS (3 to 8)
-        startAdFlow(type, count);
+        // Ad Logic
+        Swal.fire({
+            title: 'Watch Ad?',
+            text: `Free ${type} used. Watch 15s ad to refill?`,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Watch Video',
+            confirmButtonColor: '#fbbf24',
+            background: '#020617', color: '#fff'
+        }).then((res) => {
+            if (res.isConfirmed) {
+                window.open(ADSTERRA_LINK, '_blank');
+                
+                let timer = 15;
+                Swal.fire({
+                    title: 'Verifying...',
+                    html: `Reward in <b>${timer}</b>s`,
+                    timer: 15000,
+                    timerProgressBar: true,
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); },
+                    background: '#020617', color: '#fff'
+                }).then(() => {
+                    activatePowerUp(type);
+                    incrementPowerUp(type, count);
+                });
+            }
+        });
     }
 };
 
-function startAdFlow(type, currentCount) {
-    Swal.fire({
-        title: 'Locked Feature',
-        text: `Free limit used. Watch Ad to unlock ${type.toUpperCase()}?`,
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Watch Ad',
-        confirmButtonColor: '#eab308',
-        background: '#020617', color: '#fff'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.open(ADSTERRA_LINK, '_blank');
-            
-            let seconds = 15;
-            Swal.fire({
-                title: 'Verifying Ad...',
-                html: `Reward unlocks in <b>${seconds}</b>s`,
-                timer: 15000,
-                timerProgressBar: true,
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); },
-                background: '#020617', color: '#fff'
-            }).then(() => {
-                activateEffect(type);
-                incrementCount(type, currentCount);
-            });
-        }
-    });
-}
-
-function activateEffect(type) {
+function activatePowerUp(type) {
     if (type === 'refill') {
         energy = MAX_ENERGY;
         updateEnergyUI();
-        Swal.fire({
-            toast: true, position: 'top', icon: 'success', 
-            title: 'Energy Full!', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false
-        });
-    } else if (type === 'booster') {
+        Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'Energy Refilled!', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false });
+    } else {
         boostMultiplier = 2;
-        document.querySelector('.tap-arena').style.boxShadow = "0 0 50px rgba(255, 215, 0, 0.4)";
-        const badge = document.getElementById('btn-booster-badge');
-        if(badge) badge.style.color = "#ffd700";
-
-        Swal.fire({
-            toast: true, position: 'top', icon: 'success', 
-            title: '2x Boost Active (30s)', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false
-        });
+        // Visual Boost
+        const ring = document.querySelector('.cyber-ring');
+        if(ring) ring.style.boxShadow = "0 0 50px rgba(74, 222, 128, 0.5)";
+        
+        Swal.fire({ toast: true, position: 'top', icon: 'success', title: '2x Boost Active!', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false });
 
         if(boostTimer) clearTimeout(boostTimer);
         boostTimer = setTimeout(() => {
             boostMultiplier = 1;
-            document.querySelector('.tap-arena').style.boxShadow = "";
-            if(badge) badge.style.color = "";
+            if(ring) ring.style.boxShadow = "";
         }, 30000);
     }
 }
 
-function incrementCount(type, current) {
+function incrementPowerUp(type, current) {
     localStorage.setItem(`pwr_${type}_count`, current + 1);
-    updatePowerUpBadges();
+    updatePowerUpUI();
 }
 
-function updatePowerUpBadges() {
+function updatePowerUpUI() {
     ['booster', 'refill'].forEach(type => {
         const count = parseInt(localStorage.getItem(`pwr_${type}_count`) || "0");
         const el = document.getElementById(`btn-${type}-badge`);
         if(el) {
-            let text = `${TOTAL_LIMIT - count}/${TOTAL_LIMIT}`;
-            if (count >= 3 && count < 9) text += " (AD)";
-            if (count >= 9) text = "MAX";
-            el.innerText = text;
+            let txt = `${LIMITS.TOTAL - count}/${LIMITS.TOTAL}`;
+            if (count >= LIMITS.FREE && count < LIMITS.TOTAL) txt += " (AD)";
+            if (count >= LIMITS.TOTAL) txt = "MAX";
+            el.innerText = txt;
         }
     });
 }
 
-// --- HELPERS ---
+// --- UTILS ---
 function rechargeLoop() {
     if (energy < MAX_ENERGY && !isBanned) {
         energy += RECHARGE_RATE;
-        if(energy > MAX_ENERGY) energy = MAX_ENERGY;
         updateEnergyUI();
     }
 }
 
 function updateEnergyUI() {
     const fill = document.getElementById('energy-fill');
-    const text = document.getElementById('energy-text');
+    const txt = document.getElementById('energy-text');
     if(fill) fill.style.width = `${(energy / MAX_ENERGY) * 100}%`;
-    if(text) text.innerText = `${Math.floor(energy)} / ${MAX_ENERGY}`;
+    if(txt) txt.innerText = `${Math.floor(energy)} / ${MAX_ENERGY}`;
 }
 
-function showFloatingText(x, y, text) {
+function showFloatingText(x, y, txt) {
     const el = document.createElement('div');
-    el.innerText = text;
-    el.className = 'floating-text'; // Corrected class name
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
+    el.innerText = txt;
+    el.className = 'floating-text';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 800);
 }
 
-function animateCoinPress(coin) {
-    coin.style.transform = "scale(0.95)";
-    setTimeout(() => coin.style.transform = "scale(1)", 50);
+function animateCoin(el) {
+    el.style.transform = "scale(0.95)";
+    setTimeout(() => el.style.transform = "scale(1)", 50);
 }
