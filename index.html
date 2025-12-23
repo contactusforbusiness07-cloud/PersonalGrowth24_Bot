@@ -95,16 +95,8 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
-
-        /* Ban Overlay Style */
-        #ban-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.98); z-index: 999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; backdrop-filter: blur(10px);
-        }
     </style>
-</head>
+    </head>
 
 <body>
 
@@ -147,7 +139,6 @@
             }
         })();
     </script>
-
     <div id="app-container">
         
         <header class="app-header glass-effect">
@@ -217,6 +208,7 @@
                 </div>
             </div>
 
+
             <div id="page-refer" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
                 
@@ -275,6 +267,7 @@
                     </div>
                 </div>
             </div>
+
 
             <div id="page-brand" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
@@ -395,6 +388,7 @@
                 </div>
             </div>
 
+
             <div id="page-contact" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 100px;">
                 
@@ -513,6 +507,7 @@
                 </div>
             </div>
 
+
             <div id="page-info" class="internal-page hidden" 
                  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #020617; z-index: 5000; overflow-y: auto; padding-top: 80px; padding-bottom: 50px;">
                 
@@ -532,6 +527,7 @@
                     </div>
                 </div>
             </div>
+
 
             <section id="home" class="page-section active">
                 
@@ -616,40 +612,38 @@
                 </div>
             </div>
 
+
             <section id="leaderboard" class="page-section hidden">
                 <div class="arena-header">
                     <div class="live-badge">
                         <div class="live-dot"></div> LIVE ARENA
                     </div>
-                    <div class="sync-timer">SYNC IN <span id="sync-countdown">05:00</span></div>
+                    <div class="sync-timer">SYNC IN 04:59</div>
                 </div>
 
                 <div class="podium-stage">
                     <div class="podium-player p-rank-2">
-                        <div class="p-avatar-box">
-                            <img id="podium-p2-img" src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                            <div class="p-badge">#2</div>
+                        <div class="p-avatar">
+                            <img src="assets/avatars/2.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
                         </div>
-                        <div class="p-name" id="podium-p2-name">Loading...</div>
+                        <div class="p-name" id="podium-p2-name">--</div>
                         <div class="p-score" id="podium-p2-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-1">
                         <div class="p-crown"><i class="fa-solid fa-crown"></i></div>
-                        <div class="p-avatar-box main-glitch">
-                            <img id="podium-p1-img" src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                            <div class="p-badge gold">#1</div>
+                        <div class="p-avatar">
+                            <img src="assets/avatars/1.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140037.png'">
                         </div>
-                        <div class="p-name gold-text" id="podium-p1-name">Loading...</div>
-                        <div class="p-score gold-text" id="podium-p1-score">0</div>
+                        <div class="p-name" id="podium-p1-name" style="color:var(--arena-gold)">--</div>
+                        <div class="p-score" id="podium-p1-score">0</div>
                     </div>
 
                     <div class="podium-player p-rank-3">
-                        <div class="p-avatar-box">
-                            <img id="podium-p3-img" src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                            <div class="p-badge">#3</div>
+                        <div class="p-avatar">
+                            <img src="assets/avatars/3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140047.png'">
                         </div>
-                        <div class="p-name" id="podium-p3-name">Loading...</div>
+                        <div class="p-name" id="podium-p3-name">--</div>
                         <div class="p-score" id="podium-p3-score">0</div>
                     </div>
                 </div>
@@ -658,19 +652,15 @@
                     </div>
 
                 <div class="user-sticky-rank">
-                    <div class="usr-left">
-                        <img id="sticky-user-img" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                        <div class="my-rank-info">
-                            <h4 id="my-rank-val">#--</h4>
-                            <p>YOU</p>
-                        </div>
+                    <div class="my-rank-info">
+                        <h4 id="my-rank-val">#--</h4>
+                        <p>CURRENT RANK</p>
                     </div>
-                    <div class="usr-right">
-                        <div class="gap-indicator" id="gap-val">CALCULATING...</div>
-                        <i class="fa-solid fa-caret-up" style="color:#00f260"></i>
-                    </div>
+                    <div class="gap-indicator" id="gap-val">CALCULATING...</div>
+                    <button class="btn-sm" style="background:var(--arena-cyan); color:#000; font-weight:800;" onclick="navigateTo('tasks')">BOOST</button>
                 </div>
             </section>
+
 
             <section id="tasks" class="page-section hidden">
                 <div class="section-header">
@@ -679,7 +669,34 @@
                 </div>
                 
                 <div class="watch-earn-hero">
+                    <div class="we-card-inner">
+                        <div class="play-icon-box">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div class="we-content">
+                            <h4>Watch Premium Stream</h4>
+                            <p>30 SECONDS • HIGH PRIORITY</p>
+                            <div class="progress-bar-container hidden" id="ad-progress-container">
+                                <div class="progress-bar" id="ad-progress-bar"></div>
+                            </div>
+                        </div>
+                        <div class="reward-pill" onclick="startWatchTask(this)">
+                            +500 <i class="fa-solid fa-coins"></i>
+                        </div>
                     </div>
+                </div>
+
+                <div class="native-ad-card" onclick="window.open('https://google.com', '_blank')">
+                    <div class="ad-badge">RECOMMENDED</div>
+                    <div class="ad-icon-box">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div class="ad-content">
+                        <h4>Daily Bonus Mission</h4>
+                        <p>Register to unlock VIP status</p>
+                    </div>
+                    <div class="ad-action-btn">OPEN</div>
+                </div>
 
                 <div class="task-divider">AVAILABLE CHANNELS</div>
 
@@ -689,10 +706,36 @@
                     </div>
                 </div>
 
-                <div style="height: 40px;"></div> 
-            </section>
+                <div class="task-divider">SYSTEM OPERATIONS</div>
+
+                <div class="tasks-list">
+                    <div class="task-card">
+                        <div class="task-icon">
+                            <i class="fa-solid fa-users" style="color:#22c55e"></i>
+                        </div>
+                        <div class="task-info">
+                            <h4>Invite New Agent</h4>
+                            <div class="reward-badge">+1000 Coins</div>
+                        </div>
+                        <button class="btn-join" onclick="openInternalPage('page-refer')">START</button>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-icon">
+                            <i class="fa-solid fa-file-invoice" style="color:#a855f7"></i>
+                        </div>
+                        <div class="task-info">
+                            <h4>Generate AI CV</h4>
+                            <div class="reward-badge">+500 Coins</div>
+                        </div>
+                        <button class="btn-join" onclick="navigateTo('home')">OPEN</button>
+                    </div>
+                </div>
+
+                <div style="height: 40px;"></div> </section>
 
             <section id="games" class="page-section hidden">
+                
                 <div id="game-native-ad" class="native-ad-placeholder" onclick="window.open('https://www.binance.com', '_blank')">
                     <span><i class="fa-solid fa-ad"></i> SPONSORED SYSTEM</span>
                 </div>
@@ -719,17 +762,14 @@
                     </div>
 
                     <div class="game-floating-actions">
-                        
                         <div class="hitech-icon-btn booster" onclick="handlePowerUp('booster')">
                             <i class="fa-solid fa-rocket"></i>
                             <span id="btn-booster-badge" class="icon-badge">--/9</span>
                         </div>
-
                         <div class="hitech-icon-btn refill" onclick="handlePowerUp('refill')">
                             <i class="fa-solid fa-bolt-lightning"></i>
                             <span id="btn-refill-badge" class="icon-badge">--/9</span>
                         </div>
-
                     </div>
                 </div>
 
@@ -766,6 +806,7 @@
                 </div>
                 <div class="gm-iframe-container"><iframe id="game-frame" src="" frameborder="0"></iframe></div>
             </div>
+
 
             <section id="wallet" class="page-section hidden">
                 
