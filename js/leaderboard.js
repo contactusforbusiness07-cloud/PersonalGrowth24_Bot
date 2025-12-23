@@ -1,78 +1,89 @@
-/* js/leaderboard.js - NEON NEXUS ARENA ENGINE */
+/* js/leaderboard.js - REAL-TIME FIREBASE ARENA */
 
-// 1. DATA CONFIGURATION
-const MOCK_BOTS = [
-    { name: "CryptoViper", score: 98500, img: "assets/avatars/1.png" },
-    { name: "NeonGhost", score: 89200, img: "assets/avatars/2.png" },
-    { name: "AlphaWolf", score: 81000, img: "assets/avatars/3.png" },
-    { name: "Satoshi_V2", score: 76500, img: "assets/avatars/4.png" },
-    { name: "PixelHunter", score: 72000, img: "assets/avatars/5.png" },
-    { name: "VoidWalker", score: 65400, img: "assets/avatars/6.png" },
-    { name: "Quantum_X", score: 61000, img: "assets/avatars/7.png" },
-    { name: "CyberNinja", score: 55800, img: "assets/avatars/8.png" },
-    { name: "BlockMaster", score: 49000, img: "assets/avatars/2.png" },
-    { name: "MoonRover", score: 42000, img: "assets/avatars/3.png" }
-];
+// --- CONFIGURATION ---
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 Minutes
+let syncTimerInterval = null;
 
 const AD_PROTOCOL = {
     isAd: true,
     name: "SYSTEM UPGRADE",
     desc: "Speed Boost +20%",
-    img: "assets/coin_main.jpg", // Uses coin image as system icon
+    img: "assets/coin_main.jpg", 
     url: "https://google.com"
 };
 
-let allPlayers = [];
-let liveInterval = null;
-
 document.addEventListener('DOMContentLoaded', () => {
+    // Initial Load
     initLeaderboard();
 });
 
-// Expose to window so navigation can trigger it
+// Expose to window
 window.initLeaderboard = function() {
-    buildData();
-    renderArena();
-    startLiveEnvironment();
+    fetchRealLeaderboard();
+    startSyncTimer();
 };
 
-// 2. DATA BUILDER (Merge User + Bots)
-function buildData() {
-    // A. Get Real User Data
-    // We check multiple sources for robustness
-    let userProfile = JSON.parse(localStorage.getItem('finGameProfile')) || {};
-    let userName = localStorage.getItem('user_name') || userProfile.name || "You";
-    let userImg = localStorage.getItem('user_avatar') || userProfile.image || "assets/default-avatar.png";
-    let userScore = parseFloat(localStorage.getItem('local_balance')) || 0;
+// 1. FETCH REAL DATA FROM FIREBASE
+async function fetchRealLeaderboard() {
+    // Show Loading State (Scan Effect)
+    const listContainer = document.getElementById('rank-list-feed');
+    if(listContainer) {
+        listContainer.innerHTML = `
+            <div style="text-align:center; padding:20px; color:#00f3ff; font-family:'Orbitron';">
+                <i class="fa-solid fa-satellite-dish fa-spin"></i> SCANNING NETWORK...
+            </div>`;
+    }
 
-    const realUser = {
-        name: userName,
-        score: Math.floor(userScore),
-        img: userImg,
-        isUser: true
-    };
+    try {
+        // Using window.db from firebase-init.js
+        const { collection, query, orderBy, limit, getDocs } = await import("https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js");
+        
+        // Query Top 50 Players
+        const q = query(collection(window.db, "users"), orderBy("balance", "desc"), limit(50));
+        const querySnapshot = await getDocs(q);
+        
+        let players = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            players.push({
+                id: doc.id,
+                name: data.name || "Unknown",
+                score: Math.floor(data.balance || 0),
+                img: data.profileImg || "assets/default-avatar.png",
+                isUser: (window.currentUser && String(window.currentUser.id) === doc.id)
+            });
+        });
 
-    // B. Merge & Sort
-    allPlayers = [...MOCK_BOTS, realUser];
-    allPlayers.sort((a, b) => b.score - a.score);
+        // Ensure Current User is in the list (even if Rank > 50) locally for display
+        if (window.currentUser && !players.find(p => p.isUser)) {
+            // If user not in top 50, we handle them in sticky footer separately
+        }
+
+        renderArena(players);
+
+    } catch (error) {
+        console.error("Leaderboard Error:", error);
+        if(listContainer) listContainer.innerHTML = `<div style="text-align:center; color:#ef4444;">CONNECTION ERROR</div>`;
+    }
 }
 
-// 3. RENDER FUNCTION
-function renderArena() {
+// 2. RENDER THE ARENA
+function renderArena(allPlayers) {
     // --- A. Render Podium (Top 3) ---
     const top3 = allPlayers.slice(0, 3);
     
-    // Helper to safely update podium
     const updatePodium = (rank, player) => {
-        if(!player) return;
+        if(!player) return; // Empty slot
         document.getElementById(`podium-p${rank}-name`).innerText = player.isUser ? "YOU" : player.name;
         document.getElementById(`podium-p${rank}-score`).innerText = player.score.toLocaleString();
+        
         const imgEl = document.getElementById(`podium-p${rank}-img`);
         if(imgEl) imgEl.src = player.img;
         
-        // Highlight if user is on podium
+        // User Highlight Color
         if(player.isUser) {
             document.getElementById(`podium-p${rank}-name`).style.color = "#00f3ff";
+            document.getElementById(`podium-p${rank}-score`).style.color = "#00f3ff";
         }
     };
 
@@ -82,21 +93,20 @@ function renderArena() {
 
     // --- B. Render List (Rank 4+) ---
     const listContainer = document.getElementById('rank-list-feed');
-    listContainer.innerHTML = ''; // Clear
+    listContainer.innerHTML = ''; 
 
     let listData = allPlayers.slice(3);
     
-    // Inject Ad disguised as Rank #5 (Index 1 in this sliced list)
-    // We insert it visually, but don't mess up the rank calculation logic too much
-    listData.splice(1, 0, AD_PROTOCOL);
+    // Inject Ad at Index 1 (Visually Rank 5)
+    if(listData.length > 0) {
+        listData.splice(1, 0, AD_PROTOCOL);
+    }
 
     listData.forEach((player, index) => {
-        // Calculate Real Rank (Offset by 3 podium spots + index + 1)
-        // If it's an ad, we give it a fake symbol
         const visualRank = player.isAd ? '<i class="fa-solid fa-bolt text-gold"></i>' : (index + 4); 
         
         if (player.isAd) {
-            // RENDER AD CARD
+            // AD CARD
             listContainer.innerHTML += `
             <div class="rank-card native-ad" onclick="window.open('${player.url}', '_blank')">
                 <div class="r-pos">${visualRank}</div>
@@ -108,7 +118,7 @@ function renderArena() {
                 <button class="btn-boost-ad">BOOST</button>
             </div>`;
         } else {
-            // RENDER PLAYER CARD
+            // REAL PLAYER CARD
             const isUserClass = player.isUser ? 'user-highlight' : '';
             const nameColor = player.isUser ? '#00f3ff' : '#f1f5f9';
             
@@ -117,7 +127,7 @@ function renderArena() {
                 <div class="r-pos">#${visualRank}</div>
                 <img src="${player.img}" class="r-avatar">
                 <div class="r-info">
-                    <div class="r-name" style="color:${nameColor}">${player.name}</div>
+                    <div class="r-name" style="color:${nameColor}">${player.isUser ? "YOU" : player.name}</div>
                     <div class="r-score">${player.score.toLocaleString()}</div>
                 </div>
             </div>`;
@@ -125,49 +135,60 @@ function renderArena() {
     });
 
     // --- C. Update Sticky Footer ---
-    updateStickyFooter();
+    updateStickyFooter(allPlayers);
 }
 
-function updateStickyFooter() {
-    // Find User in the sorted list
+function updateStickyFooter(allPlayers) {
+    if(!window.currentUser) return;
+
+    // Find User Rank
     const userIndex = allPlayers.findIndex(p => p.isUser);
-    const user = allPlayers[userIndex];
-    const rank = userIndex + 1;
+    let rankText = "50+";
+    let gapText = "KEEP GRINDING";
+    let myScore = window.currentUser.balance;
 
-    // Update Footer visuals
-    document.getElementById('sticky-user-img').src = user.img;
-    document.getElementById('my-rank-val').innerText = `#${rank}`;
-    
-    // Calculate Gap
-    const gapEl = document.getElementById('gap-val');
-    if (rank === 1) {
-        gapEl.innerText = "BOSS OF THE ARENA";
-        gapEl.style.color = "#ffd700";
+    if (userIndex !== -1) {
+        rankText = `#${userIndex + 1}`;
+        if (userIndex > 0) {
+            const playerAbove = allPlayers[userIndex - 1];
+            const gap = playerAbove.score - myScore;
+            gapText = `+${Math.floor(gap).toLocaleString()} TO RANK #${userIndex}`;
+        } else {
+             gapText = "BOSS OF THE ARENA";
+        }
     } else {
-        const playerAbove = allPlayers[userIndex - 1];
-        const gap = playerAbove.score - user.score;
-        gapEl.innerText = `+${gap.toLocaleString()} TO RANK #${rank-1}`;
-        gapEl.style.color = "#94a3b8";
+        // User is outside top 50, calculate gap to Rank 50
+        if(allPlayers.length > 0) {
+            const lastPlayer = allPlayers[allPlayers.length - 1];
+            const gap = lastPlayer.score - myScore;
+            gapText = `+${Math.floor(gap).toLocaleString()} TO ENTER TOP 50`;
+        }
     }
+
+    // Update DOM
+    document.getElementById('sticky-user-img').src = localStorage.getItem('user_avatar') || "assets/default-avatar.png";
+    document.getElementById('my-rank-val').innerText = rankText;
+    document.getElementById('gap-val').innerText = gapText;
 }
 
-// 4. LIVE ENVIRONMENT SIMULATION
-function startLiveEnvironment() {
-    if(liveInterval) clearInterval(liveInterval);
+// 3. SYNC TIMER (5 Minutes)
+function startSyncTimer() {
+    if(syncTimerInterval) clearInterval(syncTimerInterval);
 
-    liveInterval = setInterval(() => {
-        // 1. Randomly boost a few bots
-        MOCK_BOTS.forEach(bot => {
-            if(Math.random() > 0.7) {
-                bot.score += Math.floor(Math.random() * 150);
-            }
-        });
+    let secondsLeft = 300; // 5 mins
+    const timerEl = document.getElementById('sync-countdown');
+    
+    syncTimerInterval = setInterval(() => {
+        secondsLeft--;
+        
+        // Format Time 00:00
+        const m = Math.floor(secondsLeft / 60);
+        const s = secondsLeft % 60;
+        if(timerEl) timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
 
-        // 2. Re-sort & Re-render
-        // Note: In a real heavy app, we'd update DOM elements individually. 
-        // Here, re-running buildData() preserves the user's latest score from local storage too.
-        buildData();
-        renderArena();
-
-    }, 3500); // Update every 3.5 seconds
+        if (secondsLeft <= 0) {
+            fetchRealLeaderboard(); // Auto Refresh
+            secondsLeft = 300; // Reset
+        }
+    }, 1000);
 }
