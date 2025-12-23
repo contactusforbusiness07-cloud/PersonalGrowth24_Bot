@@ -1,95 +1,109 @@
-/* Module: Profile Logic 
-    Features: Telegram Sync, Gallery Upload, LocalStorage Persistence
-*/
+/* Module: Profile Logic (Firebase Sync + Compression) */
 
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-// 1. Initialize Profile (Call this when page loads or profile section opens)
+// 1. Initialize Profile
 function initProfile() {
-    const storedProfile = JSON.parse(localStorage.getItem('finGameProfile')) || {};
+    // Priority: Firebase State > LocalStorage > Telegram Default > Generic Default
+    const storedName = localStorage.getItem('user_name');
+    const storedImg = localStorage.getItem('user_avatar');
     
-    // Check if we have Telegram WebApp Data available
     let tgUser = null;
     if (window.Telegram && window.Telegram.WebApp) {
         tgUser = window.Telegram.WebApp.initDataUnsafe.user;
     }
 
-    // Logic: LocalStorage > Telegram Data > Default
-    const finalName = storedProfile.name || (tgUser ? `${tgUser.first_name} ${tgUser.last_name || ''}` : "Guest Player");
-    const finalID = storedProfile.id || (tgUser ? tgUser.id : "8739204"); // Fallback ID for testing
-    const finalImage = storedProfile.image || defaultAvatar;
+    const finalName = storedName || (tgUser ? `${tgUser.first_name}` : "Guest Player");
+    const finalID = (tgUser ? tgUser.id : "8739204"); 
+    const finalImage = storedImg || defaultAvatar;
 
     // Update UI
     document.getElementById('display-name').innerText = finalName;
     document.getElementById('display-id').innerText = finalID;
     document.getElementById('profile-img').src = finalImage;
-
-    // Initial Save if empty
-    if (!storedProfile.name && tgUser) {
-        saveToLocal(finalName, finalImage, finalID);
+    
+    // Also update sticky footer in leaderboard if it exists
+    if(document.getElementById('sticky-user-img')) {
+        document.getElementById('sticky-user-img').src = finalImage;
     }
 }
 
-// 2. Handle Real Gallery Image Upload
-function handleImageUpload(event) {
+// 2. Handle Image Upload (WITH COMPRESSION)
+window.handleImageUpload = function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        
         reader.onload = function(e) {
-            const base64Image = e.target.result;
+            const img = new Image();
+            img.src = e.target.result;
             
-            // UI Update turant karein
-            document.getElementById('profile-img').src = base64Image;
-            
-            // Data Save karein
-            saveCurrentState();
+            img.onload = function() {
+                // Compress Image Logic (Max width 200px to save DB space)
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxWidth = 200; 
+                const scaleSize = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scaleSize;
+                
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Get Compressed Base64
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // 70% Quality
+                
+                // 1. UI Update
+                document.getElementById('profile-img').src = compressedBase64;
+                if(document.getElementById('sticky-user-img')) document.getElementById('sticky-user-img').src = compressedBase64;
+
+                // 2. Local Save
+                localStorage.setItem('user_avatar', compressedBase64);
+                
+                // 3. Firebase Save (Real-time Cloud Sync)
+                if(window.currentUser && window.saveUserData) {
+                    window.saveUserData(window.currentUser.id, { profileImg: compressedBase64 });
+                    
+                    Swal.fire({
+                        toast: true, position: 'top', icon: 'success', 
+                        title: 'Profile Picture Updated!', showConfirmButton: false, timer: 1500,
+                        background: '#020617', color: '#fff'
+                    });
+                }
+            };
         };
-        
-        reader.readAsDataURL(file); // Convert image to Base64 string
+        reader.readAsDataURL(file);
     }
 }
 
-// 3. Edit Modal Logic
-function openEditModal() {
+// 3. Edit Name Logic
+window.openEditModal = function() {
     const currentName = document.getElementById('display-name').innerText;
     document.getElementById('edit-name-input').value = currentName;
     document.getElementById('edit-modal').classList.remove('hidden');
 }
 
-function closeEditModal() {
+window.closeEditModal = function() {
     document.getElementById('edit-modal').classList.add('hidden');
 }
 
-function saveProfileChanges() {
+window.saveProfileChanges = function() {
     const newName = document.getElementById('edit-name-input').value;
     if (newName.trim() !== "") {
+        // UI Update
         document.getElementById('display-name').innerText = newName;
-        saveCurrentState();
+        
+        // Local Save
+        localStorage.setItem('user_name', newName);
+        
+        // Firebase Save
+        if(window.currentUser && window.saveUserData) {
+            window.saveUserData(window.currentUser.id, { name: newName });
+        }
+        
         closeEditModal();
     } else {
         alert("Name cannot be empty!");
     }
 }
 
-// 4. Helper: Save to LocalStorage
-function saveCurrentState() {
-    const name = document.getElementById('display-name').innerText;
-    const img = document.getElementById('profile-img').src;
-    const id = document.getElementById('display-id').innerText;
-    
-    saveToLocal(name, img, id);
-}
-
-function saveToLocal(name, image, id) {
-    const profileData = {
-        name: name,
-        image: image,
-        id: id
-    };
-    localStorage.setItem('finGameProfile', JSON.stringify(profileData));
-}
-
-// Auto-run initialization
+// Auto-run
 document.addEventListener('DOMContentLoaded', initProfile);
-
