@@ -30,9 +30,11 @@ function initGameEngine() {
     // 1. Check Previous Ban
     checkBanStatus();
 
-    // 2. Setup Click Listener
+    // 2. Setup Click Listener & Image Fix
     const coin = document.getElementById('tap-coin');
     if(coin) {
+        // Ensure image source is correct
+        coin.src = "assets/coin_main.jpg"; 
         const newCoin = coin.cloneNode(true);
         coin.parentNode.replaceChild(newCoin, coin);
         newCoin.addEventListener('pointerdown', handleSecureTap);
@@ -158,7 +160,7 @@ function showBanOverlay(endTime) {
         
         const m = Math.floor(left / 60000);
         const s = Math.floor((left % 60000) / 1000);
-        timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        if (timerEl) timerEl.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
     }, 1000);
 }
 
@@ -291,7 +293,7 @@ function updateEnergyUI() {
 function showFloatingText(x, y, text) {
     const el = document.createElement('div');
     el.innerText = text;
-    el.className = 'floating-score';
+    el.className = 'floating-text'; // Corrected class name
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
     document.body.appendChild(el);
@@ -302,4 +304,3 @@ function animateCoinPress(coin) {
     coin.style.transform = "scale(0.95)";
     setTimeout(() => coin.style.transform = "scale(1)", 50);
 }
-
