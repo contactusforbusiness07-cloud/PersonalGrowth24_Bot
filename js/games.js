@@ -1,8 +1,8 @@
-/* js/games.js - FINAL SECURE ENGINE */
+/* js/games.js - FINAL SECURE ENGINE WITH RED TIMER */
 
 // --- CONFIGURATION ---
 const MAX_ENERGY = 1000;
-const RECHARGE_RATE = 3; 
+const RECHARGE_RATE = 2; 
 const ADSTERRA_LINK = "https://www.google.com"; // Apna link dalein
 const NATIVE_AD_LINK = "https://www.binance.com"; 
 
@@ -19,6 +19,7 @@ let clickTimes = [];
 let isBanned = false;
 let boostMultiplier = 1;
 let boostTimer = null;
+let banInterval = null;
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,24 +27,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGameEngine() {
-    // 1. FIX IMAGE PATH (HTML change mana hai, JS se fix kar rahe hain)
+    // 1. FIX IMAGE PATH
     const coinImg = document.getElementById('tap-coin');
     if(coinImg) {
         coinImg.src = "assets/coin_main.jpg.png"; // 🔥 FIXED PATH
         
-        // Remove old listeners & Add New
         const newCoin = coinImg.cloneNode(true);
         coinImg.parentNode.replaceChild(newCoin, coinImg);
         newCoin.addEventListener('pointerdown', handleSecureTap);
-        // Disable drag/context
         newCoin.oncontextmenu = () => false;
         newCoin.ondragstart = () => false;
     }
 
-    // 2. RESTORE BAN STATE
-    checkBanStatus();
+    // 2. ATTACH BUTTON LISTENERS (FIX FOR CLICKS)
+    const boosterBtn = document.getElementById('btn-booster-action');
+    const refillBtn = document.getElementById('btn-refill-action');
+    if(boosterBtn) boosterBtn.addEventListener('click', () => handlePowerUp('booster'));
+    if(refillBtn) refillBtn.addEventListener('click', () => handlePowerUp('refill'));
 
-    // 3. START LOOPS
+
+    // 3. RESTORE STATE & START LOOPS
+    checkBanStatus();
     setInterval(rechargeLoop, 1000);
     updatePowerUpUI();
 
@@ -55,31 +59,25 @@ function initGameEngine() {
 // --- SECURE TAP SYSTEM ---
 function handleSecureTap(e) {
     if (isBanned) {
-        // Haptic Error Feedback
         if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
         return;
     }
 
     const now = Date.now();
-    
-    // 1. ANTI-CHEAT CALCULATIONS
     clickTimes.push(now);
-    clickTimes = clickTimes.filter(t => now - t < 1000); // Only keep last 1 sec
+    clickTimes = clickTimes.filter(t => now - t < 1000); // Keep last 1 sec
     
     const cps = clickTimes.length;
 
-    // Strict Ban Trigger
     if (cps >= ANTI_CHEAT.BAN_CPS) {
         triggerBanSystem();
         return;
     }
     
-    // Warning Trigger
     if (cps >= ANTI_CHEAT.WARN_CPS) {
         showRedWarning();
     }
 
-    // 2. GAMEPLAY
     if (energy <= 0) {
         if(navigator.vibrate) navigator.vibrate(50);
         return;
@@ -89,8 +87,6 @@ function handleSecureTap(e) {
     const earned = 2 * boostMultiplier;
     energy = Math.max(0, energy - 2);
     updateEnergyUI();
-
-    // Global Sync
     if(window.addCoins) window.addCoins(earned);
 
     // Visuals
@@ -101,35 +97,23 @@ function handleSecureTap(e) {
 
 // --- PROFESSIONAL WARNING SYSTEM ---
 function showRedWarning() {
-    // UI Feedback: Make text flash RED
     const statusText = document.getElementById('security-status');
     if(statusText) {
         statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> HIGH TRAFFIC DETECTED`;
         statusText.className = "text-red-glow";
-        
-        // Reset after 2 sec
         setTimeout(() => {
             statusText.className = "";
             statusText.innerHTML = `<i class="fa-solid fa-shield-halved"></i> SECURED`;
         }, 2000);
     }
-
-    // Red Toast
-    Swal.fire({
-        toast: true, position: 'top', icon: 'error',
-        title: '⚠️ SYSTEM ALERT',
-        text: 'Tapping speed exceeding human limits. Slow down to avoid ban.',
-        background: '#450a0a', color: '#ff4444', // Dark Red Background
-        showConfirmButton: false, timer: 2000
-    });
+    Swal.fire({ toast: true, position: 'top', icon: 'error', title: '⚠️ TAP SLOWER', background: '#450a0a', color: '#ff4444', showConfirmButton: false, timer: 1500 });
 }
 
-// --- BAN SYSTEM (Red Glow + Timer) ---
+// --- BAN SYSTEM (Red Glow + Coin Timer) ---
 function triggerBanSystem() {
     isBanned = true;
     const banEnd = Date.now() + ANTI_CHEAT.BAN_TIME;
     localStorage.setItem('game_ban_end', banEnd);
-    
     applyBanVisuals(banEnd);
 }
 
@@ -147,45 +131,46 @@ function checkBanStatus() {
 }
 
 function applyBanVisuals(endTime) {
-    // 1. Show Overlay
-    const overlay = document.getElementById('ban-overlay');
-    const timerText = document.getElementById('ban-timer');
-    if(overlay) {
-        overlay.classList.remove('hidden'); 
-        overlay.classList.add('active'); // CSS Force show
-    }
-
-    // 2. Red Glow Effect on Ring
+    // 1. Red Glow on Ring
     const ring = document.querySelector('.cyber-ring');
+    const coin = document.getElementById('tap-coin');
     if(ring) ring.classList.add('danger-state');
+    if(coin) coin.classList.add('coin-banned');
 
-    // 3. Timer Loop
-    const interval = setInterval(() => {
+    // 2. Show Red Timer over Coin
+    const coinTimer = document.getElementById('coin-ban-timer');
+    if(coinTimer) coinTimer.classList.remove('hidden');
+
+    // 3. Start Timer Loop
+    if(banInterval) clearInterval(banInterval);
+    banInterval = setInterval(() => {
         const left = endTime - Date.now();
         if (left <= 0) {
-            clearInterval(interval);
             liftBan();
             return;
         }
-        
         const m = Math.floor(left / 60000);
         const s = Math.floor((left % 60000) / 1000);
-        if(timerText) timerText.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+        if(coinTimer) coinTimer.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
     }, 1000);
 }
 
 function liftBan() {
     isBanned = false;
     localStorage.removeItem('game_ban_end');
-    
-    document.getElementById('ban-overlay').classList.add('hidden');
-    document.getElementById('ban-overlay').classList.remove('active');
+    if(banInterval) clearInterval(banInterval);
     
     const ring = document.querySelector('.cyber-ring');
+    const coin = document.getElementById('tap-coin');
+    const coinTimer = document.getElementById('coin-ban-timer');
+    
     if(ring) ring.classList.remove('danger-state');
+    if(coin) coin.classList.remove('coin-banned');
+    if(coinTimer) coinTimer.classList.add('hidden');
 }
 
 // --- POWER UP SYSTEM (FIXED) ---
+// NOTE: Using window scope to ensure click handlers work
 window.handlePowerUp = function(type) {
     if (isBanned) return;
 
@@ -198,11 +183,7 @@ window.handlePowerUp = function(type) {
     let count = parseInt(localStorage.getItem(`pwr_${type}_count`) || "0");
 
     if (count >= LIMITS.TOTAL) {
-        Swal.fire({
-            icon: 'error', title: 'Limit Reached',
-            text: 'Daily limit exhausted. Reset at 00:00 UTC.',
-            background: '#020617', color: '#fff'
-        });
+        Swal.fire({ icon: 'error', title: 'Daily Limit Reached', text: 'Come back tomorrow!', background: '#020617', color: '#fff' });
         return;
     }
 
@@ -213,26 +194,13 @@ window.handlePowerUp = function(type) {
         // Ad Logic
         Swal.fire({
             title: 'Watch Ad?',
-            text: `Free ${type} used. Watch 15s ad to refill?`,
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonText: 'Watch Video',
-            confirmButtonColor: '#fbbf24',
-            background: '#020617', color: '#fff'
+            text: `Free limit used. Watch 15s ad for ${type}?`,
+            icon: 'info', showCancelButton: true, confirmButtonText: 'Watch', confirmButtonColor: '#fbbf24', background: '#020617', color: '#fff'
         }).then((res) => {
             if (res.isConfirmed) {
                 window.open(ADSTERRA_LINK, '_blank');
-                
                 let timer = 15;
-                Swal.fire({
-                    title: 'Verifying...',
-                    html: `Reward in <b>${timer}</b>s`,
-                    timer: 15000,
-                    timerProgressBar: true,
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); },
-                    background: '#020617', color: '#fff'
-                }).then(() => {
+                Swal.fire({ title: 'Verifying...', html: `Reward in <b>${timer}</b>s`, timer: 15000, timerProgressBar: true, allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }, background: '#020617', color: '#fff' }).then(() => {
                     activatePowerUp(type);
                     incrementPowerUp(type, count);
                 });
@@ -248,12 +216,9 @@ function activatePowerUp(type) {
         Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'Energy Refilled!', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false });
     } else {
         boostMultiplier = 2;
-        // Visual Boost
         const ring = document.querySelector('.cyber-ring');
         if(ring) ring.style.boxShadow = "0 0 50px rgba(74, 222, 128, 0.5)";
-        
         Swal.fire({ toast: true, position: 'top', icon: 'success', title: '2x Boost Active!', background: '#020617', color: '#fff', timer: 1500, showConfirmButton: false });
-
         if(boostTimer) clearTimeout(boostTimer);
         boostTimer = setTimeout(() => {
             boostMultiplier = 1;
