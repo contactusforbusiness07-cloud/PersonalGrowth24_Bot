@@ -1,133 +1,189 @@
-/* css/games.css - LOCKED METAVERSE DESIGN + FLOATING ACTIONS */
+/* css/games.css - FULL CODE WITH IMAGE CENTERING */
 
-/* 1. GLOBAL LAYOUT LOCK */
+/* 1. Games Container */
 #games {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 90%);
-    overflow: hidden;
+    padding-top: 20px;
+    padding-bottom: 90px;
     display: flex;
     flex-direction: column;
-    padding-top: 60px;
-    padding-bottom: 90px;
+    height: 100vh;
     box-sizing: border-box;
-    z-index: 1;
-    -webkit-user-select: none; user-select: none;
-    -webkit-touch-callout: none;
+    overflow: hidden; /* Prevent scrolling within game */
 }
 
-/* Cyber Grid Background */
-#games::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    transform: perspective(800px) rotateX(70deg);
-    animation: gridFloat 15s linear infinite;
-    pointer-events: none; z-index: -1;
-}
-@keyframes gridFloat { 0% { transform: perspective(800px) rotateX(70deg) translateY(0); } 100% { transform: perspective(800px) rotateX(70deg) translateY(40px); } }
-
-/* 2. AD SPACE */
+/* 2. Native Ad Placeholder */
 .native-ad-placeholder {
-    flex-shrink: 0; height: 50px; margin: 5px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    background: rgba(0, 0, 0, 0.6) !important; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(5px);
+    margin: 0 20px 15px;
+    background: linear-gradient(90deg, rgba(234, 179, 8, 0.15), rgba(2, 6, 23, 0.8));
+    border: 1px dashed rgba(234, 179, 8, 0.4);
+    border-radius: 8px;
+    padding: 10px 15px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 11px;
+    color: #ffd700;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
 }
+.native-ad-placeholder:active { transform: scale(0.98); opacity: 0.8; }
 
-/* 3. DIGITAL HUD */
-.game-header { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 10px; z-index: 5; }
-.user-rank-badge { background: linear-gradient(90deg, #334155, #1e293b); padding: 4px 12px; border-radius: 20px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 5px; color: #cbd5e1; }
-.mining-hud { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 5px auto; padding: 5px 40px; background: linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(6,182,212,0.1) 100%); border-bottom: 2px solid rgba(6, 182, 212, 0.3); border-radius: 0 0 20px 20px; position: relative; }
-.mining-hud::before { content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 100%; border-left: 2px solid rgba(6, 182, 212, 0.3); border-top: 2px solid rgba(6, 182, 212, 0.3); border-top-left-radius: 10px; }
-.mining-hud::after { content: ''; position: absolute; top: 0; right: 0; width: 10px; height: 100%; border-right: 2px solid rgba(6, 182, 212, 0.3); border-top: 2px solid rgba(6, 182, 212, 0.3); border-top-right-radius: 10px; }
-.current-mining-label { font-family: 'Orbitron', sans-serif; font-size: 9px; color: #06b6d4; letter-spacing: 3px; margin-bottom: 5px; text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); }
-.big-gold-text { font-family: 'Orbitron', sans-serif; font-size: 52px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 30px rgba(6, 182, 212, 0.4); line-height: 1; }
-
-/* 4. TAP ARENA */
-.tap-arena { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 5; margin-bottom: 10px; }
-.cyber-ring { position: absolute; width: 320px; height: 320px; border-radius: 50%; border: 1px dashed rgba(6, 182, 212, 0.2); box-shadow: 0 0 30px rgba(6, 182, 212, 0.05); animation: spinSlow 20s linear infinite; pointer-events: none; z-index: 1; }
-.cyber-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 10px #06b6d4; }
-@keyframes spinSlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.main-coin { width: 270px; height: 270px; border-radius: 50%; filter: drop-shadow(0 0 35px rgba(234, 179, 8, 0.25)); cursor: pointer; transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; -webkit-user-drag: none; }
-.main-coin:active { transform: scale(0.92); filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.6)); }
-.coin-banned { filter: grayscale(100%) sepia(100%) hue-rotate(-50deg) saturate(500%) drop-shadow(0 0 30px red) !important; opacity: 0.8; }
-
-/* 5. FLOATING NUMBERS */
-.floating-text { position: absolute; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 36px; color: #fff; -webkit-text-stroke: 1px #06b6d4; pointer-events: none; animation: floatUp 0.7s ease-out forwards; z-index: 20; }
-@keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-120px) scale(1.2); opacity: 0; } }
-
-/* 6. CONTROL DECK */
-.energy-control-panel { flex-shrink: 0; margin: 0 20px 10px 20px; padding: 18px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 3px solid rgba(6, 182, 212, 0.3); border-radius: 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
-.energy-info { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 11px; color: #94a3b8; margin-bottom: 10px; letter-spacing: 1px; }
-.energy-bar-bg { height: 10px; background: #0f172a; border-radius: 5px; overflow: hidden; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.05); }
-.energy-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24, #fff); box-shadow: 0 0 15px rgba(251, 191, 36, 0.6); transition: width 0.3s ease; }
-.security-badge { display: flex; justify-content: center; gap: 20px; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-.security-badge span { font-size: 8px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
-.text-green { color: #4ade80 !important; text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
-.ban-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 38, 38, 0.95); padding: 15px 25px; border-radius: 12px; color: white; font-family: 'Orbitron'; text-align: center; border: 1px solid #fff; box-shadow: 0 0 40px red; z-index: 100; display: none; }
-
-/* --- 7. NEW FLOATING ICONS (BOOSTER & REFILL) --- */
-.game-floating-actions {
-    position: absolute;
-    bottom: 20px; /* Aligned near bottom of coin area */
-    left: 20px;
-    right: 20px;
+/* 3. Header & HUD */
+.game-header {
     display: flex;
     justify-content: space-between;
-    pointer-events: none; /* Let clicks pass through empty space */
-    z-index: 15;
+    align-items: flex-start;
+    padding: 0 20px;
+    margin-bottom: 10px;
 }
-
-.hitech-icon-btn {
-    pointer-events: auto; /* Enable clicking on buttons */
-    width: 55px; height: 55px;
-    border-radius: 50%;
+.user-rank-badge {
     background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #94a3b8;
+    display: flex; align-items: center; gap: 5px;
+}
+.mining-hud { text-align: right; }
+.current-mining-label { font-size: 10px; color: #00f3ff; letter-spacing: 1px; margin-bottom: 2px; }
+.big-gold-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* 4. TAP ARENA (The Circle) */
+.tap-arena {
     position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    width: 280px;
+    height: 280px;
+    margin: 20px auto;
+    display: flex;             /* Centering Magic */
+    justify-content: center;   /* Horizontal Center */
+    align-items: center;       /* Vertical Center */
+}
+
+/* 5. CYBER RING (Background Animation) */
+.cyber-ring {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 243, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.05);
+    animation: pulseRing 3s infinite;
+    z-index: 1;
+}
+
+/* 6. MAIN COIN (Fixed Alignment) */
+.main-coin {
+    width: 80%;       /* Circle ke andar fit hoga */
+    height: 80%;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 10;
+    cursor: pointer;
     transition: transform 0.1s;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    border: 4px solid rgba(255, 215, 0, 0.2);
 }
+.main-coin:active { transform: scale(0.95); }
 
+/* 7. Floating Actions (Buttons) */
+.game-floating-actions {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 20;
+    pointer-events: none; /* Let clicks pass through container */
+}
+.hitech-icon-btn {
+    width: 50px; height: 50px;
+    background: rgba(2, 6, 23, 0.9);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    color: #fff;
+    font-size: 18px;
+    position: relative;
+    pointer-events: auto; /* Enable clicks on buttons */
+    transition: transform 0.2s;
+}
 .hitech-icon-btn:active { transform: scale(0.9); }
+.booster { color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+.refill { color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* Left - Booster (Rocket) */
-.hitech-icon-btn.booster {
-    border-color: #4ade80; /* Green */
-    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-    animation: pulseGreen 2s infinite;
-}
-.hitech-icon-btn.booster i { font-size: 20px; color: #4ade80; }
-
-/* Right - Refill (Lightning) */
-.hitech-icon-btn.refill {
-    border-color: #fbbf24; /* Gold/Yellow */
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
-    animation: pulseGold 2s infinite;
-}
-.hitech-icon-btn.refill i { font-size: 20px; color: #fbbf24; }
-
-/* Count Badge */
 .icon-badge {
     position: absolute;
-    bottom: -8px;
-    background: #0f172a;
-    border: 1px solid rgba(255,255,255,0.2);
+    top: -5px; right: -5px;
+    background: #000;
     color: #fff;
     font-size: 9px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-family: 'Orbitron';
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid #333;
 }
 
-@keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
-@keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
+/* 8. Energy Control Panel */
+.energy-control-panel {
+    margin-top: auto; /* Push to bottom */
+    padding: 0 25px;
+}
+.energy-info {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #94a3b8; font-weight: 600;
+    margin-bottom: 8px;
+}
+.energy-bar-bg {
+    width: 100%; height: 8px;
+    background: #1e293b;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+.energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #ffd700);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+/* 9. Security Badge */
+.security-badge {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: #64748b;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 10px;
+}
+.blink-anim { animation: blink 1s infinite; }
+
+/* 10. Animations */
+@keyframes pulseRing {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 0.2; }
+    100% { transform: scale(0.95); opacity: 0.5; }
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Floating Score */
+.floating-score {
+    position: fixed;
+    color: #fff;
+    font-weight: 800;
+    font-size: 24px;
+    pointer-events: none;
+    z-index: 100;
+    animation: floatUp 0.8s ease-out forwards;
+    text-shadow: 0 0 10px #000;
+}
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
