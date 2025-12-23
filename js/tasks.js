@@ -1,34 +1,31 @@
-/* js/tasks.js - METAVERSE AD ENGINE & TASK LOGIC */
+/* js/tasks.js - LINKED TO MAIN WALLET */
 
 const TASKS_CACHE_KEY = 'fingamepro_tasks_v4';
 const AD_REWARD = 500;
 
-// 1. REAL CHANNELS
 const telegramChannels = [
     { id: 'tg_english_room', name: 'The English Room', url: 'https://t.me/The_EnglishRoom5', reward: 1000 },
     { id: 'tg_grammar_shots', name: 'Grammar Shots', url: 'https://t.me/English_Speaking_Grammar_Shots', reward: 1000 },
     { id: 'tg_upsc_notes', name: 'UPSC Notes Official', url: 'https://t.me/UPSC_Notes_Official', reward: 1000 },
     { id: 'tg_upsc_quiz', name: 'UPSC Quiz Vault', url: 'https://t.me/UPSC_Quiz_Vault', reward: 1000 },
     { id: 'tg_ias_prep', name: 'IAS Prep Quiz Zone', url: 'https://t.me/IAS_PrepQuiz_Zone', reward: 1000 },
-    // We will inject an Ad after this one
     { id: 'tg_tourism', name: 'Ministry of Tourism', url: 'https://t.me/MinistryOfTourism', reward: 1000 },
     { id: 'tg_finance', name: 'Personal Finance', url: 'https://t.me/PersonalFinanceWithShiv', reward: 1000 },
     { id: 'tg_schemes', name: 'Govt Schemes India', url: 'https://t.me/GovernmentSchemesIndia', reward: 1000 }
 ];
 
-// 2. NATIVE AD DATA (Stealth Mode)
 const nativeAds = [
     {
         title: "Exclusive: Trading Bonus",
         desc: "Sign up & Claim $50 Credit",
-        url: "https://www.binance.com/en", // Replace with your Adsterra/Affiliate Link
+        url: "https://www.binance.com/en",
         icon: "fa-solid fa-chart-line",
         cta: "CLAIM"
     }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(renderTasks, 300); // Smooth entry
+    setTimeout(renderTasks, 300);
 });
 
 function renderTasks() {
@@ -41,15 +38,11 @@ function renderTasks() {
     telegramChannels.forEach((channel, index) => {
         const isDone = completedTasks.includes(channel.id);
         
-        // 1. Create Normal Task Card
         const card = document.createElement('div');
         card.className = `task-card ${isDone ? 'completed-task' : ''}`;
-        card.style.animation = `floatHero 0.5s ease-out backwards ${index * 0.05}s`;
         
         card.innerHTML = `
-            <div class="task-icon">
-                <i class="fa-brands fa-telegram tg-blue"></i>
-            </div>
+            <div class="task-icon"><i class="fa-brands fa-telegram tg-blue"></i></div>
             <div class="task-info">
                 <h4>${channel.name}</h4>
                 <div class="reward-badge"><i class="fa-solid fa-coins"></i> +${channel.reward}</div>
@@ -60,13 +53,11 @@ function renderTasks() {
         `;
         listContainer.appendChild(card);
 
-        // 2. INJECT NATIVE AD (After 5th item for High Visibility)
         if (index === 4) {
             const adData = nativeAds[0];
             const adCard = document.createElement('div');
-            adCard.className = 'native-ad-card'; // Different Class
+            adCard.className = 'native-ad-card';
             adCard.onclick = () => window.open(adData.url, '_blank');
-            
             adCard.innerHTML = `
                 <div class="ad-badge">SPONSORED</div>
                 <div class="ad-icon-box"><i class="${adData.icon}"></i></div>
@@ -81,7 +72,6 @@ function renderTasks() {
     });
 }
 
-// --- TASK HANDLING LOGIC ---
 window.handleTaskJoin = function(id, url, reward, btn) {
     const completedTasks = JSON.parse(localStorage.getItem(TASKS_CACHE_KEY) || '[]');
     if(completedTasks.includes(id)) return;
@@ -93,7 +83,9 @@ window.handleTaskJoin = function(id, url, reward, btn) {
     btn.disabled = true;
     
     setTimeout(() => {
-        addCoins(reward);
+        // 🔥 GLOBAL ADD COINS CALL
+        if(window.addCoins) window.addCoins(reward);
+        
         completedTasks.push(id);
         localStorage.setItem(TASKS_CACHE_KEY, JSON.stringify(completedTasks));
         
@@ -131,7 +123,8 @@ window.startWatchTask = function(btn) {
 };
 
 function finishWatchTask(btn) {
-    addCoins(AD_REWARD);
+    if(window.addCoins) window.addCoins(AD_REWARD);
+    
     document.getElementById('ad-progress-container').classList.add('hidden');
     btn.disabled = false;
     btn.innerHTML = 'CLAIMED';
@@ -140,15 +133,6 @@ function finishWatchTask(btn) {
         icon: 'success', title: 'Reward Claimed!',
         background: '#020617', color: '#fff'
     });
-
     setTimeout(() => { btn.innerHTML = 'WATCH AGAIN'; }, 5000);
 }
 
-function addCoins(amount) {
-    let currentBal = parseFloat(localStorage.getItem('local_balance') || "0");
-    currentBal += amount;
-    localStorage.setItem('local_balance', currentBal);
-    if(window.currentUser) window.currentUser.balance = currentBal;
-    const headerBal = document.getElementById('header-coin-balance');
-    if(headerBal) headerBal.innerText = Math.floor(currentBal).toLocaleString();
-}
