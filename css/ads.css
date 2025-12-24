@@ -1,0 +1,46 @@
+/* css/ads.css - PREMIUM AD STYLING */
+
+/* 1. Ad Container (Native Ads) */
+.native-ad-container {
+    display: none; /* Load hone se pehle chhupa rahega */
+    position: relative;
+    margin: 20px 0;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    min-height: 120px; /* Adsterra Native size */
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. Section Wise Styling (Theme Match) */
+#ad-home-native .native-ad-container {
+    border-color: rgba(0, 243, 255, 0.2); /* Cyan Glow */
+}
+#ad-wallet-native .native-ad-container {
+    border-color: rgba(255, 215, 0, 0.2); /* Gold Glow */
+}
+#game-native-ad .native-ad-container {
+    border-color: rgba(239, 68, 68, 0.2); /* Red Glow */
+}
+
+/* 3. "SPONSORED" Badge (Trust ke liye) */
+.native-ad-container::before {
+    content: "⚡ SPONSORED";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #eab308; /* Gold Color */
+    color: #000;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-bottom-right-radius: 8px;
+    z-index: 5;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
