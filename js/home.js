@@ -1,24 +1,23 @@
-/* js/home.js - DYNAMIC HOME CONTROLLER & ADS */
+/* js/home.js - DYNAMIC DASHBOARD & MONETIZATION */
 
 // --- CONFIGURATION ---
 const HOME_CONFIG = {
-    // ⚠️ ADSTERRA LINKS YAHAN DALNA
-    SOCIAL_BAR_URL: "//pl12345678.example.com/social_script.js", // Social Bar JS Link
-    NATIVE_BANNER_ID: "container-123456", // Native Banner Container ID (if applicable)
-
+    // ⚠️ PASTE YOUR ADSTERRA LINKS HERE
+    SOCIAL_BAR_URL: "//pl12345678.example.com/social_script.js", 
+    
     SETTINGS: {
-        SOCIAL_DELAY_MS: 6000,      // 6 Sec wait
-        SESSION_CAP: 2,             // Max 2 ads per session
-        COOLDOWN_MS: 180000,        // 3 Mins cooldown
+        SOCIAL_DELAY_MS: 6000,      // 6s wait
+        SESSION_CAP: 2,             // Max 3 ads
+        COOLDOWN_MS: 180000,        // 2 Mins gap
         TICKER_SPEED: 5000
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Modify HTML Structure Dynamically (No HTML file edit needed)
+    // 1. Force Layout Upgrade (No HTML Edit needed)
     upgradeHomeLayout();
 
-    // 2. Start Systems
+    // 2. Start Core Systems
     initHomeSystem();
 });
 
@@ -42,41 +41,50 @@ function upgradeHomeLayout() {
         hero.parentNode.insertBefore(adDiv, hero.nextSibling);
     }
 
-    // 2. REPLACE "SMART TOOLS" WITH "OFFICIAL COMMS"
-    // Find the section title
+    // 2. CHANGE HEADER & REPLACE GRID WITH WIDE BARS
     const titles = document.querySelectorAll('.section-title');
     titles.forEach(t => {
-        if (t.innerText.includes('Smart Tools') || t.innerText.includes('Tools')) {
-            t.innerHTML = 'Official Comms <span class="badge-viral">VERIFIED</span>';
+        if (t.innerText.includes('Smart Tools') || t.innerText.includes('Tools') || t.innerText.includes('Official Comms')) {
+            t.innerHTML = 'OFFICIAL UPDATES <span class="badge-viral">VERIFIED</span>';
         }
     });
 
-    // Replace the Grid Content
-    const toolsGrid = document.querySelector('.tools-grid');
+    // Replace Smart Tools Grid with Wide List
+    const toolsGrid = document.querySelector('.tools-grid') || document.querySelector('.social-grid');
+    
     if (toolsGrid) {
-        const socialGrid = document.createElement('div');
-        socialGrid.className = 'social-grid';
-        socialGrid.innerHTML = `
-            <div class="social-card telegram" onclick="window.open('https://t.me/The_EnglishRoom5', '_blank')">
-                <i class="fa-brands fa-telegram"></i><span>Telegram</span>
+        const newContainer = document.createElement('div');
+        newContainer.className = 'official-stack'; // Wide Stack Style
+
+        // Exact Text & Structure as Requested
+        newContainer.innerHTML = `
+            <div class="wide-link-card telegram" onclick="window.open('https://t.me/The_EnglishRoom5', '_blank')">
+                <i class="fa-brands fa-telegram"></i>
+                <span>Official Telegram Announcement</span>
             </div>
-            <div class="social-card instagram" onclick="window.open('https://instagram.com/', '_blank')">
-                <i class="fa-brands fa-instagram"></i><span>Instagram</span>
+
+            <div class="wide-link-card instagram" onclick="window.open('https://instagram.com/', '_blank')">
+                <i class="fa-brands fa-instagram"></i>
+                <span>Official Instagram</span>
             </div>
-            <div class="social-card youtube" onclick="window.open('https://youtube.com/', '_blank')">
-                <i class="fa-brands fa-youtube"></i><span>YouTube</span>
+
+            <div class="wide-link-card youtube" onclick="window.open('https://youtube.com/', '_blank')">
+                <i class="fa-brands fa-youtube"></i>
+                <span>Official YouTube Channel</span>
             </div>
-            <div class="social-card facebook" onclick="window.open('https://facebook.com/', '_blank')">
-                <i class="fa-brands fa-facebook"></i><span>Facebook</span>
+
+            <div class="wide-link-card facebook" onclick="window.open('https://facebook.com/', '_blank')">
+                <i class="fa-brands fa-facebook"></i>
+                <span>Official Facebook Page</span>
             </div>
-            <div class="social-card pinterest" onclick="window.open('https://pinterest.com/', '_blank')">
-                <i class="fa-brands fa-pinterest"></i><span>Pinterest</span>
-            </div>
-            <div class="social-card brand" onclick="openInternalPage('page-brand')">
-                <i class="fa-solid fa-handshake"></i><span>Partner</span>
+
+            <div class="wide-link-card brand" onclick="openInternalPage('page-brand')">
+                <i class="fa-solid fa-handshake"></i>
+                <span>Partner (Brand / Sponsorship ⭐)</span>
             </div>
         `;
-        toolsGrid.parentNode.replaceChild(socialGrid, toolsGrid);
+
+        toolsGrid.parentNode.replaceChild(newContainer, toolsGrid);
     }
 }
 
@@ -84,14 +92,9 @@ function upgradeHomeLayout() {
 // ⚙️ CORE SYSTEMS
 // ==========================================
 function initHomeSystem() {
-    // Balance Sync
     updateHomeBalance();
     setInterval(updateHomeBalance, 2000);
-
-    // Motivation Ticker
     initTicker();
-
-    // Monetization Engine
     initAdEngine();
 }
 
@@ -132,32 +135,25 @@ function initTicker() {
 }
 
 // ==========================================
-// 💸 ADSTERRA MONETIZATION ENGINE
+// 💸 ADSTERRA ENGINE
 // ==========================================
 function initAdEngine() {
-    
-    // A. Inject Native Ad Script
-    const container = document.getElementById('native-ad-container');
-    if(container && container.innerHTML.trim() === "") {
-        console.log("Ads: Loading Native Banner...");
+    // Show Native Ad Slot
+    const nativeSlot = document.getElementById('adsterra-native-slot');
+    if(nativeSlot) {
+        nativeSlot.style.display = 'block';
         
-        // 👇 PASTE YOUR NATIVE AD SCRIPT HERE (Example below) 👇
-        /*
-        const s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.src = '//pl123456.example.com/native_banner.js'; 
-        container.appendChild(s);
-        */
+        // 👇 PASTE NATIVE AD SCRIPT BELOW THIS LINE
+        // const s = document.createElement('script'); s.src='...'; document.getElementById('native-ad-container').appendChild(s);
     }
 
-    // B. Trigger Social Bar (With Logic)
+    // Trigger Social Bar Logic
     const lastAdTime = parseInt(localStorage.getItem('ad_last_shown') || "0");
     const sessionAds = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     const now = Date.now();
 
     if ((now - lastAdTime > HOME_CONFIG.SETTINGS.COOLDOWN_MS) && 
         (sessionAds < HOME_CONFIG.SETTINGS.SESSION_CAP)) {
-        
         setTimeout(() => {
             triggerSocialBar();
         }, HOME_CONFIG.SETTINGS.SOCIAL_DELAY_MS);
@@ -167,17 +163,15 @@ function initAdEngine() {
 function triggerSocialBar() {
     console.log("Ads: Injecting Social Bar...");
     
-    // 👇 PASTE SOCIAL BAR SCRIPT HERE 👇
+    // 👇 PASTE SOCIAL BAR SCRIPT HERE
     /*
     const script = document.createElement('script');
     script.src = HOME_CONFIG.SOCIAL_BAR_URL;
     script.async = true;
     document.body.appendChild(script);
     */
-
-    // Update Limits
+    
     localStorage.setItem('ad_last_shown', Date.now());
     const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     sessionStorage.setItem('ad_session_count', count + 1);
 }
-
