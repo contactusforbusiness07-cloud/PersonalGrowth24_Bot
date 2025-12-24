@@ -853,7 +853,7 @@
         
         <div class="menu-list">
             <div class="menu-item" onclick="openInternalPage('page-profile')"><div class="mi-icon"><i class="fa-solid fa-user"></i></div><span>My Profile</span></div>
-            <div class="menu-item" onclick="navigateTo('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
+            <div class="menu-item" onclick="handleMenuNav('wallet')"><div class="mi-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet & Earnings</span></div>
             <div class="menu-item" style="opacity: 0.6;"><div class="mi-icon"><i class="fa-solid fa-id-card"></i></div><span>KYC Verification</span><span style="font-size: 10px; background: #334155; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Coming Soon</span></div>
             <div class="menu-item" onclick="openInternalPage('page-refer')"><div class="mi-icon"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></div>
             <div class="menu-item highlight-box" onclick="openInternalPage('page-brand')"><div class="mi-icon"><i class="fa-solid fa-handshake text-gold"></i></div><span class="text-gold" style="font-weight: 700;">Brand / Sponsorship ⭐</span></div>
@@ -896,6 +896,53 @@
 
     <script>
       AOS.init();
+      
+      // Initialize active section tracking
+      let currentActiveSectionId = 'home';
+      
+      // Add listeners to navigation items to track current section
+      document.querySelectorAll('.nav-item').forEach(item => {
+          item.addEventListener('click', function() {
+             const onclickVal = this.getAttribute('onclick');
+             // extracting 'home' from "navigateTo('home')"
+             if(onclickVal) {
+                 const match = onclickVal.match(/'([^']+)'/);
+                 if(match && match[1]) {
+                     currentActiveSectionId = match[1];
+                 }
+             }
+          });
+      });
+
+      // Menu Navigation Handler (Wallet Fix)
+      window.handleMenuNav = function(section) {
+          if(typeof navigateTo === 'function') {
+              navigateTo(section);
+              currentActiveSectionId = section; // update tracker
+          }
+          toggleProfileMenu(false); // Close menu
+      }
+
+      // Logout Handler (Close App)
+      window.handleLogout = function() {
+          Swal.fire({
+            title: 'Logout?',
+            text: "Close the app and return to Telegram?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, Close'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                if(window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.close();
+                } else {
+                    window.location.reload(); // Fallback
+                }
+            }
+          });
+      }
 
       // Reliable Menu Toggle
       window.toggleProfileMenu = function(forceState) {
@@ -930,18 +977,34 @@
           }
       };
 
-      // ✅ FIXED: Back Button Logic
-      // Ye ab page ko background se hata dega aur Home show karega menu ke piche
+      // ✅ FIXED: Back Button Logic (State Persistence)
       window.backToProfileMenu = function() {
           // 1. Pehle Menu Kholo
           window.toggleProfileMenu(true);
 
-          // 2. Jo Page khula tha usko chhupa do (Hide Current Page)
+          // 2. Jo Page khula tha usko chhupa do (Hide Internal Page)
           document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
 
-          // 3. Background me 'Home' section dikha do (Taaki blank na lage)
-          const homeSection = document.getElementById('home');
-          if(homeSection) homeSection.classList.remove('hidden');
+          // 3. Ensure the current main section is visible (Don't force Home)
+          // Check if all page-sections are hidden. If so, reveal the last active one.
+          const sections = document.querySelectorAll('.page-section');
+          let anyVisible = false;
+          sections.forEach(s => {
+              if(!s.classList.contains('hidden') && s.style.display !== 'none') {
+                  anyVisible = true;
+              }
+          });
+          
+          if(!anyVisible) {
+              // If nothing is visible (because internal page covered it), show last active
+              const target = document.getElementById(currentActiveSectionId);
+              if(target) target.classList.remove('hidden');
+              else {
+                   // Fallback to home if something goes wrong
+                   const home = document.getElementById('home');
+                   if(home) home.classList.remove('hidden');
+              }
+          }
       };
     </script>
 </body>
