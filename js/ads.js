@@ -1,172 +1,87 @@
-/* =========================================
-   💎 FinGamePro: ADVANCED MONETIZATION ENGINE
-   Target: 10x-15x Revenue | UX: Premium Metaverse
-   ========================================= */
+/* js/ads.js - 10X REVENUE LOGIC (UPDATED WITH YOUR LINKS) */
 
-const AD_SYSTEM = {
-    // 👇 Yahan Apne Adsterra Links Dalein
-    CONFIG: {
-        NATIVE_BANNER_SRC: "//pl25569834.online-advert.com/your-native-code.js", 
-        SOCIAL_BAR_SRC: "//pl99887766.online-advert.com/your-social-code.js",
-        DIRECT_LINK_URL: "https://www.highcpmgate.com/xyz123", // Smartlink for Boosters
-        
-        // Settings
-        REFRESH_RATE: 30000,       // 30 Seconds
-        INITIAL_DELAY: 2000,       // App load hone ke 2 sec baad ads aayenge
-        SCROLL_PAUSE: true,        // Scroll karte waqt refresh nahi hoga
-        SOCIAL_DELAY: 25000,       // 25 sec baad Social Bar aayega
-        
-        // Limits (Safety)
-        BOOSTER_LIMIT: 6,          // Max 6 times per day
-        REFILL_LIMIT: 6            // Max 6 times per day
-    },
-
-    // 📍 All Ad Placements
-    SLOTS: [
-        "ad-home-native",         // Home: "Special Offer" style
-        "ad-leaderboard-native",  // Rank: "Sponsored Champion" style
-        "ad-tasks-native",        // Task: "Premium Mission" style
-        "ad-wallet-native",       // Wallet: "Finance Partner" style
-        "game-native-ad",         // Game: "Arena Sponsor" style
-        "menu-native-ad",         // Menu: If placeholder exists
-        "legal-native-ad"         // For all Info pages
-    ],
-
-    // State Tracking
-    timers: {},
-    isScrolling: false
-};
-
-// --- 🚀 INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("💰 Monetization Engine: Warming up...");
-    
-    // 1. Inject Native Ads
-    setTimeout(injectNativeAds, AD_SYSTEM.CONFIG.INITIAL_DELAY);
-
-    // 2. Inject Social Bar (Delayed)
-    setTimeout(injectSocialBar, AD_SYSTEM.CONFIG.SOCIAL_DELAY);
-
-    // 3. Setup Scroll Listener (To pause refresh)
-    setupScrollLogic();
-    
-    // 4. Setup Visibility Listener (Tab switch refresh)
-    document.addEventListener("visibilitychange", handleTabSwitch);
+    // 2 second delay taaki pehle app load ho (User Experience Safe)
+    setTimeout(initAdSystem, 2000);
 });
 
-// --- 🛠️ NATIVE AD INJECTION ---
-function injectNativeAds() {
-    AD_SYSTEM.SLOTS.forEach(slotId => {
-        const container = document.getElementById(slotId);
-        if (container) {
-            renderAd(container, slotId);
-            // Start Auto Refresh Timer
-            startRefreshTimer(container, slotId);
+// --- CONFIGURATION (YOUR LINKS) ---
+const ADS_CONFIG = {
+    // 1. SMARTLINK (High CPM)
+    SMARTLINK_URL: "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a",
+
+    // 2. SOCIAL BAR (Script URL)
+    SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js",
+
+    // 3. NATIVE BANNER (Key & Container ID from your code)
+    NATIVE_KEY: "85c8e4eb0a60d8ad0292343f4d54b04b", 
+    NATIVE_CONTAINER_ID: "container-85c8e4eb0a60d8ad0292343f4d54b04b"
+};
+
+function initAdSystem() {
+    console.log("💰 AdManager: Injecting Premium Ads...");
+
+    // A. Inject Social Bar (Global)
+    injectSocialBar();
+
+    // B. Inject Native Banners (Targeted Sections)
+    const adSlots = [
+        "ad-home-native",         // Home
+        "ad-leaderboard-native",  // Rank
+        "ad-tasks-native",        // Tasks
+        "ad-wallet-native",       // Wallet
+        "game-native-ad",         // Game
+        "menu-native-ad",         // Menu
+        "legal-ad-top",           // Legal Pages
+        "legal-ad-bottom"
+    ];
+
+    adSlots.forEach(slotId => {
+        const slot = document.getElementById(slotId);
+        if (slot) {
+            injectNativeAd(slot);
         }
     });
 }
 
-function renderAd(container, id) {
-    // Clear old ad
+// --- 1. NATIVE AD INJECTION LOGIC ---
+function injectNativeAd(container) {
+    // Styling Reset
     container.innerHTML = "";
+    container.className = "native-ad-container";
+    container.style.display = "block";
+
+    // Adsterra Native needs a specific DIV ID inside
+    // Note: Since ID must be unique, we create a dynamic wrapper, 
+    // but Adsterra script targets specific ID. We will try to clone it.
     
-    // Styling to match Metaverse Theme
-    container.classList.add('ad-loaded-container');
-    
-    // Script Injection
+    // 1. Create the Div Adsterra looks for
+    const adDiv = document.createElement('div');
+    adDiv.id = ADS_CONFIG.NATIVE_CONTAINER_ID; 
+    container.appendChild(adDiv);
+
+    // 2. Create the Script
     const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = AD_SYSTEM.CONFIG.NATIVE_BANNER_SRC + `?t=${Date.now()}`; // Cache bust
     script.async = true;
-    
-    // Error Handling
-    script.onerror = () => { container.style.display = 'none'; };
-    
+    script.dataset.cfasync = "false";
+    script.src = `//pl28285595.effectivegatecpm.com/${ADS_CONFIG.NATIVE_KEY}/invoke.js`;
+
     container.appendChild(script);
-    console.log(`✅ Ad Refreshed: ${id}`);
+    console.log("✅ Native Ad Injected");
 }
 
-// --- 🔄 SMART REFRESH LOGIC ---
-function startRefreshTimer(container, id) {
-    // Clear existing timer if any
-    if (AD_SYSTEM.timers[id]) clearInterval(AD_SYSTEM.timers[id]);
-
-    AD_SYSTEM.timers[id] = setInterval(() => {
-        // Refresh ONLY if user is NOT scrolling
-        if (!AD_SYSTEM.isScrolling && document.visibilityState === 'visible') {
-            // Blink Effect before refresh (Premium Feel)
-            container.style.opacity = "0.5";
-            setTimeout(() => {
-                renderAd(container, id);
-                container.style.opacity = "1";
-            }, 300);
-        }
-    }, AD_SYSTEM.CONFIG.REFRESH_RATE);
-}
-
-function setupScrollLogic() {
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        AD_SYSTEM.isScrolling = true;
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            AD_SYSTEM.isScrolling = false;
-        }, 1000); // Resume refresh 1 sec after scrolling stops
-    });
-}
-
-function handleTabSwitch() {
-    // User wapas aaya? Turant naye ads dikhao (High Revenue Trick)
-    if (document.visibilityState === 'visible') {
-        console.log("👀 User returned. Refreshing all ads...");
-        injectNativeAds();
-    }
-}
-
-// --- 🔔 SOCIAL BAR (IN-PAGE PUSH) ---
+// --- 2. SOCIAL BAR LOGIC ---
 function injectSocialBar() {
     const script = document.createElement('script');
-    script.src = AD_SYSTEM.CONFIG.SOCIAL_BAR_SRC;
+    script.src = ADS_CONFIG.SOCIAL_BAR_URL;
     script.async = true;
     document.body.appendChild(script);
     console.log("🔔 Social Bar Active");
 }
 
-// --- ⚡ DIRECT LINK (GAME BOOSTERS) - THE MONEY MAKER ---
-// Is function ko Game ke button onClick par call karein
-window.handlePowerUp = function(type) {
-    const today = new Date().toDateString();
-    const storageKey = `ad_limit_${type}_${today}`;
-    let count = parseInt(localStorage.getItem(storageKey) || "0");
-
-    if (count >= AD_SYSTEM.CONFIG.BOOSTER_LIMIT) {
-        // Limit Reached - Show Toast
-        Swal.fire({
-            icon: 'warning',
-            title: 'Limit Reached',
-            text: 'Come back tomorrow for more boosts!',
-            background: '#020617', color: '#fff'
-        });
-        return;
-    }
-
-    // 1. Open Direct Link (Ad)
-    window.open(AD_SYSTEM.CONFIG.DIRECT_LINK_URL, '_blank');
-
-    // 2. Grant Reward (Simulated)
-    count++;
-    localStorage.setItem(storageKey, count);
-    
-    // Update Badge UI
-    const badge = document.getElementById(`btn-${type}-badge`);
-    if(badge) badge.innerText = `${count}/${AD_SYSTEM.CONFIG.BOOSTER_LIMIT}`;
-
-    // Success Animation
-    Swal.fire({
-        icon: 'success',
-        title: 'System Boosted!',
-        text: 'Energy recharged successfully.',
-        background: '#020617', color: '#fff',
-        timer: 2000, showConfirmButton: false
-    });
+// --- 3. SMARTLINK LOGIC (HIGH REVENUE) ---
+// Is function ko 'Claim Bonus' ya 'Power Up' button par lagana
+window.openSmartLink = function() {
+    console.log("🚀 Opening Smartlink...");
+    window.open(ADS_CONFIG.SMARTLINK_URL, '_blank');
 };
