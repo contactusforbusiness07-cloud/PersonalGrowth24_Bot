@@ -70,26 +70,21 @@ function upgradeHomeLayout() {
         const newContainer = document.createElement('div');
         newContainer.className = 'official-stack'; // Wide Stack Style
 
-        // Exact Text & Structure as Requested
+        // Exact Text & Structure as Requested (Updated Links, Removed Facebook)
         newContainer.innerHTML = `
-            <div class="wide-link-card telegram" onclick="window.open('https://t.me/The_EnglishRoom5', '_blank')">
+            <div class="wide-link-card telegram" onclick="window.open('https://t.me/FinGamePro', '_blank')">
                 <i class="fa-brands fa-telegram"></i>
                 <span>Official Telegram Announcement</span>
             </div>
 
-            <div class="wide-link-card instagram" onclick="window.open('https://instagram.com/', '_blank')">
+            <div class="wide-link-card instagram" onclick="window.open('https://www.instagram.com/fingamepro?igsh=MWJ6amJqeThmOGtjcw==', '_blank')">
                 <i class="fa-brands fa-instagram"></i>
                 <span>Official Instagram</span>
             </div>
 
-            <div class="wide-link-card youtube" onclick="window.open('https://youtube.com/', '_blank')">
+            <div class="wide-link-card youtube" onclick="window.open('https://youtube.com/@fingamepro?si=7AVh0bbiICF-w7Uw', '_blank')">
                 <i class="fa-brands fa-youtube"></i>
                 <span>Official YouTube Channel</span>
-            </div>
-
-            <div class="wide-link-card facebook" onclick="window.open('https://facebook.com/', '_blank')">
-                <i class="fa-brands fa-facebook"></i>
-                <span>Official Facebook Page</span>
             </div>
 
             <div class="wide-link-card brand" onclick="openInternalPage('page-brand')">
@@ -185,4 +180,3 @@ function triggerSocialBar() {
     const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     sessionStorage.setItem('ad_session_count', count + 1);
 }
-
