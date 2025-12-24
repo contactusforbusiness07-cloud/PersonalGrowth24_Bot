@@ -1,23 +1,17 @@
-/* js/home.js - DYNAMIC DASHBOARD & MONETIZATION */
+/* js/home.js - HOME LOGIC CONNECTED TO ADS.JS (FINAL) */
 
 // --- CONFIGURATION ---
 const HOME_CONFIG = {
-    // ⚠️ PASTE YOUR ADSTERRA LINKS HERE
-    SOCIAL_BAR_URL: "//pl12345678.example.com/social_script.js", 
-    
     SETTINGS: {
-        SOCIAL_DELAY_MS: 6000,      // 6s wait
-        SESSION_CAP: 2,             // Max 3 ads
-        COOLDOWN_MS: 180000,        // 2 Mins gap
-        TICKER_SPEED: 5000
+        TICKER_SPEED: 5000 // News ticker speed
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Force Layout Upgrade (No HTML Edit needed)
+    // 1. Force Layout Upgrade (Ads + Social Links)
     upgradeHomeLayout();
 
-    // 2. Start Core Systems
+    // 2. Start Core Systems (Balance, Ticker)
     initHomeSystem();
 });
 
@@ -25,23 +19,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // 🛠️ DYNAMIC LAYOUT UPGRADE (MAGIC FUNCTION)
 // ==========================================
 function upgradeHomeLayout() {
-    console.log("🛠️ FinGamePro: Upgrading Home Layout...");
+    console.log("🛠️ FinGamePro: Upgrading Home Layout & Connecting Ads...");
 
-    // 1. INJECT NATIVE AD (After Hero Card)
+    // 🟢 1. INJECT NATIVE AD SLOT (Connected to ads.js)
+    // Check if ad slot already exists, if not, create it
     const hero = document.querySelector('.hero-card');
-    if (hero && !document.getElementById('adsterra-native-slot')) {
+    let adSlot = document.getElementById('ad-home-native');
+
+    if (hero && !adSlot) {
+        // Create the container exactly as ads.js expects
         const adDiv = document.createElement('div');
-        adDiv.id = 'adsterra-native-slot';
-        adDiv.className = 'native-ad-module';
-        adDiv.innerHTML = `
-            <div class="ad-label"><i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST</div>
-            <div id="native-ad-container">
-                </div>
-        `;
+        adDiv.id = 'ad-home-native'; // This ID matches ads.js target
+        adDiv.className = 'native-ad-container';
+        adDiv.style.marginTop = "20px";
+        adDiv.style.marginBottom = "20px";
+        
+        // Insert after Hero Card
         hero.parentNode.insertBefore(adDiv, hero.nextSibling);
+
+        // 🚀 SIGNAL TO ADS.JS
+        // Agar ads.js load ho chuka hai, to use bolo ki isme ad bhar de
+        setTimeout(() => {
+            if (window.injectAdIntoContainer) {
+                window.injectAdIntoContainer("ad-home-native");
+            }
+        }, 1000);
     }
 
-    // 2. CHANGE HEADER & REPLACE GRID WITH WIDE BARS
+    // 🟢 2. CHANGE HEADER & REPLACE GRID WITH WIDE BARS
     const titles = document.querySelectorAll('.section-title');
     titles.forEach(t => {
         if (t.innerText.includes('Smart Tools') || t.innerText.includes('Tools') || t.innerText.includes('Official Comms')) {
@@ -49,14 +54,13 @@ function upgradeHomeLayout() {
         }
     });
 
-    // Replace Smart Tools Grid with Wide List
+    // Replace Smart Tools Grid with Wide List (Your Custom Design)
     const toolsGrid = document.querySelector('.tools-grid') || document.querySelector('.social-grid');
     
     if (toolsGrid) {
         const newContainer = document.createElement('div');
         newContainer.className = 'official-stack'; // Wide Stack Style
 
-        // Exact Text & Structure as Requested
         newContainer.innerHTML = `
             <div class="wide-link-card telegram" onclick="window.open('https://t.me/The_EnglishRoom5', '_blank')">
                 <i class="fa-brands fa-telegram"></i>
@@ -93,18 +97,19 @@ function upgradeHomeLayout() {
 // ==========================================
 function initHomeSystem() {
     updateHomeBalance();
-    setInterval(updateHomeBalance, 2000);
+    setInterval(updateHomeBalance, 2000); // Keep balance fresh
     initTicker();
-    initAdEngine();
 }
 
 function updateHomeBalance() {
+    // Get balance from local storage (synced by main.js)
     const bal = parseFloat(localStorage.getItem('local_balance') || "0");
     const displayEl = document.getElementById('home-balance-display');
     const headerEl = document.getElementById('header-coin-balance');
     const formatted = Math.floor(bal).toLocaleString();
     
     if(displayEl) {
+        // Animation effect if balance changes
         if(displayEl.innerText !== formatted) {
             displayEl.style.textShadow = "0 0 25px #fff";
             setTimeout(() => { displayEl.style.textShadow = "0 0 10px rgba(255,255,255,0.5)"; }, 300);
@@ -121,7 +126,6 @@ function initTicker() {
         "SYSTEM ONLINE: Earn 1200 coins to reach Level 2",
         "OFFICIAL: Join Telegram for daily crypto codes",
         "BOOST AVAILABLE: Check Games section for 2x Multiplier",
-        
     ];
     let i = 0;
     setInterval(() => {
@@ -132,46 +136,4 @@ function initTicker() {
             i = (i + 1) % msgs.length;
         }, 500);
     }, HOME_CONFIG.SETTINGS.TICKER_SPEED);
-}
-
-// ==========================================
-// 💸 ADSTERRA ENGINE
-// ==========================================
-function initAdEngine() {
-    // Show Native Ad Slot
-    const nativeSlot = document.getElementById('adsterra-native-slot');
-    if(nativeSlot) {
-        nativeSlot.style.display = 'block';
-        
-        // 👇 PASTE NATIVE AD SCRIPT BELOW THIS LINE
-        // const s = document.createElement('script'); s.src='...'; document.getElementById('native-ad-container').appendChild(s);
-    }
-
-    // Trigger Social Bar Logic
-    const lastAdTime = parseInt(localStorage.getItem('ad_last_shown') || "0");
-    const sessionAds = parseInt(sessionStorage.getItem('ad_session_count') || "0");
-    const now = Date.now();
-
-    if ((now - lastAdTime > HOME_CONFIG.SETTINGS.COOLDOWN_MS) && 
-        (sessionAds < HOME_CONFIG.SETTINGS.SESSION_CAP)) {
-        setTimeout(() => {
-            triggerSocialBar();
-        }, HOME_CONFIG.SETTINGS.SOCIAL_DELAY_MS);
-    }
-}
-
-function triggerSocialBar() {
-    console.log("Ads: Injecting Social Bar...");
-    
-    // 👇 PASTE SOCIAL BAR SCRIPT HERE
-    /*
-    const script = document.createElement('script');
-    script.src = HOME_CONFIG.SOCIAL_BAR_URL;
-    script.async = true;
-    document.body.appendChild(script);
-    */
-    
-    localStorage.setItem('ad_last_shown', Date.now());
-    const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
-    sessionStorage.setItem('ad_session_count', count + 1);
 }
