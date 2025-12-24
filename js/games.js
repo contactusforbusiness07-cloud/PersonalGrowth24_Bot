@@ -1,10 +1,12 @@
-/* js/games.js - SECURE ENGINE (Fixed Buttons + Pro Warnings) */
+/* js/games.js - SECURE ENGINE (WITH THIN NATIVE ADS + SMARTLINK) */
 
 // --- CONFIGURATION ---
 const MAX_ENERGY = 1000;
 const RECHARGE_RATE = 2; // Energy per second
-const ADSTERRA_LINK = "https://www.google.com"; // UPDATE THIS
-const NATIVE_AD_LINK = "https://www.binance.com"; 
+
+// ⚠️ AD LINKS (UPDATED)
+const SMARTLINK_URL = "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a"; // Booster/Refill
+const NATIVE_AD_LINK = "https://www.binance.com"; // Backup Link
 
 const LIMITS = { FREE: 3, ADS: 6, TOTAL: 9 };
 const ANTI_CHEAT = {
@@ -27,7 +29,43 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGameEngine() {
-    // 1. INJECT BAN TIMER (Without changing HTML)
+    console.log("🎮 Game Engine: Starting...");
+
+    // 🟢 1. INJECT THIN NATIVE AD (COIN KE UPAR)
+    // Hum existing placeholder ko use karenge aur usse modify karenge
+    const adPlaceholder = document.getElementById('game-native-ad');
+    if (adPlaceholder) {
+        // Clear & Restyle for THIN LOOK (Taaki Coin niche na khiske)
+        adPlaceholder.innerHTML = "";
+        adPlaceholder.style.height = "60px"; // Fixed Height (Patla)
+        adPlaceholder.style.minHeight = "60px";
+        adPlaceholder.style.marginBottom = "5px"; // Thoda gap
+        adPlaceholder.style.overflow = "hidden";
+        adPlaceholder.style.borderRadius = "12px";
+        adPlaceholder.style.background = "rgba(0,0,0,0.3)";
+        adPlaceholder.style.border = "1px solid rgba(255, 215, 0, 0.3)";
+        adPlaceholder.style.display = "flex";
+        adPlaceholder.style.alignItems = "center";
+        adPlaceholder.style.justifyContent = "center";
+
+        // Inject Adsterra Banner (320x50 is best for this small space)
+        // Note: Native ad bada hota hai, isliye yahan hum Banner Script use karenge jo fit ho jaye
+        // Agar Native hi lagana hai, to hum usse CSS se shrink kar rahe hain:
+        const adDiv = document.createElement('div');
+        adDiv.id = "container-85c8e4eb0a60d8ad0292343f4d54b04b"; // Native ID
+        adDiv.style.transform = "scale(0.8)"; // Thoda chhota dikhao
+        adDiv.style.transformOrigin = "center";
+        
+        adPlaceholder.appendChild(adDiv);
+
+        const s = document.createElement('script');
+        s.async = true;
+        s.dataset.cfasync = "false";
+        s.src = "https://pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+        adPlaceholder.appendChild(s);
+    }
+
+    // 2. INJECT BAN TIMER (Without changing HTML)
     const arena = document.querySelector('.tap-arena');
     if(arena && !document.getElementById('injected-ban-timer')) {
         const timerDiv = document.createElement('div');
@@ -41,10 +79,10 @@ function initGameEngine() {
         arena.appendChild(timerDiv);
     }
 
-    // 2. FIX IMAGE PATH & LISTENER
+    // 3. FIX IMAGE PATH & LISTENER
     const coinImg = document.getElementById('tap-coin');
     if(coinImg) {
-        coinImg.src = "assets/coin_main.jpg.png"; // 🔥 FIXED PATH
+        coinImg.src = "assets/coin_main.jpg.png"; 
         
         const newCoin = coinImg.cloneNode(true);
         coinImg.parentNode.replaceChild(newCoin, coinImg);
@@ -53,8 +91,7 @@ function initGameEngine() {
         newCoin.ondragstart = () => false;
     }
 
-    // 3. FORCE FIX BUTTONS (Global attach)
-    // Hum sidha buttons dhoondh ke unpe onclick laga rahe hain
+    // 4. FORCE FIX BUTTONS (Global attach)
     const boosters = document.querySelectorAll('.hitech-icon-btn.booster');
     const refills = document.querySelectorAll('.hitech-icon-btn.refill');
     
@@ -65,14 +102,10 @@ function initGameEngine() {
         btn.onclick = (e) => { e.stopPropagation(); handlePowerUp('refill'); };
     });
 
-    // 4. RESTORE STATE & LOOPS
+    // 5. RESTORE STATE & LOOPS
     checkBanStatus();
     setInterval(rechargeLoop, 1000);
     updatePowerUpUI();
-
-    // 5. AD LISTENER
-    const adBanner = document.getElementById('game-native-ad');
-    if(adBanner) adBanner.onclick = () => window.open(NATIVE_AD_LINK, '_blank');
 }
 
 // --- SECURE TAP SYSTEM ---
@@ -88,32 +121,27 @@ function handleSecureTap(e) {
     
     const cps = clickTimes.length;
 
-    // Ban Trigger
     if (cps >= ANTI_CHEAT.BAN_CPS) {
         triggerBanSystem();
         return;
     }
     
-    // Warning Trigger
     if (cps >= ANTI_CHEAT.WARN_CPS) {
         showRedWarning();
     }
 
     if (energy <= 0) return;
 
-    // Process Tap
     const earned = 2 * boostMultiplier;
     energy = Math.max(0, energy - 2);
     updateEnergyUI();
     if(window.addCoins) window.addCoins(earned);
 
-    // Visuals
     showFloatingText(e.clientX, e.clientY, `+${earned}`);
     animateCoin(e.target);
     if(navigator.vibrate) navigator.vibrate(10);
 }
 
-// --- PROFESSIONAL WARNING ---
 function showRedWarning() {
     const statusText = document.getElementById('security-status');
     if(statusText) {
@@ -125,7 +153,6 @@ function showRedWarning() {
         }, 2000);
     }
     
-    // Toast Warning
     Swal.fire({ 
         toast: true, position: 'top', icon: 'error', 
         title: '⚠️ SECURITY ALERT', 
@@ -135,14 +162,12 @@ function showRedWarning() {
     });
 }
 
-// --- BAN SYSTEM ---
 function triggerBanSystem() {
     isBanned = true;
     const banEnd = Date.now() + ANTI_CHEAT.BAN_TIME;
     localStorage.setItem('game_ban_end', banEnd);
     applyBanVisuals(banEnd);
     
-    // Modal Alert
     Swal.fire({ 
         icon: 'error', 
         title: 'ACCESS DENIED', 
@@ -201,9 +226,13 @@ function liftBan() {
     if(timerDiv) timerDiv.classList.add('hidden');
 }
 
-// --- POWER UP SYSTEM ---
+// --- POWER UP SYSTEM (WITH SMARTLINK) ---
 window.handlePowerUp = function(type) {
     if (isBanned) return;
+
+    // 🟢 1. ALWAYS OPEN SMARTLINK ON CLICK (EARNING LOGIC)
+    // Ye code user ko earning page par le jayega
+    if (SMARTLINK_URL) window.open(SMARTLINK_URL, '_blank');
 
     const today = new Date().toDateString();
     if (localStorage.getItem(`pwr_${type}_date`) !== today) {
@@ -222,21 +251,18 @@ window.handlePowerUp = function(type) {
         activatePowerUp(type);
         incrementPowerUp(type, count);
     } else {
-        // Ads Logic
+        // Ads Logic Confirmation (Wait Logic)
         Swal.fire({
-            title: 'Locked Protocol',
-            text: `Free allocation used. View 15s content to unlock ${type.toUpperCase()}?`,
-            icon: 'info', showCancelButton: true, confirmButtonText: 'View Content', confirmButtonColor: '#fbbf24', background: '#020617', color: '#fff'
-        }).then((res) => {
-            if (res.isConfirmed) {
-                window.open(ADSTERRA_LINK, '_blank');
-                let t = 15;
-                Swal.fire({ title: 'Verifying...', html: `Access granted in <b>${t}</b>s`, timer: 15000, timerProgressBar: true, didOpen: () => Swal.showLoading(), background: '#020617', color: '#fff' })
-                .then(() => {
-                    activatePowerUp(type);
-                    incrementPowerUp(type, count);
-                });
-            }
+            title: 'Protocol Syncing...',
+            text: `Validating ad view for ${type.toUpperCase()}...`,
+            icon: 'info', 
+            background: '#020617', color: '#fff',
+            timer: 5000, // 5 sec wait to simulate ad watch
+            timerProgressBar: true,
+            didOpen: () => Swal.showLoading()
+        }).then(() => {
+            activatePowerUp(type);
+            incrementPowerUp(type, count);
         });
     }
 };
