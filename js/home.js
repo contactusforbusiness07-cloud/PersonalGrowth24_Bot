@@ -2,8 +2,7 @@
 
 // --- CONFIGURATION ---
 const HOME_CONFIG = {
-    // ⚠️ PASTE YOUR ADSTERRA LINKS HERE
-    // Maine yahan aapka Social Bar link daal diya hai
+    // Social Bar URL (Jo aapne pehle diya tha)
     SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js", 
     
     SETTINGS: {
@@ -28,34 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
 function upgradeHomeLayout() {
     console.log("🛠️ FinGamePro: Upgrading Home Layout...");
 
-    // 1. INJECT NATIVE AD (After Hero Card)
+    // 1. INJECT NATIVE AD (NEW CODE: 85c8e4eb...)
     const hero = document.querySelector('.hero-card');
+    
+    // Check agar pehle se ad slot nahi hai tabhi banao
     if (hero && !document.getElementById('adsterra-native-slot')) {
         const adDiv = document.createElement('div');
         adDiv.id = 'adsterra-native-slot';
         adDiv.className = 'native-ad-module';
         
-        // Yahan Native Ad ka Container ID set kar diya hai
+        // Setup Container Structure
         adDiv.innerHTML = `
             <div class="ad-label"><i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST</div>
-            <div id="native-ad-container" style="text-align: center; min-height: 100px;">
-                <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b"></div>
-            </div>
+            <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b" style="min-height: 100px; text-align: center;"></div>
         `;
+        
+        // Insert Ad Wrapper after Hero Card
         hero.parentNode.insertBefore(adDiv, hero.nextSibling);
 
-        // Inject Native Script Immediately
+        // 👇 NAYA WALA SCRIPT LOAD 👇
         const s = document.createElement('script');
         s.async = true;
         s.dataset.cfasync = "false";
-        s.src = "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+        s.src = "https://pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
         
-        // Script ko container me append kar rahe hain
-        // Thoda timeout diya taaki DOM ready ho jaye
-        setTimeout(() => {
-            const container = document.getElementById('native-ad-container');
-            if(container) container.appendChild(s);
-        }, 100);
+        // Script ko container ke paas append kar rahe hain
+        adDiv.appendChild(s);
     }
 
     // 2. CHANGE HEADER & REPLACE GRID WITH WIDE BARS
@@ -155,11 +152,10 @@ function initTicker() {
 // 💸 ADSTERRA ENGINE
 // ==========================================
 function initAdEngine() {
-    // Show Native Ad Slot
+    // Show Native Ad Slot (Already injected in upgradeHomeLayout)
     const nativeSlot = document.getElementById('adsterra-native-slot');
     if(nativeSlot) {
         nativeSlot.style.display = 'block';
-        // Code already injected in upgradeHomeLayout
     }
 
     // Trigger Social Bar Logic
@@ -178,7 +174,7 @@ function initAdEngine() {
 function triggerSocialBar() {
     console.log("Ads: Injecting Social Bar...");
     
-    // 👇 SOCIAL BAR SCRIPT INJECTED HERE
+    // 👇 SOCIAL BAR SCRIPT INJECT
     const script = document.createElement('script');
     script.src = HOME_CONFIG.SOCIAL_BAR_URL;
     script.async = true;
@@ -189,4 +185,3 @@ function triggerSocialBar() {
     const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     sessionStorage.setItem('ad_session_count', count + 1);
 }
-
