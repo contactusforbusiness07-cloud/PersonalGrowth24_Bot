@@ -1,150 +1,8 @@
-/* js/pro-refer.js - FIREBASE CONNECTED + ORIGINAL UI LOGIC */
+/* js/pro-refer.js - INSTANT MILESTONES + FIREBASE BACKEND */
 
 // ==========================================
-// 1. FIREBASE BACKEND CONTROLLER (ADDED)
+// 1. DATA & CONFIGURATION
 // ==========================================
-// Ye code background me chalega aur data laakar aapke UI functions ko dega
-(async function initFirebaseSystem() {
-    console.log("🚀 Initializing Referral Backend...");
-
-    try {
-        // --- A. DYNAMIC IMPORTS (No HTML Change Needed) ---
-        const { db } = await import("./firebase-init.js");
-        const { doc, getDoc, collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js");
-
-        // --- B. USER ID DETECTION ---
-        const tg = window.Telegram.WebApp;
-        // Fallback to TEST_USER if running in browser/outside Telegram
-        const currentUserId = tg.initDataUnsafe?.user?.id?.toString() || "TEST_USER"; 
-        
-        console.log("👤 Fetching data for:", currentUserId);
-
-        // --- C. FETCH MAIN STATS ---
-        let userData = {
-            id: currentUserId,
-            referralCount: 0,
-            totalEarnings: 0
-        };
-
-        const userRef = doc(db, "users", currentUserId);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-            const data = userSnap.data();
-            userData.referralCount = data.referralCount || 0;
-            // Calculation: 500 coins per invite
-            userData.totalEarnings = (userData.referralCount * 500); 
-        }
-
-        // --- D. FETCH TEAM LIST ---
-        let teamData = [];
-        const q = query(collection(db, "users"), where("referredBy", "==", currentUserId));
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach((doc) => {
-            const friend = doc.data();
-            teamData.push({
-                name: friend.firstName || friend.name || "User",
-                id: friend.userId || friend.id,
-                earned_for_ref: 500
-            });
-        });
-
-        // --- E. UPDATE UI (Calling your existing function) ---
-        // Thoda delay taaki DOM ready ho jaye
-        setTimeout(() => {
-            if (window.updateReferralUI) {
-                window.updateReferralUI(userData, teamData);
-            } else {
-                console.error("❌ UI Function not found!");
-            }
-        }, 500);
-
-    } catch (error) {
-        console.error("🔥 Firebase Error:", error);
-    }
-})();
-
-
-// ==========================================
-// 2. YOUR ORIGINAL UI LOGIC (UNCHANGED)
-// ==========================================
-
-// --- PRO-REFER.JS (UI & Global Logic) ---
-
-// 1. Render Tabs (Globally Accessible)
-window.switchReferTab = function(tabName) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    
-    const target = document.getElementById(`tab-${tabName}`);
-    if(target) target.classList.remove('hidden');
-    
-    // Button Active State Logic
-    const btns = document.querySelectorAll('.tab-btn');
-    // Simple index check based on your HTML structure
-    if(tabName === 'milestones' && btns[0]) btns[0].classList.add('active');
-    if(tabName === 'team' && btns[1]) btns[1].classList.add('active');
-}
-
-// 2. Copy Logic
-window.copyReferralCode = function() {
-    const linkElement = document.getElementById('my-referral-link');
-    if(!linkElement) return;
-    
-    const textToCopy = linkElement.innerText;
-    if(textToCopy.includes("Loading") || textToCopy.includes("Generating")) return;
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        // Simple Alert or Toast
-        const btn = document.querySelector('.code-box i');
-        if(btn) {
-            const originalClass = btn.className;
-            btn.className = "fa-solid fa-check";
-            setTimeout(() => btn.className = originalClass, 2000);
-        }
-        
-        if(typeof Swal !== 'undefined') {
-            Swal.fire({
-                toast: true, position: 'top-end', icon: 'success', 
-                title: 'Link Copied!', showConfirmButton: false, timer: 1500,
-                background: '#00f260', color: '#000'
-            });
-        } else {
-            // Fallback
-            console.log("Copied");
-        }
-    });
-}
-
-// 3. Render UI with Real Data (Called from main.js or Firebase Init)
-window.updateReferralUI = function(userData, teamData) {
-    console.log("📊 Updating Referral UI...", userData);
-
-    // Update Counts
-    if(document.getElementById('total-referrals')) 
-        document.getElementById('total-referrals').innerText = userData.referralCount || 0;
-    
-    if(document.getElementById('referral-earnings')) 
-        document.getElementById('referral-earnings').innerText = (userData.totalEarnings || 0).toLocaleString();
-
-    // Update Codes & Links
-    if(document.getElementById('my-referral-code')) 
-        document.getElementById('my-referral-code').innerText = "FGP-" + userData.id;
-    
-    if(document.getElementById('my-referral-link')) {
-        const botName = "PersonalGrowth24_Bot"; 
-        document.getElementById('my-referral-link').innerText = `https://t.me/${botName}?start=ref_${userData.id}`;
-    }
-
-    // Render Sections
-    renderMilestones(userData.referralCount || 0);
-    renderTeamList(teamData || []);
-}
-
-// 4. Internal Render Helpers
-
-// --- UPDATED TARGETS LIST ---
 const REFERRAL_TARGETS = [
     { target: 3, reward: 500 },
     { target: 5, reward: 1000 },
@@ -158,10 +16,14 @@ const REFERRAL_TARGETS = [
     { target: 10000, reward: 7000000 }
 ];
 
+// ==========================================
+// 2. UI RENDER FUNCTIONS (Defined First)
+// ==========================================
+
 function renderMilestones(count) {
     const list = document.getElementById('milestone-list');
     if(!list) return;
-    list.innerHTML = "";
+    list.innerHTML = ""; // Clear previous
 
     REFERRAL_TARGETS.forEach(tier => {
         const isUnlocked = count >= tier.target;
@@ -172,21 +34,23 @@ function renderMilestones(count) {
         }
 
         let btnHTML = isUnlocked 
-            ? `<button class="btn-claim ready">CLAIMED</button>` // Logic for manual claim can be added later
-            : `<button class="btn-claim locked"><i class="fa-solid fa-lock"></i> LOCKED</button>`;
+            ? `<button class="btn-claim ready" style="background:#4ade80; color:#000; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; font-size:10px;">CLAIMED</button>` 
+            : `<button class="btn-claim locked" style="background:#334155; color:#94a3b8; border:1px solid #475569; padding:5px 10px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-lock"></i> LOCKED</button>`;
         
         list.innerHTML += `
-        <div class="milestone-card">
-            <div class="milestone-header">
-                <span class="target-title">${tier.target} Friends</span>
-                <span class="reward-badge" style="color:#ffd700; background:rgba(255, 215, 0, 0.1);">+${tier.reward.toLocaleString()}</span>
+        <div class="milestone-card" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span class="target-title" style="color:#fff; font-family:'Orbitron'; font-size:12px;">${tier.target} Friends</span>
+                <span class="reward-badge" style="color:#ffd700; background:rgba(255, 215, 0, 0.1); padding:2px 8px; border-radius:10px; font-size:10px; font-weight:bold;">+${tier.reward.toLocaleString()}</span>
             </div>
-            <div class="progress-track"><div class="progress-fill" style="width: ${percent}%"></div></div>
+            <div class="progress-track" style="height:6px; background:#1e293b; border-radius:3px; overflow:hidden; margin-bottom:8px;">
+                <div class="progress-fill" style="width: ${percent}%; height:100%; background:linear-gradient(90deg, #3b82f6, #06b6d4);"></div>
+            </div>
             <div style="display:flex; justify-content:space-between; font-size:12px; color:#aaa; margin-top:5px;">
                 <span>Progress: ${count}/${tier.target}</span>
                 <span>${Math.floor(percent)}%</span>
             </div>
-            <div style="margin-top:10px;">${btnHTML}</div>
+            <div style="margin-top:10px; text-align:right;">${btnHTML}</div>
         </div>`;
     });
 }
@@ -203,16 +67,139 @@ function renderTeamList(team) {
     let html = "";
     team.forEach(friend => {
         html += `
-        <div class="team-item">
+        <div class="team-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; margin-bottom:8px; border-radius:8px;">
             <div class="team-info">
-                <h4>${friend.name || "Unknown"}</h4>
-                <p>ID: ${friend.id}</p>
+                <h4 style="margin:0; color:#fff; font-size:13px;">${friend.name || "Unknown"}</h4>
+                <p style="margin:0; color:#aaa; font-size:10px;">ID: ${friend.id}</p>
             </div>
-            <div class="commission-box">
-                <span class="comm-amount">+${friend.earned_for_ref || 0}</span>
-                <span class="comm-label">Earned</span>
+            <div class="commission-box" style="text-align:right;">
+                <span class="comm-amount" style="color:#4ade80; font-weight:bold; font-size:12px;">+${friend.earned_for_ref || 0}</span>
+                <span class="comm-label" style="display:block; font-size:9px; color:#aaa;">Earned</span>
             </div>
         </div>`;
     });
     list.innerHTML = html;
+}
+
+// ==========================================
+// 3. INITIALIZATION (INSTANT & ASYNC)
+// ==========================================
+
+// A. INSTANT RENDER (Page Load hote hi dikhega)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("🚀 Referral UI Initializing...");
+    
+    // Default 0 par render kar do taaki user ko list dikhe
+    renderMilestones(0); 
+    
+    // UI Reset
+    if(document.getElementById('total-referrals')) document.getElementById('total-referrals').innerText = "0";
+    if(document.getElementById('referral-earnings')) document.getElementById('referral-earnings').innerText = "0";
+    
+    // Tab Defaults
+    const tab1 = document.getElementById('tab-milestones');
+    if(tab1) tab1.classList.remove('hidden');
+    const btn1 = document.querySelector('.tab-btn');
+    if(btn1) btn1.classList.add('active');
+});
+
+// B. FIREBASE BACKEND (Data fetch karega)
+(async function initFirebaseSystem() {
+    try {
+        // Dynamic Imports
+        const { db } = await import("./firebase-init.js");
+        const { doc, getDoc, collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js");
+
+        const tg = window.Telegram.WebApp;
+        const currentUserId = tg.initDataUnsafe?.user?.id?.toString() || "TEST_USER"; 
+        
+        console.log("👤 Fetching data for:", currentUserId);
+
+        // Update Link
+        setupReferralLink(currentUserId);
+
+        // Fetch User Stats
+        const userRef = doc(db, "users", currentUserId);
+        const userSnap = await getDoc(userRef);
+
+        let refCount = 0;
+        let earnings = 0;
+
+        if (userSnap.exists()) {
+            const data = userSnap.data();
+            refCount = data.referralCount || 0;
+            earnings = refCount * 500;
+        }
+
+        // Update UI with Real Data
+        if(document.getElementById('total-referrals')) document.getElementById('total-referrals').innerText = refCount;
+        if(document.getElementById('referral-earnings')) document.getElementById('referral-earnings').innerText = earnings.toLocaleString();
+        
+        // Re-render Milestones with Real Count
+        renderMilestones(refCount);
+
+        // Fetch Team List
+        let teamData = [];
+        const q = query(collection(db, "users"), where("referredBy", "==", currentUserId));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+            const friend = doc.data();
+            teamData.push({
+                name: friend.firstName || friend.name || "User",
+                id: friend.userId || friend.id,
+                earned_for_ref: 500
+            });
+        });
+        renderTeamList(teamData);
+
+    } catch (error) {
+        console.error("🔥 Firebase Error:", error);
+    }
+})();
+
+// ==========================================
+// 4. GLOBAL UTILS (Tabs, Copy, etc.)
+// ==========================================
+
+function setupReferralLink(uid) {
+    const botName = "PersonalGrowth24_Bot"; // APNA BOT NAME CHECK KAREIN
+    const link = `https://t.me/${botName}?start=ref_${uid}`;
+    
+    if(document.getElementById('my-referral-code')) 
+        document.getElementById('my-referral-code').innerText = "FGP-" + uid;
+    
+    if(document.getElementById('my-referral-link')) 
+        document.getElementById('my-referral-link').innerText = link;
+}
+
+window.switchReferTab = function(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    const target = document.getElementById(`tab-${tabName}`);
+    if(target) target.classList.remove('hidden');
+    
+    const btns = document.querySelectorAll('.tab-btn');
+    if(tabName === 'milestones' && btns[0]) btns[0].classList.add('active');
+    if(tabName === 'team' && btns[1]) btns[1].classList.add('active');
+}
+
+window.copyReferralCode = function() {
+    const linkElement = document.getElementById('my-referral-link');
+    if(!linkElement) return;
+    
+    const textToCopy = linkElement.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.querySelector('.code-box i');
+        if(btn) {
+            btn.className = "fa-solid fa-check";
+            setTimeout(() => btn.className = "fa-solid fa-share-nodes", 2000);
+        }
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'Link Copied!', showConfirmButton: false, timer: 1500 });
+        } else {
+            alert("Copied!");
+        }
+    });
 }
