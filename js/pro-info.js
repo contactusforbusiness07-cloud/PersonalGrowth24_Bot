@@ -3,7 +3,7 @@
 
 // --- 1. REUSABLE COMPONENTS ---
 
-// A. The Future Ecosystem Roadmap Box (Blue Neon)
+// A. Roadmap Box
 const roadmapBox = `
 <div class="roadmap-box" style="border: 1px solid #06b6d4; background: rgba(6,182,212,0.1); border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(6,182,212,0.15); margin-bottom: 20px;">
     <h3 style="color:#22d3ee; display:flex; align-items:center; gap:10px; margin-bottom:10px; font-family:'Orbitron', sans-serif; letter-spacing:1px;">
@@ -14,21 +14,20 @@ const roadmapBox = `
     </p>
 </div>`;
 
-// B. Native Ad Placeholders (HTML Structure Only - Script injected via JS)
-// Note: We use unique IDs (_top, _bottom) so we can target them with JS
+// B. Native Ad Placeholders (Iframe Targets)
 const adSpaceTop = `
 <div class="native-ad-placeholder top-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-bottom:25px; text-align:center; border-radius:12px; overflow:hidden;">
     <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
-    <div id="ad-injector-top"></div>
+    <div id="ad-frame-top" style="width:100%; overflow:hidden;"></div>
 </div>`;
 
 const adSpaceBottom = `
 <div class="native-ad-placeholder bottom-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-top:35px; text-align:center; border-radius:12px; overflow:hidden;">
     <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
-    <div id="ad-injector-bottom"></div>
+    <div id="ad-frame-bottom" style="width:100%; overflow:hidden;"></div>
 </div>`;
 
-// C. Hitech Red Disclaimer Box
+// C. Disclaimer Box
 const redAlertBox = `
 <div class="legal-alert-box" style="border-left: 4px solid #ef4444; background: linear-gradient(90deg, rgba(239,68,68,0.15) 0%, rgba(15,23,42,0) 100%); padding: 20px; margin-bottom: 25px; border-radius: 6px;">
     <h4 style="color:#f87171; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-family:'Orbitron', sans-serif;">
@@ -49,38 +48,14 @@ const infoContent = {
     withdraw_terms: `
         ${roadmapBox}
         ${adSpaceTop}
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">1. Current Withdrawal Status: PAUSED</h4>
-            <p style="${textStyle}">Direct INR/Fiat withdrawals are currently disabled for all users. We are in the "Accumulation Phase," transitioning our ledger from a standard database to a Blockchain-ready infrastructure.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">2. Nature of Digital Assets</h4>
-            <p style="${textStyle}">Coins earned on FinGamePro are "Promotional Reward Points". At this stage, they hold no guaranteed fixed monetary value until the official Phase 2 Token Listing event.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">3. The "Safe Storage" Protocol</h4>
-            <p style="${textStyle}">To protect early adopters, we have activated "Storage Mode". This prevents inflationary dumping of coins and ensures that genuine users get maximum priority.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">4. Phase 2: Liquidity & Airdrops</h4>
-            <p style="${textStyle}">Upon the launch of Phase 2, a "Liquidity Pool" will be established. Users will be able to convert their points based on their Leaderboard Rank.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">5. Verification Requirement (KYC)</h4>
-            <p style="${textStyle}">Future withdrawals will require mandatory identity verification (KYC). Ensure your profile name matches your legal government ID.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">6. Transaction Fees</h4>
-            <p style="${textStyle}">A nominal network fee (Gas Fee) may be deducted from the total withdrawal amount to process the transaction on the blockchain.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">7. Anti-Money Laundering (AML)</h4>
-            <p style="${textStyle}">FinGamePro adheres to strict AML policies. Any attempt to cycle illicit funds will result in an immediate permanent ban.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">8. Inactive Accounts</h4>
-            <p style="${textStyle}">Accounts inactive for more than 90 days may be considered dormant, and their coin balance may be burned.</p>
-        </div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">1. Current Withdrawal Status: PAUSED</h4><p style="${textStyle}">Direct INR/Fiat withdrawals are currently disabled. We are in the "Accumulation Phase".</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">2. Nature of Digital Assets</h4><p style="${textStyle}">Coins are "Promotional Reward Points" with no fixed value until Phase 2 Listing.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">3. The "Safe Storage" Protocol</h4><p style="${textStyle}">"Storage Mode" prevents dumping and prioritizes genuine HODLers.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">4. Phase 2: Liquidity & Airdrops</h4><p style="${textStyle}">Liquidity Pool will allow point conversion based on Rank.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">5. Verification (KYC)</h4><p style="${textStyle}">Future withdrawals require mandatory KYC.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">6. Transaction Fees</h4><p style="${textStyle}">Gas Fees may apply on blockchain transactions.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">7. Anti-Money Laundering</h4><p style="${textStyle}">Illicit fund cycling leads to a permanent ban.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">8. Inactive Accounts</h4><p style="${textStyle}">90+ days inactivity may lead to coin burn.</p></div>
         ${adSpaceBottom}
     `,
 
@@ -88,38 +63,14 @@ const infoContent = {
     terms: `
         ${roadmapBox}
         ${adSpaceTop}
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">1. Acceptance of Terms</h4>
-            <p style="${textStyle}">By accessing FinGamePro, you agree to be bound by these Terms. If you do not agree, please cease using the platform immediately.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">2. Eligibility Criteria</h4>
-            <p style="${textStyle}">You must be at least 18 years of age. Users under 18 may use the platform for educational purposes only.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">3. Permitted Use</h4>
-            <p style="${textStyle}">You agree to use the platform for personal, non-commercial purposes. Attacks on server infrastructure are criminal offenses.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">4. Earning Mechanics</h4>
-            <p style="${textStyle}">Coins are awarded for specific actions. We reserve the right to revoke coins if "Invalid Traffic" or "Bot Activity" is detected.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">5. Prohibited Conduct</h4>
-            <p style="${textStyle}">Using VPN/Proxy, Auto-Clickers, Scripts, or Multiple Accounts results in an instant ban.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">6. Account Security</h4>
-            <p style="${textStyle}">You are responsible for maintaining the confidentiality of your login credentials.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">7. Termination</h4>
-            <p style="${textStyle}">We reserve the right to suspend or terminate your account at any time for violation of these Terms.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">8. Limitation of Liability</h4>
-            <p style="${textStyle}">The platform provides services on an "As Is" basis. We are not liable for damages arising from app downtime.</p>
-        </div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">1. Acceptance</h4><p style="${textStyle}">By using FinGamePro, you agree to these Terms.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">2. Eligibility</h4><p style="${textStyle}">Must be 18+. Under 18 for educational use only.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">3. Permitted Use</h4><p style="${textStyle}">Personal use only. No attacks on server.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">4. Earning Mechanics</h4><p style="${textStyle}">Coins can be revoked for Invalid Traffic.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">5. Prohibited Conduct</h4><p style="${textStyle}">No VPN, Auto-Clickers, or Multiple Accounts.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">6. Security</h4><p style="${textStyle}">Protect your login credentials.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">7. Intellectual Property</h4><p style="${textStyle}">Content belongs to FinGamePro.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">8. Termination</h4><p style="${textStyle}">We may suspend accounts for violations.</p></div>
         ${adSpaceBottom}
     `,
 
@@ -127,30 +78,12 @@ const infoContent = {
     privacy: `
         ${roadmapBox}
         ${adSpaceTop}
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">1. Information We Collect</h4>
-            <p style="${textStyle}">We collect minimal data: Telegram User ID, Display Name, and Profile Picture. We do NOT access private messages.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">2. Device Data</h4>
-            <p style="${textStyle}">We collect IP Address and Device Model to prevent fraud and ensure fair play.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">3. Usage of Data</h4>
-            <p style="${textStyle}">Data is used to maintain balances, display rankings, and deliver ads.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">4. Data Sharing</h4>
-            <p style="${textStyle}">We DO NOT sell personal data. Data is shared only with ad partners for analytics.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">5. Security</h4>
-            <p style="${textStyle}">User data is encrypted and stored on secure Firebase servers.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">6. User Rights</h4>
-            <p style="${textStyle}">You have the right to request account deletion, which results in coin forfeiture.</p>
-        </div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">1. Data Collection</h4><p style="${textStyle}">Minimal data: Telegram ID, Name, Picture.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">2. Device Data</h4><p style="${textStyle}">IP & Device Model collected for fraud prevention.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">3. Usage</h4><p style="${textStyle}">Used for balances, rankings, and ads.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">4. Sharing</h4><p style="${textStyle}">Data not sold. Shared only with ad partners.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">5. Security</h4><p style="${textStyle}">Encrypted storage on Firebase.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">6. User Rights</h4><p style="${textStyle}">Account deletion leads to coin loss.</p></div>
         ${adSpaceBottom}
     `,
 
@@ -159,34 +92,12 @@ const infoContent = {
         ${roadmapBox}
         ${adSpaceTop}
         ${redAlertBox}
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">1. Not a Bank</h4>
-            <p style="${textStyle}">FinGamePro is a rewards app, not a bank. Coins are virtual tokens and do not represent a legal debt.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">2. No Investment Advice</h4>
-            <p style="${textStyle}">Nothing on this platform constitutes financial or trading advice.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">3. Compliance</h4>
-            <p style="${textStyle}">This platform operates as a "Game of Skill". No real money is requested from users.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">4. Speculative Nature</h4>
-            <p style="${textStyle}">References to "Phase 2" or "Airdrops" are forward-looking and speculative.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">5. Volatility</h4>
-            <p style="${textStyle}">Digital reward points can be volatile. Conversion rates are subject to change.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">6. Tax Liability</h4>
-            <p style="${textStyle}">Users are responsible for reporting and paying taxes on rewards.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">7. No Guarantee</h4>
-            <p style="${textStyle}">Participation does not guarantee a fixed income. Earnings are variable.</p>
-        </div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">1. Not a Bank</h4><p style="${textStyle}">Coins are virtual tokens, not legal tender.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">2. No Advice</h4><p style="${textStyle}">No financial or investment advice provided.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">3. Compliance</h4><p style="${textStyle}">"Game of Skill" model compliant with Indian laws.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">4. Speculative</h4><p style="${textStyle}">Phase 2 & Airdrops are forward-looking statements.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">5. Volatility</h4><p style="${textStyle}">Rewards value can fluctuate.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">6. Tax</h4><p style="${textStyle}">User responsible for applicable taxes.</p></div>
         ${adSpaceBottom}
     `,
 
@@ -194,43 +105,19 @@ const infoContent = {
     faq: `
         ${roadmapBox}
         ${adSpaceTop}
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">1. Can I withdraw to Bank/UPI?</h4>
-            <p style="${textStyle}">Currently NO. Withdrawal is paused for Phase 2 upgrade. Coins are safe in Storage Mode.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">2. Is this Crypto Mining?</h4>
-            <p style="${textStyle}">No. You are earning allocations for a future token, not mining with hardware.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">3. How to rank up?</h4>
-            <p style="${textStyle}">Increase balance by completing tasks, playing games, and referring friends.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">4. Why did balance decrease?</h4>
-            <p style="${textStyle}">Coins earned via bots or fake referrals are automatically burned.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">5. Phase 2 Date?</h4>
-            <p style="${textStyle}">Scheduled for late 2025. Follow Telegram for updates.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">6. Multiple Accounts?</h4>
-            <p style="${textStyle}">Strictly prohibited. Leads to permanent ban.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">7. Ad didn't give coins?</h4>
-            <p style="${textStyle}">Ensure you watch the full ad. Network verification takes time.</p>
-        </div>
-        <div style="${itemStyle}">
-            <h4 style="${titleStyle}">8. Contact Support?</h4>
-            <p style="${textStyle}">Use the "Contact Support" page in the menu.</p>
-        </div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">1. Withdraw to Bank?</h4><p style="${textStyle}">Paused for Phase 2. Coins are safe.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">2. Crypto Mining?</h4><p style="${textStyle}">No. You earn allocations, not mine with hardware.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">3. Rank Up?</h4><p style="${textStyle}">Complete tasks, play games, refer friends.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">4. Balance Decreased?</h4><p style="${textStyle}">Fake/Bot coins are automatically burned.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">5. Launch Date?</h4><p style="${textStyle}">Late 2025. Check Telegram.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">6. Multiple Accounts?</h4><p style="${textStyle}">Prohibited. Leads to ban.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">7. No Coins from Ad?</h4><p style="${textStyle}">Watch full ad for network verification.</p></div>
+        <div style="${itemStyle}"><h4 style="${titleStyle}">8. Support?</h4><p style="${textStyle}">Use "Contact Support" in menu.</p></div>
         ${adSpaceBottom}
     `
 };
 
-// --- LOGIC TO OPEN PAGES & INJECT ADS ---
+// --- LOGIC TO OPEN PAGES & INJECT IFRAME ADS ---
 function openInfoPage(pageKey) {
     const page = document.getElementById('page-info');
     const titleEl = document.getElementById('info-title');
@@ -245,7 +132,7 @@ function openInfoPage(pageKey) {
     };
 
     if(page && contentEl) {
-        // 1. Set Title & HTML Content
+        // 1. Set Title & Content
         titleEl.innerText = titles[pageKey] || 'Information';
         contentEl.innerHTML = infoContent[pageKey] || '<p>Content not found.</p>';
         
@@ -253,37 +140,43 @@ function openInfoPage(pageKey) {
         page.classList.remove('hidden');
         if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 
-        // 3. ⚡ MANUAL AD INJECTION (Fix for innerHTML) ⚡
-        // Timeout is needed to ensure DOM elements exist before we inject script
+        // 3. ⚡ INJECT ADS USING IFRAMES (Solves Conflicts & Rendering Issues) ⚡
         setTimeout(() => {
-            injectNativeAd('ad-injector-top', 'container-85c8e4eb0a60d8ad0292343f4d54b04b');
-            injectNativeAd('ad-injector-bottom', 'container-85c8e4eb0a60d8ad0292343f4d54b04b'); 
+            renderAdIframe('ad-frame-top');
+            renderAdIframe('ad-frame-bottom');
         }, 100);
     }
 }
 
-// Helper Function to Create Ad Script dynamically
-function injectNativeAd(wrapperId, adsterraContainerId) {
-    const wrapper = document.getElementById(wrapperId);
-    if (!wrapper) return;
-
-    // Clear previous ads if any
-    wrapper.innerHTML = '';
-
-    // A. Create the DIV Adsterra looks for
-    // Note: HTML IDs must be unique. Using the same code twice on one page might cause conflict 
-    // in some browsers, but we try to force it by clearing and re-appending.
-    const adDiv = document.createElement('div');
-    adDiv.id = adsterraContainerId; 
-    wrapper.appendChild(adDiv);
-
-    // B. Create and Run the Script
-    const s = document.createElement('script');
-    s.src = "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
-    s.async = true;
-    s.dataset.cfasync = "false";
+// 🔥 POWERFUL IFRAME INJECTOR 🔥
+// Ye function ek alag sandboxed window banata hai jisme Ad load hota hai.
+// Isse Adsterra confuse nahi hota aur ads 100% dikhte hain.
+function renderAdIframe(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
     
-    // Append script to the wrapper to execute it
-    wrapper.appendChild(s);
-    console.log("Native Ad Injected in: " + wrapperId);
+    container.innerHTML = ""; // Clear old
+
+    const iframe = document.createElement('iframe');
+    iframe.style.width = "100%";
+    iframe.style.height = "150px"; // Height fix for visibility
+    iframe.style.border = "none";
+    iframe.scrolling = "no";
+    
+    container.appendChild(iframe);
+
+    // Write Ad Code inside the Iframe
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
+        <body>
+            <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b"></div>
+            <script async="async" data-cfasync="false" src="//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js"></script>
+        </body>
+        </html>
+    `);
+    doc.close();
 }
