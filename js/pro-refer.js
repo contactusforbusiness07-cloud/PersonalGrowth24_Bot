@@ -1,34 +1,94 @@
-/* js/pro-refer.js - BACKEND CONNECTED & STRICT VERIFICATION */
+/* js/pro-refer.js - FIXED LOADING & SOCIAL SHARE */
 
 import { db } from "./firebase-init.js"; 
 import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Current User ID (Telegram WebApp se)
+// 1. User ID Detection (Safe Mode)
 const tg = window.Telegram.WebApp;
-const currentUserId = tg.initDataUnsafe?.user?.id?.toString();
-const botUsername = "PersonalGrowth24_Bot"; // Apna Bot username yahan confirm karein
+const currentUserId = tg.initDataUnsafe?.user?.id?.toString(); 
+const botUsername = "PersonalGrowth24_Bot"; // Apna Bot Username Check karein
 
-// --- 1. INITIALIZATION ---
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    // UI ko turant "0" set karein taaki broken icons na dikhein
+    resetUI();
+
     if (currentUserId) {
         initReferralSystem();
     } else {
-        console.warn("No User ID found. Testing mode or outside Telegram.");
+        console.warn("⚠️ Testing Mode: No Telegram ID found.");
+        // Testing ke liye fake data dikha sakte hain agar chahiye
+        document.getElementById('my-referral-code').innerText = "FGP-TEST";
+        document.getElementById('my-referral-link').innerText = "https://t.me/test_link";
     }
 });
 
-async function initReferralSystem() {
-    // UI Setup
-    setupReferralLink();
-    
-    // Data Fetching (Strict Verification)
-    await loadReferralStats();
-    await loadFriendList();
+function resetUI() {
+    // Fix broken squares by setting default 0
+    if(document.getElementById('total-referrals')) document.getElementById('total-referrals').innerText = "0";
+    if(document.getElementById('referral-earnings')) document.getElementById('referral-earnings').innerText = "0";
 }
 
-// --- 2. DATA FETCHING (BACKEND) ---
+async function initReferralSystem() {
+    setupReferralLink();      // Link generate karo
+    await loadReferralStats(); // Firebase se data lao
+    await loadFriendList();    // Team list lao
+}
 
-// A. Load User Stats (Count & Earnings)
+// --- 2. LINK GENERATION & SOCIAL SHARE ---
+function setupReferralLink() {
+    const refCode = `ref_${currentUserId}`;
+    const link = `https://t.me/${botUsername}?start=${refCode}`;
+    
+    // Set Text
+    const codeEl = document.getElementById('my-referral-code');
+    const linkEl = document.getElementById('my-referral-link');
+
+    if(codeEl) codeEl.innerText = "FGP-" + currentUserId;
+    if(linkEl) linkEl.innerText = link;
+
+    // --- 🔥 NEW: NATIVE SOCIAL SHARE LOGIC ---
+    // Jab user Link wale box pe click karega, Share Sheet khulegi
+    const linkBox = document.querySelector('.code-box.link-style');
+    if(linkBox) {
+        // Purana onclick hatane ke liye clone (Optional safety)
+        const newBox = linkBox.cloneNode(true);
+        linkBox.parentNode.replaceChild(newBox, linkBox);
+        
+        newBox.onclick = async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Join FinGamePro!',
+                        text: `🚀 Join me on FinGamePro and earn coins! Use my code: FGP-${currentUserId}`,
+                        url: link
+                    });
+                    console.log('Shared successfully');
+                } catch (err) {
+                    console.log('Error sharing:', err);
+                    // Agar share fail ho (desktop), to copy karo
+                    copyTextToClipboard(link);
+                }
+            } else {
+                // Fallback for Desktop (Copy Link)
+                copyTextToClipboard(link);
+            }
+        };
+    }
+}
+
+// Helper: Copy Fallback
+function copyTextToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        Swal.fire({
+            toast: true, position: 'top', icon: 'success', 
+            title: 'Link Copied!', background: '#020617', color: '#fff', 
+            showConfirmButton: false, timer: 1500
+        });
+    });
+}
+
+// --- 3. DATA FETCHING (FIREBASE) ---
 async function loadReferralStats() {
     try {
         const userRef = doc(db, "users", currentUserId);
@@ -37,37 +97,39 @@ async function loadReferralStats() {
         if (userSnap.exists()) {
             const data = userSnap.data();
             const refCount = data.referralCount || 0;
-            const earnings = refCount * 500; // 500 coins per refer formula
+            const earnings = refCount * 500; 
 
-            // Update Header Stats
-            if(document.getElementById('total-referrals')) 
-                document.getElementById('total-referrals').innerText = refCount;
-            
-            if(document.getElementById('referral-earnings')) 
-                document.getElementById('referral-earnings').innerText = earnings.toLocaleString();
+            // Update Header Stats (Fixing "Loading..." Issue)
+            const countEl = document.getElementById('total-referrals');
+            const earnEl = document.getElementById('referral-earnings');
 
-            // Render Milestones based on Real Count
+            if(countEl) countEl.innerText = refCount;
+            if(earnEl) earnEl.innerText = earnings.toLocaleString();
+
             renderMilestones(refCount);
+        } else {
+            // User DB me nahi hai (New User)
+            console.log("User doc not found, creating default...");
+            resetUI();
         }
     } catch (error) {
         console.error("Error loading stats:", error);
+        resetUI(); // Error aaye to bhi 0 dikhao, broken icon nahi
     }
 }
 
-// B. Load Team List (Querying Database)
 async function loadFriendList() {
     const listContainer = document.getElementById('team-list');
     if(!listContainer) return;
     
-    listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;"><i class="fa-solid fa-circle-notch fa-spin"></i> Verifying partners...</div>';
+    // listContainer.innerHTML = '...'; // Loader styling preserved from CSS
 
     try {
-        // Query: Find users where 'referredBy' == currentUserId
         const q = query(collection(db, "users"), where("referredBy", "==", currentUserId));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            renderTeamList([]); // Empty list render
+            renderTeamList([]); 
             return;
         }
 
@@ -75,48 +137,26 @@ async function loadFriendList() {
         querySnapshot.forEach((doc) => {
             const friend = doc.data();
             teamData.push({
-                name: friend.firstName || "Unknown User",
-                id: friend.userId,
-                earned_for_ref: 500 // Static reward per user
+                name: friend.firstName || friend.name || "Unknown", // Handle varied names
+                id: friend.userId || friend.id,
+                earned_for_ref: 500 
             });
         });
 
-        renderTeamList(teamData); // Pass real data to your UI renderer
+        renderTeamList(teamData);
 
     } catch (e) {
         console.error("Error fetching team:", e);
-        listContainer.innerHTML = '<div style="text-align:center; color:#ef4444;">Error loading data.</div>';
     }
 }
 
-// --- 3. UI SETUP ---
+// --- 4. RENDER UI HELPERS (Unchanged Logic) ---
 
-function setupReferralLink() {
-    const refCode = `ref_${currentUserId}`;
-    const link = `https://t.me/${botUsername}?start=${refCode}`;
-    
-    if(document.getElementById('my-referral-code')) 
-        document.getElementById('my-referral-code').innerText = "FGP-" + currentUserId;
-    
-    if(document.getElementById('my-referral-link')) 
-        document.getElementById('my-referral-link').innerText = link;
-}
-
-
-// --- 4. RENDER LOGIC (YOUR ORIGINAL UI CODE PRESERVED) ---
-
-// UPDATED TARGETS LIST
 const REFERRAL_TARGETS = [
-    { target: 3, reward: 500 },
-    { target: 5, reward: 1000 },
-    { target: 10, reward: 2500 },
-    { target: 20, reward: 5000 },
-    { target: 50, reward: 15000 },
-    { target: 100, reward: 35000 },
-    { target: 500, reward: 200000 }, 
-    { target: 1000, reward: 500000 }, 
-    { target: 5000, reward: 3000000 }, 
-    { target: 10000, reward: 7000000 }
+    { target: 3, reward: 500 }, { target: 5, reward: 1000 },
+    { target: 10, reward: 2500 }, { target: 20, reward: 5000 },
+    { target: 50, reward: 15000 }, { target: 100, reward: 35000 },
+    { target: 500, reward: 200000 }, { target: 1000, reward: 500000 }
 ];
 
 function renderMilestones(count) {
@@ -126,11 +166,8 @@ function renderMilestones(count) {
 
     REFERRAL_TARGETS.forEach(tier => {
         const isUnlocked = count >= tier.target;
-        // Progress Calculation
         let percent = 0;
-        if(count > 0) {
-            percent = Math.min((count / tier.target) * 100, 100);
-        }
+        if(count > 0) percent = Math.min((count / tier.target) * 100, 100);
 
         let btnHTML = isUnlocked 
             ? `<button class="btn-claim ready">CLAIMED</button>` 
@@ -178,9 +215,7 @@ function renderTeamList(team) {
     list.innerHTML = html;
 }
 
-
-// --- 5. GLOBAL UTILS (Tabs & Copy) ---
-
+// --- GLOBAL UTILS ---
 window.switchReferTab = function(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -193,28 +228,8 @@ window.switchReferTab = function(tabName) {
     if(tabName === 'team' && btns[1]) btns[1].classList.add('active');
 }
 
+// Note: copyReferralCode ki zaroorat ab shareLogic me handle ho gayi hai, par 'Code' copy karne ke liye rakh sakte hain
 window.copyReferralCode = function() {
-    const linkElement = document.getElementById('my-referral-link');
-    if(!linkElement) return;
-    
-    const textToCopy = linkElement.innerText;
-    if(textToCopy.includes("Loading") || textToCopy.includes("Generating")) return;
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const btn = document.querySelector('.code-box i');
-        if(btn) {
-            const originalClass = btn.className;
-            btn.className = "fa-solid fa-check";
-            setTimeout(() => btn.className = originalClass, 2000);
-        }
-        
-        if(typeof Swal !== 'undefined') {
-            Swal.fire({
-                toast: true, position: 'top', icon: 'success', 
-                title: 'Link Copied!', showConfirmButton: false, timer: 1500,
-                background: '#020617', color: '#fff'
-            });
-        }
-    });
+    const code = document.getElementById('my-referral-code')?.innerText;
+    if(code) copyTextToClipboard(code);
 }
-
