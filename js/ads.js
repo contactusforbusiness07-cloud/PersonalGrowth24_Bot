@@ -1,87 +1,91 @@
-/* js/ads.js - 10X REVENUE LOGIC (UPDATED WITH YOUR LINKS) */
+/* js/ads.js - DEBUG VERSION (Testing ke liye) */
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 2 second delay taaki pehle app load ho (User Experience Safe)
-    setTimeout(initAdSystem, 2000);
-});
-
-// --- CONFIGURATION (YOUR LINKS) ---
+// --- CONFIGURATION ---
 const ADS_CONFIG = {
-    // 1. SMARTLINK (High CPM)
-    SMARTLINK_URL: "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a",
-
-    // 2. SOCIAL BAR (Script URL)
-    SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js",
-
-    // 3. NATIVE BANNER (Key & Container ID from your code)
-    NATIVE_KEY: "85c8e4eb0a60d8ad0292343f4d54b04b", 
-    NATIVE_CONTAINER_ID: "container-85c8e4eb0a60d8ad0292343f4d54b04b"
+    // Aapke diye huye original links
+    SMARTLINK: "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a",
+    NATIVE_URL: "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js",
+    NATIVE_KEY: "85c8e4eb0a60d8ad0292343f4d54b04b",
+    SOCIAL_BAR: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js"
 };
 
-function initAdSystem() {
-    console.log("💰 AdManager: Injecting Premium Ads...");
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("🔥 Ads System Starting...");
+    setTimeout(initGlobalAds, 2000);
+});
 
-    // A. Inject Social Bar (Global)
-    injectSocialBar();
+function initGlobalAds() {
+    console.log("💰 Injecting Social Bar...");
+    
+    // 1. Social Bar Inject
+    const script = document.createElement('script');
+    script.src = ADS_CONFIG.SOCIAL_BAR;
+    script.async = true;
+    script.onerror = () => console.error("❌ Social Bar Blocked by Browser!");
+    document.body.appendChild(script);
 
-    // B. Inject Native Banners (Targeted Sections)
-    const adSlots = [
-        "ad-home-native",         // Home
-        "ad-leaderboard-native",  // Rank
-        "ad-tasks-native",        // Tasks
-        "ad-wallet-native",       // Wallet
-        "game-native-ad",         // Game
-        "menu-native-ad",         // Menu
-        "legal-ad-top",           // Legal Pages
-        "legal-ad-bottom"
-    ];
-
-    adSlots.forEach(slotId => {
-        const slot = document.getElementById(slotId);
-        if (slot) {
-            injectNativeAd(slot);
-        }
-    });
+    // 2. Native Ads Inject
+    refreshAllAds();
 }
 
-// --- 1. NATIVE AD INJECTION LOGIC ---
-function injectNativeAd(container) {
-    // Styling Reset
+// --- GLOBAL FUNCTIONS ---
+
+window.injectAdIntoContainer = function(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        console.warn(`⚠️ Ad Slot Missing: ${containerId}`);
+        return;
+    }
+
+    console.log(`✅ Filling Slot: ${containerId}`);
+
+    // --- DEBUG STYLING (Taaki pata chale code chal raha hai) ---
     container.innerHTML = "";
-    container.className = "native-ad-container";
+    container.className = "native-ad-container"; 
     container.style.display = "block";
-
-    // Adsterra Native needs a specific DIV ID inside
-    // Note: Since ID must be unique, we create a dynamic wrapper, 
-    // but Adsterra script targets specific ID. We will try to clone it.
+    container.style.minHeight = "100px";
     
-    // 1. Create the Div Adsterra looks for
-    const adDiv = document.createElement('div');
-    adDiv.id = ADS_CONFIG.NATIVE_CONTAINER_ID; 
-    container.appendChild(adDiv);
+    // RED BORDER (Testing ke liye - Agar ye dikha to code sahi hai)
+    container.style.border = "2px dashed red"; 
+    container.innerHTML = `<p style="color:red; font-size:10px; padding:10px;">⏳ AD LOADING...<br>(${containerId})</p>`;
 
-    // 2. Create the Script
+    // Adsterra Structure
+    const adWrapper = document.createElement('div');
+    adWrapper.id = `container-${ADS_CONFIG.NATIVE_KEY}`;
+    container.appendChild(adWrapper);
+
+    // Script Create
     const script = document.createElement('script');
     script.async = true;
     script.dataset.cfasync = "false";
-    script.src = `//pl28285595.effectivegatecpm.com/${ADS_CONFIG.NATIVE_KEY}/invoke.js`;
+    script.src = ADS_CONFIG.NATIVE_URL;
+    
+    // Success/Error check
+    script.onload = () => {
+        // Ad load ho gaya to Red Border hata do
+        container.style.border = "1px solid rgba(255,255,255,0.1)"; 
+        container.querySelector('p').style.display = 'none'; // Loading text hatao
+        console.log(`🎉 Ad Loaded Success: ${containerId}`);
+    };
 
+    script.onerror = () => {
+        container.innerHTML = `<p style="color:red; padding:10px;">❌ AD BLOCKED BY BROWSER</p>`;
+        console.error(`🚫 Ad Blocked in: ${containerId}`);
+    };
+    
     container.appendChild(script);
-    console.log("✅ Native Ad Injected");
-}
+};
 
-// --- 2. SOCIAL BAR LOGIC ---
-function injectSocialBar() {
-    const script = document.createElement('script');
-    script.src = ADS_CONFIG.SOCIAL_BAR_URL;
-    script.async = true;
-    document.body.appendChild(script);
-    console.log("🔔 Social Bar Active");
-}
-
-// --- 3. SMARTLINK LOGIC (HIGH REVENUE) ---
-// Is function ko 'Claim Bonus' ya 'Power Up' button par lagana
 window.openSmartLink = function() {
     console.log("🚀 Opening Smartlink...");
-    window.open(ADS_CONFIG.SMARTLINK_URL, '_blank');
+    window.open(ADS_CONFIG.SMARTLINK, '_blank');
+};
+
+window.refreshAllAds = function() {
+    const slots = [
+        "ad-home-native", "ad-leaderboard-native", "ad-tasks-native", 
+        "ad-wallet-native", "game-native-ad", "menu-native-ad",
+        "legal-ad-top", "legal-ad-bottom"
+    ];
+    slots.forEach(id => window.injectAdIntoContainer(id));
 };
