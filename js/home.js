@@ -1,129 +1,57 @@
-/* js/home.js - DYNAMIC DASHBOARD & MONETIZATION (THIN CARD STYLE) */
+/* js/home.js - DYNAMIC DASHBOARD & MONETIZATION */
 
 // --- CONFIGURATION ---
 const HOME_CONFIG = {
+    // Social Bar URL (Jo aapne pehle diya tha)
     SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js", 
     
     SETTINGS: {
-        SOCIAL_DELAY_MS: 6000,
-        SESSION_CAP: 2,
-        COOLDOWN_MS: 180000,
+        SOCIAL_DELAY_MS: 6000,      // 6s wait
+        SESSION_CAP: 2,             // Max 3 ads
+        COOLDOWN_MS: 180000,        // 2 Mins gap
         TICKER_SPEED: 5000
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Force Layout Upgrade (No HTML Edit needed)
     upgradeHomeLayout();
+
+    // 2. Start Core Systems
     initHomeSystem();
 });
 
 // ==========================================
-// 🛠️ DYNAMIC LAYOUT UPGRADE (THIN AD STYLE APPLIED)
+// 🛠️ DYNAMIC LAYOUT UPGRADE (MAGIC FUNCTION)
 // ==========================================
 function upgradeHomeLayout() {
-    console.log("🛠️ FinGamePro: Upgrading Home Layout (Thin Style)...");
+    console.log("🛠️ FinGamePro: Upgrading Home Layout...");
 
-    // 🟢 1. INJECT NATIVE AD (THIN CARD STYLE)
+    // 1. INJECT NATIVE AD (NEW CODE: 85c8e4eb...)
     const hero = document.querySelector('.hero-card');
     
+    // Check agar pehle se ad slot nahi hai tabhi banao
     if (hero && !document.getElementById('adsterra-native-slot')) {
-        
-        // A. INJECT CUSTOM CSS FOR THIN CARD LOOK
-        // Ye CSS ad ko zabardasti patla aur horizontal banayegi
-        const thinStyle = document.createElement('style');
-        thinStyle.innerHTML = `
-            /* Outer Card Wrapper */
-            .native-ad-thin-card {
-                background: linear-gradient(145deg, rgba(25, 30, 50, 0.9), rgba(0, 0, 0, 0.6));
-                border: 1px solid rgba(255, 215, 0, 0.25); /* Gold border subtle */
-                border-radius: 16px;
-                padding: 12px;
-                margin: 20px 0;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            /* The small "SPONSORED" Label */
-            .ad-label-thin {
-                font-size: 9px;
-                color: #ffd700;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 8px;
-                display: block;
-                opacity: 0.8;
-            }
-
-            /* FORCING ADSTERRA CONTAINER TO BE THIN & HORIZONTAL */
-            #container-85c8e4eb0a60d8ad0292343f4d54b04b {
-                 display: flex !important;
-                 flex-direction: row !important; /* Image left, text right */
-                 align-items: center !important;
-                 justify-content: flex-start !important;
-                 
-                 min-height: auto !important;
-                 max-height: 85px !important; /* HEIGHT CONTROL: Patla karne ke liye */
-                 
-                 overflow: hidden !important;
-                 text-align: left !important;
-                 gap: 15px !important;
-            }
-
-            /* Attempt to target internal Adsterra elements to ensure they fit */
-            /* Note: Sometimes Adsterra ignores this, but we try to force it */
-            #container-85c8e4eb0a60d8ad0292343f4d54b04b img {
-                 height: 70px !important;
-                 width: 70px !important;
-                 object-fit: cover !important;
-                 border-radius: 10px !important;
-                 flex-shrink: 0 !important; /* Image ko dabne se bachao */
-            }
-            #container-85c8e4eb0a60d8ad0292343f4d54b04b a {
-                 text-decoration: none !important;
-                 color: white !important;
-                 font-family: 'Inter', sans-serif !important;
-            }
-             #container-85c8e4eb0a60d8ad0292343f4d54b04b .headline {
-                 font-size: 14px !important;
-                 font-weight: 700 !important;
-                 margin-bottom: 4px !important;
-                 line-height: 1.2 !important;
-                 display: -webkit-box !important;
-                 -webkit-line-clamp: 2 !important; /* Max 2 lines title */
-                 -webkit-box-orient: vertical !important;
-                 overflow: hidden !important;
-            }
-            #container-85c8e4eb0a60d8ad0292343f4d54b04b .description {
-                 font-size: 11px !important;
-                 color: #aaa !important;
-                 display: -webkit-box !important;
-                 -webkit-line-clamp: 1 !important; /* Max 1 line description */
-                 -webkit-box-orient: vertical !important;
-                 overflow: hidden !important;
-            }
-        `;
-        document.head.appendChild(thinStyle);
-
-
-        // B. CREATE THE AD STRUCTURE
         const adDiv = document.createElement('div');
         adDiv.id = 'adsterra-native-slot';
-        // Nayi class add ki hai thin look ke liye
-        adDiv.className = 'native-ad-thin-card';
+        adDiv.className = 'native-ad-module';
         
+        // Setup Container Structure
         adDiv.innerHTML = `
-            <span class="ad-label-thin"><i class="fa-solid fa-bolt"></i> SPONSORED BOOST</span>
-            <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b"></div>
+            <div class="ad-label"><i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST</div>
+            <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b" style="min-height: 100px; text-align: center;"></div>
         `;
         
+        // Insert Ad Wrapper after Hero Card
         hero.parentNode.insertBefore(adDiv, hero.nextSibling);
 
-        // C. INJECT SCRIPT
+        // 👇 NAYA WALA SCRIPT LOAD 👇
         const s = document.createElement('script');
         s.async = true;
         s.dataset.cfasync = "false";
         s.src = "https://pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+        
+        // Script ko container ke paas append kar rahe hain
         adDiv.appendChild(s);
     }
 
@@ -135,28 +63,41 @@ function upgradeHomeLayout() {
         }
     });
 
+    // Replace Smart Tools Grid with Wide List
     const toolsGrid = document.querySelector('.tools-grid') || document.querySelector('.social-grid');
+    
     if (toolsGrid) {
         const newContainer = document.createElement('div');
-        newContainer.className = 'official-stack';
+        newContainer.className = 'official-stack'; // Wide Stack Style
 
+        // Exact Text & Structure as Requested
         newContainer.innerHTML = `
             <div class="wide-link-card telegram" onclick="window.open('https://t.me/The_EnglishRoom5', '_blank')">
-                <i class="fa-brands fa-telegram"></i><span>Official Telegram Announcement</span>
+                <i class="fa-brands fa-telegram"></i>
+                <span>Official Telegram Announcement</span>
             </div>
+
             <div class="wide-link-card instagram" onclick="window.open('https://instagram.com/', '_blank')">
-                <i class="fa-brands fa-instagram"></i><span>Official Instagram</span>
+                <i class="fa-brands fa-instagram"></i>
+                <span>Official Instagram</span>
             </div>
+
             <div class="wide-link-card youtube" onclick="window.open('https://youtube.com/', '_blank')">
-                <i class="fa-brands fa-youtube"></i><span>Official YouTube Channel</span>
+                <i class="fa-brands fa-youtube"></i>
+                <span>Official YouTube Channel</span>
             </div>
+
             <div class="wide-link-card facebook" onclick="window.open('https://facebook.com/', '_blank')">
-                <i class="fa-brands fa-facebook"></i><span>Official Facebook Page</span>
+                <i class="fa-brands fa-facebook"></i>
+                <span>Official Facebook Page</span>
             </div>
+
             <div class="wide-link-card brand" onclick="openInternalPage('page-brand')">
-                <i class="fa-solid fa-handshake"></i><span>Partner (Brand / Sponsorship ⭐)</span>
+                <i class="fa-solid fa-handshake"></i>
+                <span>Partner (Brand / Sponsorship ⭐)</span>
             </div>
         `;
+
         toolsGrid.parentNode.replaceChild(newContainer, toolsGrid);
     }
 }
@@ -194,6 +135,7 @@ function initTicker() {
         "SYSTEM ONLINE: Earn 1200 coins to reach Level 2",
         "OFFICIAL: Join Telegram for daily crypto codes",
         "BOOST AVAILABLE: Check Games section for 2x Multiplier",
+        
     ];
     let i = 0;
     setInterval(() => {
@@ -210,11 +152,13 @@ function initTicker() {
 // 💸 ADSTERRA ENGINE
 // ==========================================
 function initAdEngine() {
+    // Show Native Ad Slot (Already injected in upgradeHomeLayout)
     const nativeSlot = document.getElementById('adsterra-native-slot');
     if(nativeSlot) {
         nativeSlot.style.display = 'block';
     }
 
+    // Trigger Social Bar Logic
     const lastAdTime = parseInt(localStorage.getItem('ad_last_shown') || "0");
     const sessionAds = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     const now = Date.now();
@@ -229,6 +173,8 @@ function initAdEngine() {
 
 function triggerSocialBar() {
     console.log("Ads: Injecting Social Bar...");
+    
+    // 👇 SOCIAL BAR SCRIPT INJECT
     const script = document.createElement('script');
     script.src = HOME_CONFIG.SOCIAL_BAR_URL;
     script.async = true;
@@ -239,3 +185,4 @@ function triggerSocialBar() {
     const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     sessionStorage.setItem('ad_session_count', count + 1);
 }
+
