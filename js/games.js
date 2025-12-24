@@ -1,12 +1,19 @@
-/* js/games.js - SECURE ENGINE (WITH THIN NATIVE ADS + SMARTLINK) */
+/* js/games.js - SECURE ENGINE (WITH SMARTLINK & 320x50 BANNER) */
 
 // --- CONFIGURATION ---
 const MAX_ENERGY = 1000;
 const RECHARGE_RATE = 2; // Energy per second
 
 // ⚠️ AD LINKS (UPDATED)
-const SMARTLINK_URL = "https://www.effectivegatecpm.com/qiwcegy4js?key=f1d39bc10aa8d8d13ec1985da83d996a"; // Booster/Refill
-const NATIVE_AD_LINK = "https://www.binance.com"; // Backup Link
+const SMARTLINK_URL = "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87"; // For Booster/Refill
+// Banner Ad Configuration (320x50)
+const BANNER_CONFIG = {
+    key: 'da50611c22ea409fabf6255e80467cc4',
+    format: 'iframe',
+    height: 50,
+    width: 320,
+    params: {}
+};
 
 const LIMITS = { FREE: 3, ADS: 6, TOTAL: 9 };
 const ANTI_CHEAT = {
@@ -31,38 +38,37 @@ document.addEventListener('DOMContentLoaded', () => {
 function initGameEngine() {
     console.log("🎮 Game Engine: Starting...");
 
-    // 🟢 1. INJECT THIN NATIVE AD (COIN KE UPAR)
-    // Hum existing placeholder ko use karenge aur usse modify karenge
+    // 🟢 1. INJECT 320x50 BANNER AD (ABOVE COIN)
     const adPlaceholder = document.getElementById('game-native-ad');
     if (adPlaceholder) {
-        // Clear & Restyle for THIN LOOK (Taaki Coin niche na khiske)
+        // Clear & Style Container for 320x50
         adPlaceholder.innerHTML = "";
-        adPlaceholder.style.height = "60px"; // Fixed Height (Patla)
+        adPlaceholder.style.height = "60px"; // Slightly larger than 50px for padding
         adPlaceholder.style.minHeight = "60px";
-        adPlaceholder.style.marginBottom = "5px"; // Thoda gap
-        adPlaceholder.style.overflow = "hidden";
-        adPlaceholder.style.borderRadius = "12px";
-        adPlaceholder.style.background = "rgba(0,0,0,0.3)";
-        adPlaceholder.style.border = "1px solid rgba(255, 215, 0, 0.3)";
+        adPlaceholder.style.marginBottom = "10px";
         adPlaceholder.style.display = "flex";
-        adPlaceholder.style.alignItems = "center";
         adPlaceholder.style.justifyContent = "center";
-
-        // Inject Adsterra Banner (320x50 is best for this small space)
-        // Note: Native ad bada hota hai, isliye yahan hum Banner Script use karenge jo fit ho jaye
-        // Agar Native hi lagana hai, to hum usse CSS se shrink kar rahe hain:
-        const adDiv = document.createElement('div');
-        adDiv.id = "container-85c8e4eb0a60d8ad0292343f4d54b04b"; // Native ID
-        adDiv.style.transform = "scale(0.8)"; // Thoda chhota dikhao
-        adDiv.style.transformOrigin = "center";
+        adPlaceholder.style.alignItems = "center";
+        adPlaceholder.style.background = "transparent"; // Clean look
         
-        adPlaceholder.appendChild(adDiv);
+        // Inject Banner using Script (Dynamic Creation)
+        const bannerScript = document.createElement('script');
+        bannerScript.type = 'text/javascript';
+        bannerScript.innerHTML = `
+            atOptions = {
+                'key' : '${BANNER_CONFIG.key}',
+                'format' : '${BANNER_CONFIG.format}',
+                'height' : ${BANNER_CONFIG.height},
+                'width' : ${BANNER_CONFIG.width},
+                'params' : {}
+            };
+        `;
+        adPlaceholder.appendChild(bannerScript);
 
-        const s = document.createElement('script');
-        s.async = true;
-        s.dataset.cfasync = "false";
-        s.src = "https://pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
-        adPlaceholder.appendChild(s);
+        const invokeScript = document.createElement('script');
+        invokeScript.type = 'text/javascript';
+        invokeScript.src = `//www.highperformanceformat.com/${BANNER_CONFIG.key}/invoke.js`;
+        adPlaceholder.appendChild(invokeScript);
     }
 
     // 2. INJECT BAN TIMER (Without changing HTML)
@@ -231,7 +237,6 @@ window.handlePowerUp = function(type) {
     if (isBanned) return;
 
     // 🟢 1. ALWAYS OPEN SMARTLINK ON CLICK (EARNING LOGIC)
-    // Ye code user ko earning page par le jayega
     if (SMARTLINK_URL) window.open(SMARTLINK_URL, '_blank');
 
     const today = new Date().toDateString();
