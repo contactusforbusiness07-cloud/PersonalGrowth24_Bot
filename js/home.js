@@ -3,7 +3,8 @@
 // --- CONFIGURATION ---
 const HOME_CONFIG = {
     // ⚠️ PASTE YOUR ADSTERRA LINKS HERE
-    SOCIAL_BAR_URL: "//pl12345678.example.com/social_script.js", 
+    // Maine yahan aapka Social Bar link daal diya hai
+    SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js", 
     
     SETTINGS: {
         SOCIAL_DELAY_MS: 6000,      // 6s wait
@@ -33,12 +34,28 @@ function upgradeHomeLayout() {
         const adDiv = document.createElement('div');
         adDiv.id = 'adsterra-native-slot';
         adDiv.className = 'native-ad-module';
+        
+        // Yahan Native Ad ka Container ID set kar diya hai
         adDiv.innerHTML = `
             <div class="ad-label"><i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST</div>
-            <div id="native-ad-container">
-                </div>
+            <div id="native-ad-container" style="text-align: center; min-height: 100px;">
+                <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b"></div>
+            </div>
         `;
         hero.parentNode.insertBefore(adDiv, hero.nextSibling);
+
+        // Inject Native Script Immediately
+        const s = document.createElement('script');
+        s.async = true;
+        s.dataset.cfasync = "false";
+        s.src = "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+        
+        // Script ko container me append kar rahe hain
+        // Thoda timeout diya taaki DOM ready ho jaye
+        setTimeout(() => {
+            const container = document.getElementById('native-ad-container');
+            if(container) container.appendChild(s);
+        }, 100);
     }
 
     // 2. CHANGE HEADER & REPLACE GRID WITH WIDE BARS
@@ -142,9 +159,7 @@ function initAdEngine() {
     const nativeSlot = document.getElementById('adsterra-native-slot');
     if(nativeSlot) {
         nativeSlot.style.display = 'block';
-        
-        // 👇 PASTE NATIVE AD SCRIPT BELOW THIS LINE
-        // const s = document.createElement('script'); s.src='...'; document.getElementById('native-ad-container').appendChild(s);
+        // Code already injected in upgradeHomeLayout
     }
 
     // Trigger Social Bar Logic
@@ -163,15 +178,15 @@ function initAdEngine() {
 function triggerSocialBar() {
     console.log("Ads: Injecting Social Bar...");
     
-    // 👇 PASTE SOCIAL BAR SCRIPT HERE
-    /*
+    // 👇 SOCIAL BAR SCRIPT INJECTED HERE
     const script = document.createElement('script');
     script.src = HOME_CONFIG.SOCIAL_BAR_URL;
     script.async = true;
+    script.type = 'text/javascript';
     document.body.appendChild(script);
-    */
     
     localStorage.setItem('ad_last_shown', Date.now());
     const count = parseInt(sessionStorage.getItem('ad_session_count') || "0");
     sessionStorage.setItem('ad_session_count', count + 1);
 }
+
