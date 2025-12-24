@@ -1,5 +1,4 @@
-/* js/pro-info.js - Content Management System for Info Pages */
-/* Optimized for Professional Layout, Legal Safety & Hitech UI */
+/* js/pro-info.js - BIG BOX ADS LIKE HOME SECTION */
 
 // --- 1. REUSABLE COMPONENTS ---
 
@@ -14,17 +13,27 @@ const roadmapBox = `
     </p>
 </div>`;
 
-// B. Native Ad Placeholders (Iframe Targets)
+// B. BIG AD BOXES (HOME STYLE REPLICA)
+// Maine yahan wahi "Sponsored Power Boost" wala design force kiya hai
+
 const adSpaceTop = `
-<div class="native-ad-placeholder top-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-bottom:25px; text-align:center; border-radius:12px; overflow:hidden;">
-    <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
-    <div id="ad-frame-top" style="width:100%; overflow:hidden;"></div>
+<div class="native-ad-module" style="background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(15,23,42,0.8) 100%); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
+    <div style="background: linear-gradient(90deg, #ffd700, #f59e0b); color: #000; padding: 5px 15px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border-bottom-right-radius: 12px; position: absolute; top: 0; left: 0; z-index: 10;">
+        <i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST
+    </div>
+    
+    <div id="ad-frame-top" style="min-height: 280px; width: 100%; display: flex; align-items: center; justify-content: center; padding-top: 30px;">
+        </div>
 </div>`;
 
 const adSpaceBottom = `
-<div class="native-ad-placeholder bottom-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-top:35px; text-align:center; border-radius:12px; overflow:hidden;">
-    <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
-    <div id="ad-frame-bottom" style="width:100%; overflow:hidden;"></div>
+<div class="native-ad-module" style="background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(15,23,42,0.8) 100%); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px; margin-top: 35px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
+    <div style="background: linear-gradient(90deg, #ffd700, #f59e0b); color: #000; padding: 5px 15px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border-bottom-right-radius: 12px; position: absolute; top: 0; left: 0; z-index: 10;">
+        <i class="fa-solid fa-bolt"></i> SPONSORED POWER BOOST
+    </div>
+    
+    <div id="ad-frame-bottom" style="min-height: 280px; width: 100%; display: flex; align-items: center; justify-content: center; padding-top: 30px;">
+        </div>
 </div>`;
 
 // C. Disclaimer Box
@@ -140,7 +149,7 @@ function openInfoPage(pageKey) {
         page.classList.remove('hidden');
         if(window.toggleProfileMenu) window.toggleProfileMenu(false);
 
-        // 3. ⚡ INJECT ADS USING IFRAMES (Solves Conflicts & Rendering Issues) ⚡
+        // 3. ⚡ INJECT BIG ADS USING IFRAMES ⚡
         setTimeout(() => {
             renderAdIframe('ad-frame-top');
             renderAdIframe('ad-frame-bottom');
@@ -148,9 +157,7 @@ function openInfoPage(pageKey) {
     }
 }
 
-// 🔥 POWERFUL IFRAME INJECTOR 🔥
-// Ye function ek alag sandboxed window banata hai jisme Ad load hota hai.
-// Isse Adsterra confuse nahi hota aur ads 100% dikhte hain.
+// 🔥 POWERFUL IFRAME INJECTOR (FULL SIZE) 🔥
 function renderAdIframe(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -159,19 +166,32 @@ function renderAdIframe(containerId) {
 
     const iframe = document.createElement('iframe');
     iframe.style.width = "100%";
-    iframe.style.height = "150px"; // Height fix for visibility
+    iframe.style.height = "100%"; // Take full height of parent box
+    iframe.style.minHeight = "250px"; // Ensure it's big
     iframe.style.border = "none";
     iframe.scrolling = "no";
     
     container.appendChild(iframe);
 
-    // Write Ad Code inside the Iframe
+    // Write Ad Code inside the Iframe with Styling
     const doc = iframe.contentWindow.document;
     doc.open();
     doc.write(`
         <!DOCTYPE html>
         <html>
-        <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;}</style></head>
+        <head>
+            <style>
+                body { 
+                    margin: 0; padding: 0; 
+                    display: flex; justify-content: center; align-items: center; 
+                    background: transparent; height: 100vh; overflow: hidden;
+                }
+                /* Force Adsterra to fill space */
+                #container-85c8e4eb0a60d8ad0292343f4d54b04b {
+                    transform: scale(1.1); /* Thoda bada dikhane ke liye */
+                }
+            </style>
+        </head>
         <body>
             <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b"></div>
             <script async="async" data-cfasync="false" src="//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js"></script>
@@ -180,3 +200,4 @@ function renderAdIframe(containerId) {
     `);
     doc.close();
 }
+
