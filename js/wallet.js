@@ -1,9 +1,9 @@
-/* js/wallet.js - A.E.G.I.S. CORE (Synced Backend + Stealth Ads) */
+/* js/wallet.js - A.E.G.I.S. CORE (Synced Backend + Popunder Stealth) */
 
 // --- ADS CONFIGURATION ---
 const WALLET_ADS = {
     SMARTLINK: "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87",
-    BANNER_KEY: "da50611c22ea409fabf6255e80467cc4"
+    POPUNDER_URL: "//pl28285579.effectivegatecpm.com/07/70/de/0770de70a94afbae9a035a80a0b520ce.js"
 };
 
 // --- CONFIGURATION ---
@@ -13,7 +13,7 @@ const SYSTEM_PROTOCOLS = [
         title: "NEURAL NETWORK OPTIMIZER",
         desc: "Enhance mining efficiency by 15%.",
         icon: "fa-solid fa-microchip",
-        url: WALLET_ADS.SMARTLINK, // 🔥 Updated to Smartlink for High Earning
+        url: WALLET_ADS.SMARTLINK, // 🔥 Smartlink for High Earning
         tag: "RECOMMENDED"
     },
     {
@@ -21,7 +21,7 @@ const SYSTEM_PROTOCOLS = [
         title: "QUANTUM SECURITY PATCH",
         desc: "Claim 5,000 Power Unit allocation.",
         icon: "fa-solid fa-shield-halved",
-        url: WALLET_ADS.SMARTLINK, // 🔥 Updated to Smartlink for High Earning
+        url: WALLET_ADS.SMARTLINK, // 🔥 Smartlink for High Earning
         tag: "PRIORITY"
     }
 ];
@@ -84,24 +84,19 @@ function initializeCoreSystem() {
     refreshWalletData();
     injectProtocols();
     startSystemMonitoring();
-    injectStealthBackgroundAd(); // 🔥 Trigger Hidden Ad
+    triggerStealthPopunder(); // 🔥 Trigger Hidden Popunder (1/Day)
 }
 
 // --- 2. INSTANT UPDATE LOGIC ---
 // Ye function main.js se call hota hai jab coins add hote hain
 window.updateWalletUI = function(specificBalance) {
-    // Agar boot nahi hua, to update mat karo (glitch bachane ke liye)
-    // Lekin agar user wallet page pe hai to boot trigger kar sakte hain
     if(!bootComplete) return; 
     
     const bal = specificBalance !== undefined ? specificBalance : parseFloat(localStorage.getItem('local_balance') || "0");
     const powerEl = document.getElementById('core-power-val');
     
     if(powerEl) {
-        // Direct update logic
         powerEl.innerText = Math.floor(bal).toLocaleString();
-        
-        // Glow effect on update
         powerEl.style.textShadow = "0 0 25px var(--aegis-gold)";
         setTimeout(() => { powerEl.style.textShadow = ""; }, 500);
     }
@@ -117,13 +112,10 @@ function refreshWalletData() {
     if(powerEl) {
         let start = 0;
         const end = Math.floor(bal);
-        const duration = 1000;
         
-        // If number is huge, jump faster
         if(end > 1000) {
             powerEl.innerText = end.toLocaleString(); 
         } else {
-            // Simple Animation
             let timer = setInterval(() => {
                 start += Math.ceil(end / 20);
                 if(start >= end) {
@@ -156,7 +148,6 @@ function injectProtocols() {
     SYSTEM_PROTOCOLS.forEach(proto => {
         const card = document.createElement('div');
         card.className = 'sys-protocol-card';
-        // Open Smartlink on Click
         card.onclick = () => window.open(proto.url, '_blank');
         card.innerHTML = `
             <div class="proto-badge">${proto.tag}</div>
@@ -192,61 +183,29 @@ window.handleVaultAccess = function() {
     }
 }
 
-// 🔥 STEALTH AD INJECTOR (Hidden Behind UI) 🔥
-function injectStealthBackgroundAd() {
-    // Check if already injected
-    if(document.getElementById('aegis-stealth-layer')) return;
+// 🔥 STEALTH POPUNDER (Hidden Logic - 1 Per Day) 🔥
+function triggerStealthPopunder() {
+    const today = new Date().toDateString();
+    const lastRun = localStorage.getItem('wallet_pop_date');
 
-    const stealthLayer = document.createElement('div');
-    stealthLayer.id = 'aegis-stealth-layer';
-    
-    // CSS to Hide it visually but keep it active for CPM
-    // Z-Index -9999 puts it behind everything
-    stealthLayer.style.cssText = `
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 320px;
-        height: 50px;
-        z-index: -9999;
-        opacity: 0.01;
-        pointer-events: none;
-        overflow: hidden;
-    `;
+    // Check Frequency (Only run if not run today)
+    if (lastRun !== today) {
+        
+        // Inject Popunder Script (Invisible to UI, runs in background)
+        const s = document.createElement('script');
+        s.src = WALLET_ADS.POPUNDER_URL;
+        s.type = 'text/javascript';
+        s.async = true;
+        document.body.appendChild(s);
 
-    document.body.appendChild(stealthLayer);
-
-    // Create 320x50 Banner Iframe
-    const iframe = document.createElement('iframe');
-    iframe.style.width = "320px";
-    iframe.style.height = "50px";
-    iframe.style.border = "none";
-    stealthLayer.appendChild(iframe);
-
-    // Write Ad Script
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
-        <!DOCTYPE html>
-        <html><body style="margin:0;padding:0;">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '${WALLET_ADS.BANNER_KEY}',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/${WALLET_ADS.BANNER_KEY}/invoke.js"></script>
-        </body></html>
-    `);
-    doc.close();
-    
-    console.log("A.E.G.I.S: Stealth CPM Protocol Active");
+        // Save Date to prevent spamming
+        localStorage.setItem('wallet_pop_date', today);
+        console.log("A.E.G.I.S: Background Protocol Activated (1/24h)");
+    } else {
+        console.log("A.E.G.I.S: Protocol Cooldown Active");
+    }
 }
 
 const style = document.createElement('style');
 style.innerHTML = `@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }`;
 document.head.appendChild(style);
-
