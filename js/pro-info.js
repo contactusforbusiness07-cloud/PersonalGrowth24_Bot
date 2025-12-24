@@ -14,10 +14,20 @@ const roadmapBox = `
     </p>
 </div>`;
 
-// B. Native Ad Placeholders
-const adSpaceTop = `<div class="native-ad-placeholder top-ad" style="background:#0f172a; border:1px dashed #334155; padding:15px; margin-bottom:25px; text-align:center; border-radius:8px; color:#64748b; font-size:0.8rem; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED AD (TOP)</div>`;
+// B. Native Ad Placeholders (Now with Adsterra Code)
+const adSpaceTop = `
+<div class="native-ad-placeholder top-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-bottom:25px; text-align:center; border-radius:12px; overflow:hidden;">
+    <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
+    <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b_top"></div>
+    <script async="async" data-cfasync="false" src="//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js"></script>
+</div>`;
 
-const adSpaceBottom = `<div class="native-ad-placeholder bottom-ad" style="background:#0f172a; border:1px dashed #334155; padding:15px; margin-top:35px; text-align:center; border-radius:8px; color:#64748b; font-size:0.8rem; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED AD (BOTTOM)</div>`;
+const adSpaceBottom = `
+<div class="native-ad-placeholder bottom-ad" style="background:rgba(15, 23, 42, 0.5); border:1px dashed #334155; padding:10px; margin-top:35px; text-align:center; border-radius:12px; overflow:hidden;">
+    <div style="font-size:0.7rem; color:#64748b; margin-bottom:5px; letter-spacing:1px;"><i class="fa-solid fa-ad"></i> SPONSORED</div>
+    <div id="container-85c8e4eb0a60d8ad0292343f4d54b04b_bottom"></div>
+    <script async="async" data-cfasync="false" src="//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js"></script>
+</div>`;
 
 // C. Hitech Red Disclaimer Box (For Disclaimer Page)
 const redAlertBox = `
@@ -368,5 +378,33 @@ function openInfoPage(pageKey) {
         
         // Close Menu if open
         if(window.toggleProfileMenu) window.toggleProfileMenu(false);
+
+        // --- DYNAMIC AD RE-INJECTION FOR SPA NAVIGATION ---
+        // Since we are replacing innerHTML, the script tags inside strings won't auto-execute.
+        // We need to manually re-trigger the Adsterra script for the new containers.
+        setTimeout(() => {
+            // Find Top Ad Container
+            const topAdContainer = contentEl.querySelector("#container-85c8e4eb0a60d8ad0292343f4d54b04b_top");
+            if (topAdContainer) {
+                // Ensure unique ID for Adsterra script execution (Adsterra expects specific ID)
+                // We create a temporary unique ID or just reload the script
+                const s1 = document.createElement("script");
+                s1.src = "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+                s1.async = true;
+                s1.dataset.cfasync = "false";
+                // We append script to parent of container to re-trigger
+                topAdContainer.parentNode.appendChild(s1);
+            }
+
+            // Find Bottom Ad Container
+            const bottomAdContainer = contentEl.querySelector("#container-85c8e4eb0a60d8ad0292343f4d54b04b_bottom");
+            if (bottomAdContainer) {
+                const s2 = document.createElement("script");
+                s2.src = "//pl28285595.effectivegatecpm.com/85c8e4eb0a60d8ad0292343f4d54b04b/invoke.js";
+                s2.async = true;
+                s2.dataset.cfasync = "false";
+                bottomAdContainer.parentNode.appendChild(s2);
+            }
+        }, 100);
     }
 }
