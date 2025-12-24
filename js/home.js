@@ -121,7 +121,7 @@ function initTicker() {
         "SYSTEM ONLINE: Earn 1200 coins to reach Level 2",
         "OFFICIAL: Join Telegram for daily crypto codes",
         "BOOST AVAILABLE: Check Games section for 2x Multiplier",
-        "LIVE FEED: User409 just withdrew 5000 Coins"
+        
     ];
     let i = 0;
     setInterval(() => {
