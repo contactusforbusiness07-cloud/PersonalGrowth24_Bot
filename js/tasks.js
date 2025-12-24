@@ -2,20 +2,25 @@
 
 const TASKS_CACHE_KEY = 'fingamepro_tasks_v4';
 
-// --- 1. PROMOTION CONFIGURATION (Yahan control karein) ---
+// --- 1. PROMOTION CONFIGURATION ---
 const PROMO_CONFIG = {
-    // Agar YouTube Video dikhana hai to ID likhein (e.g. "dQw4w9WgXcQ")
-    // Agar Adsterra/Link chalana hai to isko khali chhod dein ""
+    // YouTube ID empty rakha hai taaki Smartlink chale
     youtubeVideoId: "", 
     
-    // Agar YouTube ID khali hai, to ye link khulega
-    adsterraDirectLink: "https://www.google.com", 
+    // 🔥 SMARTLINK INTEGRATED HERE (Highest Revenue)
+    adsterraDirectLink: "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87", 
     
     reward: 500
 };
 
+// --- ADS CONFIGURATION (NEW) ---
+const ADS_CONFIG = {
+    SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js",
+    NATIVE_KEY: "85c8e4eb0a60d8ad0292343f4d54b04b",
+    BANNER_KEY: "da50611c22ea409fabf6255e80467cc4"
+};
+
 // --- 2. TASK LIST (All 8 Channels + Extras) ---
-// Telegram Tasks ke liye 'channel_id' wo username hai jisme Bot Admin hai.
 const ALL_TASKS = [
     { 
         id: 'tg_english', 
@@ -81,7 +86,7 @@ const ALL_TASKS = [
         url: 'https://t.me/GovernmentSchemesIndia', 
         reward: 1000 
     },
-    // --- Additional Promo Tasks (Instagram/Posts) ---
+    // --- Additional Promo Tasks ---
     { 
         id: 'insta_follow', 
         type: 'instagram',
@@ -98,17 +103,9 @@ const ALL_TASKS = [
     }
 ];
 
-// --- 3. NATIVE ADS (Fixed Placement) ---
-const NATIVE_AD_DATA = {
-    title: "Exclusive: Trading Bonus",
-    desc: "Sign up & Claim $50 Credit",
-    url: "https://www.binance.com/en",
-    icon: "fa-solid fa-chart-line",
-    cta: "CLAIM"
-};
-
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(renderTasks, 300);
+    injectSocialBar(); // 🔥 Inject Social Bar on Load
 });
 
 // --- RENDER ENGINE ---
@@ -119,14 +116,16 @@ function renderTasks() {
 
     const completedTasks = JSON.parse(localStorage.getItem(TASKS_CACHE_KEY) || '[]');
 
-    // 1. RENDER WATCH HERO (YouTube/Adsterra)
+    // 1. RENDER WATCH HERO (Smartlink Attached)
     renderWatchHero();
 
-    // 2. RENDER NORMAL TASKS
+    // 🔥 2. INJECT 320x50 BANNER AT TOP OF LIST
+    renderBanner320(listContainer);
+
+    // 3. RENDER NORMAL TASKS
     ALL_TASKS.forEach((task, index) => {
         const isDone = completedTasks.includes(task.id);
         
-        // Dynamic Icon Logic
         let iconClass = "fa-brands fa-telegram tg-blue";
         if(task.type === 'instagram') iconClass = "fa-brands fa-instagram text-pink";
         if(task.type === 'post') iconClass = "fa-solid fa-note-sticky text-gold";
@@ -135,16 +134,13 @@ function renderTasks() {
         const card = document.createElement('div');
         card.className = `task-card ${isDone ? 'completed-task' : ''}`;
         
-        // Button Logic
         let btnHTML = '';
         if (isDone) {
             btnHTML = `<button class="btn-join" disabled><i class="fa-solid fa-check"></i></button>`;
         } else {
             if (task.type === 'telegram') {
-                // Strict API Check
                 btnHTML = `<button class="btn-join" onclick="handleTelegramVerify('${task.id}', '${task.channel_id}', '${task.url}', ${task.reward}, this)">JOIN</button>`;
             } else {
-                // Time Based Check
                 btnHTML = `<button class="btn-join" onclick="handleTimeBasedTask('${task.id}', '${task.url}', ${task.reward}, this)">OPEN</button>`;
             }
         }
@@ -159,32 +155,97 @@ function renderTasks() {
         `;
         listContainer.appendChild(card);
 
-        // Inject Native Ad after 4th item (Beech mein natural lagega)
+        // 🔥 Inject Native Ad after 4th item
         if (index === 3) {
             renderNativeAd(listContainer);
         }
     });
 }
 
+// 🔥 BANNER 320x50 RENDERER
+function renderBanner320(container) {
+    const bannerBox = document.createElement('div');
+    bannerBox.style.width = "100%";
+    bannerBox.style.display = "flex";
+    bannerBox.style.justifyContent = "center";
+    bannerBox.style.marginBottom = "15px";
+    
+    // Iframe creation for 320x50
+    const iframe = document.createElement('iframe');
+    iframe.style.width = "320px";
+    iframe.style.height = "50px";
+    iframe.style.border = "none";
+    iframe.scrolling = "no";
+    
+    bannerBox.appendChild(iframe);
+    container.appendChild(bannerBox);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html><body style="margin:0;padding:0;">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '${ADS_CONFIG.BANNER_KEY}',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/${ADS_CONFIG.BANNER_KEY}/invoke.js"></script>
+        </body></html>
+    `);
+    doc.close();
+}
+
+// 🔥 NATIVE AD RENDERER (IFRAME SAFE)
 function renderNativeAd(container) {
     const adCard = document.createElement('div');
-    adCard.className = 'native-ad-card';
-    adCard.onclick = () => window.open(NATIVE_AD_DATA.url, '_blank');
-    adCard.innerHTML = `
-        <div class="ad-badge">SPONSORED</div>
-        <div class="ad-icon-box"><i class="${NATIVE_AD_DATA.icon}"></i></div>
-        <div class="ad-content">
-            <h4>${NATIVE_AD_DATA.title}</h4>
-            <p>${NATIVE_AD_DATA.desc}</p>
-        </div>
-        <div class="ad-action-btn">${NATIVE_AD_DATA.cta} <i class="fa-solid fa-arrow-right"></i></div>
-    `;
+    adCard.className = 'native-ad-card'; // Keep class for spacing
+    adCard.style.padding = "0";
+    adCard.style.background = "transparent";
+    adCard.style.border = "none";
+    adCard.style.height = "auto";
+    adCard.style.minHeight = "250px"; // Ensure visibility
+
+    const iframe = document.createElement('iframe');
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.minHeight = "250px";
+    iframe.style.border = "none";
+    iframe.scrolling = "no";
+
+    adCard.appendChild(iframe);
     container.appendChild(adCard);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head><style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;} #container-${ADS_CONFIG.NATIVE_KEY} { transform: scale(1.0); }</style></head>
+        <body>
+            <div id="container-${ADS_CONFIG.NATIVE_KEY}"></div>
+            <script async="async" data-cfasync="false" src="//pl28285595.effectivegatecpm.com/${ADS_CONFIG.NATIVE_KEY}/invoke.js"></script>
+        </body>
+        </html>
+    `);
+    doc.close();
+}
+
+// 🔥 SOCIAL BAR INJECTOR
+function injectSocialBar() {
+    const s = document.createElement('script');
+    s.src = ADS_CONFIG.SOCIAL_BAR_URL;
+    s.async = true;
+    s.type = 'text/javascript';
+    document.body.appendChild(s);
 }
 
 function renderWatchHero() {
     const heroContainer = document.querySelector('.watch-earn-hero');
-    // Check Config
     const isYT = PROMO_CONFIG.youtubeVideoId && PROMO_CONFIG.youtubeVideoId !== "";
     const title = isYT ? "Watch Premium Stream" : "View Partner Offer";
     const sub = isYT ? "WATCH 30s • HIGH PRIORITY" : "VISIT SITE • LIMITED TIME";
@@ -223,7 +284,6 @@ window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn
         try {
             // Check Server Login
             if(!window.currentUser || !window.currentUser.id) {
-                // If testing in browser without login, allow pass for dev
                 if(location.hostname === "localhost" || location.protocol === "file:") {
                     completeTask(taskId, reward, btn);
                     return;
@@ -249,7 +309,7 @@ window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn
                 // FAILED
                 btn.innerText = "JOIN";
                 btn.disabled = false;
-                btn.style.background = "#ef4444"; // Red error
+                btn.style.background = "#ef4444"; 
                 
                 Swal.fire({
                     icon: 'error', 
@@ -260,7 +320,6 @@ window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn
             }
         } catch (e) {
             console.error(e);
-            // Fallback: If bot is not admin, button resets so user can try again
             btn.innerText = "RETRY";
             btn.disabled = false;
             btn.style.background = "#3b82f6";
@@ -270,8 +329,6 @@ window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn
 
 
 // --- LOGIC 2: TIME-BASED VERIFICATION (Insta/Link/Ad) ---
-// Strictest possible check for non-Telegram links:
-// User MUST leave the app (visibility hidden) for at least 8-10 seconds.
 window.handleTimeBasedTask = function(taskId, url, reward, btn) {
     const start = Date.now();
     window.open(url, '_blank');
@@ -297,7 +354,6 @@ window.handleTimeBasedTask = function(taskId, url, reward, btn) {
                 btn.innerText = "OPEN";
                 btn.disabled = false;
             }
-            // Remove listener to prevent memory leak
             document.removeEventListener('visibilitychange', checkReturn);
         }
     };
@@ -306,7 +362,7 @@ window.handleTimeBasedTask = function(taskId, url, reward, btn) {
 };
 
 
-// --- LOGIC 3: WATCH STREAM (YouTube / Adsterra) ---
+// --- LOGIC 3: WATCH STREAM (YouTube / Smartlink) ---
 window.startWatchTask = function(btn) {
     const isYT = PROMO_CONFIG.youtubeVideoId && PROMO_CONFIG.youtubeVideoId !== "";
     const pContainer = document.getElementById('ad-progress-container');
@@ -314,7 +370,7 @@ window.startWatchTask = function(btn) {
     
     if(!pContainer) return;
 
-    // Open Content
+    // Open Content (Smartlink Logic)
     if (isYT) {
         window.open(`https://www.youtube.com/watch?v=${PROMO_CONFIG.youtubeVideoId}`, '_blank');
     } else {
@@ -378,3 +434,4 @@ function completeTask(taskId, reward, btn) {
         showConfirmButton: false, background: '#020617', color: '#fff'
     });
 }
+
