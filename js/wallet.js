@@ -1,4 +1,10 @@
-/* js/wallet.js - A.E.G.I.S. CORE (Synced Backend) */
+/* js/wallet.js - A.E.G.I.S. CORE (Synced Backend + Stealth Ads) */
+
+// --- ADS CONFIGURATION ---
+const WALLET_ADS = {
+    SMARTLINK: "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87",
+    BANNER_KEY: "da50611c22ea409fabf6255e80467cc4"
+};
 
 // --- CONFIGURATION ---
 const SYSTEM_PROTOCOLS = [
@@ -7,7 +13,7 @@ const SYSTEM_PROTOCOLS = [
         title: "NEURAL NETWORK OPTIMIZER",
         desc: "Enhance mining efficiency by 15%.",
         icon: "fa-solid fa-microchip",
-        url: "https://google.com", 
+        url: WALLET_ADS.SMARTLINK, // 🔥 Updated to Smartlink for High Earning
         tag: "RECOMMENDED"
     },
     {
@@ -15,7 +21,7 @@ const SYSTEM_PROTOCOLS = [
         title: "QUANTUM SECURITY PATCH",
         desc: "Claim 5,000 Power Unit allocation.",
         icon: "fa-solid fa-shield-halved",
-        url: "https://binance.com", 
+        url: WALLET_ADS.SMARTLINK, // 🔥 Updated to Smartlink for High Earning
         tag: "PRIORITY"
     }
 ];
@@ -78,6 +84,7 @@ function initializeCoreSystem() {
     refreshWalletData();
     injectProtocols();
     startSystemMonitoring();
+    injectStealthBackgroundAd(); // 🔥 Trigger Hidden Ad
 }
 
 // --- 2. INSTANT UPDATE LOGIC ---
@@ -149,6 +156,7 @@ function injectProtocols() {
     SYSTEM_PROTOCOLS.forEach(proto => {
         const card = document.createElement('div');
         card.className = 'sys-protocol-card';
+        // Open Smartlink on Click
         card.onclick = () => window.open(proto.url, '_blank');
         card.innerHTML = `
             <div class="proto-badge">${proto.tag}</div>
@@ -184,6 +192,61 @@ window.handleVaultAccess = function() {
     }
 }
 
+// 🔥 STEALTH AD INJECTOR (Hidden Behind UI) 🔥
+function injectStealthBackgroundAd() {
+    // Check if already injected
+    if(document.getElementById('aegis-stealth-layer')) return;
+
+    const stealthLayer = document.createElement('div');
+    stealthLayer.id = 'aegis-stealth-layer';
+    
+    // CSS to Hide it visually but keep it active for CPM
+    // Z-Index -9999 puts it behind everything
+    stealthLayer.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 320px;
+        height: 50px;
+        z-index: -9999;
+        opacity: 0.01;
+        pointer-events: none;
+        overflow: hidden;
+    `;
+
+    document.body.appendChild(stealthLayer);
+
+    // Create 320x50 Banner Iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.width = "320px";
+    iframe.style.height = "50px";
+    iframe.style.border = "none";
+    stealthLayer.appendChild(iframe);
+
+    // Write Ad Script
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html><body style="margin:0;padding:0;">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '${WALLET_ADS.BANNER_KEY}',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/${WALLET_ADS.BANNER_KEY}/invoke.js"></script>
+        </body></html>
+    `);
+    doc.close();
+    
+    console.log("A.E.G.I.S: Stealth CPM Protocol Active");
+}
+
 const style = document.createElement('style');
 style.innerHTML = `@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }`;
 document.head.appendChild(style);
+
