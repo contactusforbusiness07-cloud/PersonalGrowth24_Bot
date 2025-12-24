@@ -95,6 +95,28 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
+
+        /* 🔥 FIX: SweetAlert Z-Index & Dark Theme Override */
+        /* Ye code ensure karega ki Popup Menu aur Internal Pages ke upar aaye */
+        .swal2-container {
+            z-index: 2147483650 !important; /* Higher than menu (2147483647) */
+        }
+        
+        /* Professional Dark Theme for Alerts */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: #0f172a !important; /* Dark Blue/Slate */
+            border: 1px solid #334155;
+            color: #ffffff !important;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        div:where(.swal2-container) .swal2-title,
+        div:where(.swal2-container) .swal2-html-container {
+            color: #ffffff !important;
+        }
+        div:where(.swal2-icon).swal2-warning {
+            border-color: #f59e0b !important;
+            color: #f59e0b !important;
+        }
     </style>
     </head>
 
@@ -904,7 +926,6 @@
       document.querySelectorAll('.nav-item').forEach(item => {
           item.addEventListener('click', function() {
              const onclickVal = this.getAttribute('onclick');
-             // extracting 'home' from "navigateTo('home')"
              if(onclickVal) {
                  const match = onclickVal.match(/'([^']+)'/);
                  if(match && match[1]) {
@@ -914,7 +935,7 @@
           });
       });
 
-      // Menu Navigation Handler (Wallet Fix)
+      // Menu Navigation Handler
       window.handleMenuNav = function(section) {
           if(typeof navigateTo === 'function') {
               navigateTo(section);
@@ -923,12 +944,14 @@
           toggleProfileMenu(false); // Close menu
       }
 
-      // Logout Handler (Close App)
+      // Logout Handler (Dark Theme + Top Layer)
       window.handleLogout = function() {
           Swal.fire({
             title: 'Logout?',
             text: "Close the app and return to Telegram?",
             icon: 'warning',
+            background: '#1e293b',  /* Dark Theme */
+            color: '#ffffff',       /* White Text */
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
@@ -938,7 +961,7 @@
                 if(window.Telegram && window.Telegram.WebApp) {
                     window.Telegram.WebApp.close();
                 } else {
-                    window.location.reload(); // Fallback
+                    window.location.reload(); 
                 }
             }
           });
@@ -954,20 +977,17 @@
               return;
           }
 
-          // Close
           if (forceState === false) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
               return;
           }
-          // Open
           if (forceState === true) {
               menu.classList.add('open');
               overlay.classList.add('visible');
               return;
           }
           
-          // Toggle
           if (menu.classList.contains('open')) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
@@ -977,16 +997,11 @@
           }
       };
 
-      // ✅ FIXED: Back Button Logic (State Persistence)
+      // Back Button Logic
       window.backToProfileMenu = function() {
-          // 1. Pehle Menu Kholo
           window.toggleProfileMenu(true);
-
-          // 2. Jo Page khula tha usko chhupa do (Hide Internal Page)
           document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
 
-          // 3. Ensure the current main section is visible (Don't force Home)
-          // Check if all page-sections are hidden. If so, reveal the last active one.
           const sections = document.querySelectorAll('.page-section');
           let anyVisible = false;
           sections.forEach(s => {
@@ -996,16 +1011,76 @@
           });
           
           if(!anyVisible) {
-              // If nothing is visible (because internal page covered it), show last active
               const target = document.getElementById(currentActiveSectionId);
               if(target) target.classList.remove('hidden');
               else {
-                   // Fallback to home if something goes wrong
                    const home = document.getElementById('home');
                    if(home) home.classList.remove('hidden');
               }
           }
       };
+
+      // 🔥 FIX: Brand Proposal Function (Internal Fallback)
+      // Ye function tab kaam karega agar external file load nahi hui
+      // Aur Z-Index fix ke saath alert dikhayega.
+      window.sendPremiumProposal = function() {
+          const brandName = document.getElementById('brand-contact').value || "Not Provided";
+          const message = document.getElementById('brand-message').value || "No Details";
+          
+          if(!brandName || brandName.length < 3) {
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Details Required',
+                 text: 'Please provide valid contact info.',
+                 background: '#1e293b', color: '#fff'
+             });
+             return;
+          }
+
+          // Show Success (On Top of Menu)
+          Swal.fire({
+              icon: 'success',
+              title: 'Proposal Sent!',
+              text: 'Opening Telegram to finalize details...',
+              timer: 2000,
+              showConfirmButton: false,
+              background: '#1e293b', color: '#fff'
+          }).then(() => {
+              // Redirect to Telegram with Data
+              const text = `🚀 *New Sponsorship Proposal*\n\n👤 Contact: ${brandName}\n📝 Msg: ${message}`;
+              const encoded = encodeURIComponent(text);
+              // Replace 'FinGamePro_Support' with your actual username if needed
+              window.open(`https://t.me/FinGamePro_Support?text=${encoded}`, '_blank');
+          });
+      }
+
+      // 🔥 FIX: Support Ticket Function
+      window.submitSupportTicket = function() {
+          const category = document.getElementById('sup-category').value;
+          const msg = document.getElementById('sup-message').value;
+
+          if(!category || !msg) {
+              Swal.fire({
+                 icon: 'warning',
+                 title: 'Missing Info',
+                 text: 'Please select a category and describe the issue.',
+                 background: '#1e293b', color: '#fff'
+             });
+             return;
+          }
+
+          Swal.fire({
+              icon: 'success',
+              title: 'Ticket Submitted',
+              text: 'Support team will contact you via Telegram.',
+              background: '#1e293b', color: '#fff'
+          }).then(() => {
+              const text = `🛠 *Support Request*\n\n📂 Category: ${category}\n💬 Issue: ${msg}`;
+              const encoded = encodeURIComponent(text);
+              window.open(`https://t.me/FinGamePro_Support?text=${encoded}`, '_blank');
+          });
+      }
+
     </script>
 </body>
 </html>
