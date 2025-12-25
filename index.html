@@ -1021,7 +1021,7 @@
 
       // 🔥 BACKEND CONFIGURATION
       // IMPORTANT: Replace this URL with your actual deployed backend URL (e.g., from Render)
-      const BACKEND_URL = "https://YOUR-APP-NAME.onrender.com"; 
+      const BACKEND_URL = "https://fingamebot-backend-pgf3.onrender.com"; 
 
       // 🔥 BACKEND CONNECT: Brand Proposal
       window.sendPremiumProposal = async function() {
@@ -1102,7 +1102,7 @@
 
           try {
               // Send Data to Backend Bot
-              const response = await fetch(`${https://fingamebot-backend-pgf3.onrender.com}/api/submit-support`, {
+              const response = await fetch(`${BACKEND_URL}/api/submit-support`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
