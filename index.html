@@ -925,6 +925,7 @@
       document.querySelectorAll('.nav-item').forEach(item => {
           item.addEventListener('click', function() {
              const onclickVal = this.getAttribute('onclick');
+             // extracting 'home' from "navigateTo('home')"
              if(onclickVal) {
                  const match = onclickVal.match(/'([^']+)'/);
                  if(match && match[1]) {
@@ -934,7 +935,7 @@
           });
       });
 
-      // Menu Navigation Handler
+      // Menu Navigation Handler (Wallet Fix)
       window.handleMenuNav = function(section) {
           if(typeof navigateTo === 'function') {
               navigateTo(section);
@@ -943,14 +944,12 @@
           toggleProfileMenu(false); // Close menu
       }
 
-      // Logout Handler (Dark Theme + Top Layer)
+      // Logout Handler (Close App)
       window.handleLogout = function() {
           Swal.fire({
             title: 'Logout?',
             text: "Close the app and return to Telegram?",
             icon: 'warning',
-            background: '#1e293b',  /* Dark Theme */
-            color: '#ffffff',       /* White Text */
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
@@ -960,7 +959,7 @@
                 if(window.Telegram && window.Telegram.WebApp) {
                     window.Telegram.WebApp.close();
                 } else {
-                    window.location.reload(); 
+                    window.location.reload(); // Fallback
                 }
             }
           });
@@ -976,17 +975,20 @@
               return;
           }
 
+          // Close
           if (forceState === false) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
               return;
           }
+          // Open
           if (forceState === true) {
               menu.classList.add('open');
               overlay.classList.add('visible');
               return;
           }
           
+          // Toggle
           if (menu.classList.contains('open')) {
               menu.classList.remove('open');
               overlay.classList.remove('visible');
@@ -996,11 +998,16 @@
           }
       };
 
-      // Back Button Logic
+      // ✅ FIXED: Back Button Logic (State Persistence)
       window.backToProfileMenu = function() {
+          // 1. Pehle Menu Kholo
           window.toggleProfileMenu(true);
+
+          // 2. Jo Page khula tha usko chhupa do (Hide Internal Page)
           document.querySelectorAll('.internal-page').forEach(p => p.classList.add('hidden'));
 
+          // 3. Ensure the current main section is visible (Don't force Home)
+          // Check if all page-sections are hidden. If so, reveal the last active one.
           const sections = document.querySelectorAll('.page-section');
           let anyVisible = false;
           sections.forEach(s => {
@@ -1010,79 +1017,64 @@
           });
           
           if(!anyVisible) {
+              // If nothing is visible (because internal page covered it), show last active
               const target = document.getElementById(currentActiveSectionId);
               if(target) target.classList.remove('hidden');
               else {
+                   // Fallback to home if something goes wrong
                    const home = document.getElementById('home');
                    if(home) home.classList.remove('hidden');
               }
           }
       };
 
-      // 🔥 BACKEND CONFIGURATION
-      // IMPORTANT: Replace this URL with your actual deployed backend URL (e.g., from Render)
-      const BACKEND_URL = "https://fingamebot-backend-pgf3.onrender.com"; 
-
-      // 🔥 BACKEND CONNECT: Brand Proposal
-      window.sendPremiumProposal = async function() {
+      // 🔥 FIX: Brand Proposal Function (BACKEND CONNECT - Full Data)
+      window.sendPremiumProposal = function() {
           const brandName = document.getElementById('brand-contact').value || "Not Provided";
           const message = document.getElementById('brand-message').value || "No Details";
 
-          // Capture Hidden Fields
+          // Capture Hidden Fields (Chip Selection)
           const asset = document.getElementById('input-asset').value || "Not Selected";
           const format = document.getElementById('input-format').value || "Not Selected";
           const duration = document.getElementById('input-duration').value || "Not Selected";
           const budget = document.getElementById('input-budget').value || "Not Selected";
           
           if(!brandName || brandName.length < 3) {
-             Swal.fire({ icon: 'error', title: 'Details Required', text: 'Please provide valid contact info.', background: '#1e293b', color: '#fff' });
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Details Required',
+                 text: 'Please provide valid contact info.',
+                 background: '#1e293b', color: '#fff'
+             });
              return;
           }
 
-          // Show Loading
-          const btn = document.querySelector('.btn-submit-proposal');
-          const originalText = btn.innerHTML;
-          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-          btn.disabled = true;
-
-          try {
-              // Send Data to Backend Bot
-              const response = await fetch(`${BACKEND_URL}/api/submit-sponsorship`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      user_id: window.Telegram.WebApp.initDataUnsafe?.user?.id || 0,
-                      username: window.Telegram.WebApp.initDataUnsafe?.user?.username || 'Hidden',
-                      brandName, message, asset, format, duration, budget
-                  })
-              });
-
-              if(response.ok) {
-                  Swal.fire({
-                      icon: 'success',
-                      title: 'Proposal Sent!',
-                      text: 'Our team will review and contact you via bot.',
-                      background: '#1e293b', color: '#fff'
-                  });
-              } else {
-                  throw new Error("Server Error");
-              }
-          } catch(e) {
-              console.error(e);
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Failed',
-                  text: 'Could not connect to server. Check your connection.',
-                  background: '#1e293b', color: '#fff'
-              });
-          } finally {
-              btn.innerHTML = originalText;
-              btn.disabled = false;
-          }
+          Swal.fire({
+              icon: 'success',
+              title: 'Proposal Sent!',
+              text: 'Opening Telegram to finalize details...',
+              timer: 2000,
+              showConfirmButton: false,
+              background: '#1e293b', color: '#fff'
+          }).then(() => {
+              // Construct Full Report for Admin
+              const text = `🚀 *New Sponsorship Proposal*\n\n` +
+                           `📍 Placement: ${asset}\n` +
+                           `🎯 Format: ${format}\n` +
+                           `⏱ Duration: ${duration}\n` +
+                           `💰 Budget: ${budget}\n` +
+                           `---------------------------\n` +
+                           `👤 Contact: ${brandName}\n` +
+                           `📝 Details: ${message}`;
+                           
+              const encoded = encodeURIComponent(text);
+              // 👇 REPLACE 'FinGamePro_Support' WITH YOUR USERNAME
+              window.open(`https://t.me/FinGamePro_Support?text=${encoded}`, '_blank');
+          });
       }
 
-      // 🔥 BACKEND CONNECT: Support Ticket
-      window.submitSupportTicket = async function() {
+      // 🔥 FIX: Support Ticket Function (BACKEND CONNECT - Full Data)
+      window.submitSupportTicket = function() {
           const name = document.getElementById('sup-name').value || "Unknown";
           const email = document.getElementById('sup-email').value || "N/A";
           const mobile = document.getElementById('sup-mobile').value || "N/A";
@@ -1090,50 +1082,34 @@
           const msg = document.getElementById('sup-message').value;
 
           if(!category || !msg) {
-              Swal.fire({ icon: 'warning', title: 'Missing Info', text: 'Please select a category and describe the issue.', background: '#1e293b', color: '#fff' });
-              return;
-          }
-
-          // Show Loading
-          const btn = document.querySelector('.btn-submit-ticket');
-          const originalText = btn.innerHTML;
-          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-          btn.disabled = true;
-
-          try {
-              // Send Data to Backend Bot
-              const response = await fetch(`${BACKEND_URL}/api/submit-support`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                      user_id: window.Telegram.WebApp.initDataUnsafe?.user?.id || 0,
-                      username: window.Telegram.WebApp.initDataUnsafe?.user?.username || 'Hidden',
-                      name, email, mobile, category, msg
-                  })
-              });
-
-              if(response.ok) {
-                  Swal.fire({
-                      icon: 'success',
-                      title: 'Ticket Submitted',
-                      text: 'Support team will contact you via Telegram Bot.',
-                      background: '#1e293b', color: '#fff'
-                  });
-              } else {
-                  throw new Error("Server Error");
-              }
-          } catch(e) {
-              console.error(e);
               Swal.fire({
-                  icon: 'error',
-                  title: 'Failed',
-                  text: 'Could not connect to server. Check your connection.',
-                  background: '#1e293b', color: '#fff'
-              });
-          } finally {
-              btn.innerHTML = originalText;
-              btn.disabled = false;
+                 icon: 'warning',
+                 title: 'Missing Info',
+                 text: 'Please select a category and describe the issue.',
+                 background: '#1e293b', color: '#fff'
+             });
+             return;
           }
+
+          Swal.fire({
+              icon: 'success',
+              title: 'Ticket Submitted',
+              text: 'Support team will contact you via Telegram.',
+              background: '#1e293b', color: '#fff'
+          }).then(() => {
+              // Construct Full Ticket Report
+              const text = `🛠 *Support Ticket*\n\n` +
+                           `👤 Name: ${name}\n` +
+                           `📧 Email: ${email}\n` +
+                           `📱 Mobile: ${mobile}\n` +
+                           `---------------------------\n` +
+                           `📂 Issue: ${category}\n` +
+                           `💬 Desc: ${msg}`;
+
+              const encoded = encodeURIComponent(text);
+              // 👇 REPLACE 'FinGamePro_Support' WITH YOUR USERNAME
+              window.open(`https://t.me/FinGamePro_Support?text=${encoded}`, '_blank');
+          });
       }
 
     </script>
