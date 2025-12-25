@@ -1019,6 +1019,10 @@
           }
       };
 
+      // 🔥 BACKEND CONFIGURATION
+      // IMPORTANT: Replace this URL with your actual deployed backend URL (e.g., from Render)
+      const BACKEND_URL = "https://YOUR-APP-NAME.onrender.com"; 
+
       // 🔥 BACKEND CONNECT: Brand Proposal
       window.sendPremiumProposal = async function() {
           const brandName = document.getElementById('brand-contact').value || "Not Provided";
@@ -1043,7 +1047,7 @@
 
           try {
               // Send Data to Backend Bot
-              const response = await fetch('/api/submit-sponsorship', {
+              const response = await fetch(`${BACKEND_URL}/api/submit-sponsorship`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
@@ -1068,7 +1072,7 @@
               Swal.fire({
                   icon: 'error',
                   title: 'Failed',
-                  text: 'Could not connect to server. Try again later.',
+                  text: 'Could not connect to server. Check your connection.',
                   background: '#1e293b', color: '#fff'
               });
           } finally {
@@ -1098,7 +1102,7 @@
 
           try {
               // Send Data to Backend Bot
-              const response = await fetch('/api/submit-support', {
+              const response = await fetch(`${BACKEND_URL}/api/submit-support`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
@@ -1123,7 +1127,7 @@
               Swal.fire({
                   icon: 'error',
                   title: 'Failed',
-                  text: 'Could not connect to server. Try again later.',
+                  text: 'Could not connect to server. Check your connection.',
                   background: '#1e293b', color: '#fff'
               });
           } finally {
