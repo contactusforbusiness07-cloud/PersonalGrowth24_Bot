@@ -4,31 +4,37 @@ const TASKS_CACHE_KEY = 'fingamepro_tasks_v4';
 
 // --- 1. PROMOTION CONFIGURATION ---
 const PROMO_CONFIG = {
-    // YouTube ID empty rakha hai taaki Smartlink chale
     youtubeVideoId: "", 
-    
-    // 🔥 SMARTLINK INTEGRATED HERE (Highest Revenue)
+    // 🔥 SMARTLINK INTEGRATED HERE
     adsterraDirectLink: "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87", 
-    
+    // Popunder Link for rotation
+    popunderLink: "https://www.effectivegatecpm.com/q3zxkem7?key=8dba0d1f9c1ff4fd04c8eec011b1bf87", 
     reward: 500
 };
 
-// --- ADS CONFIGURATION (NEW) ---
+// --- ADS CONFIGURATION ---
 const ADS_CONFIG = {
     SOCIAL_BAR_URL: "//pl28285623.effectivegatecpm.com/8f/bd/f6/8fbdf667a2a2e1609a5d4f38e0105d34.js",
     NATIVE_KEY: "85c8e4eb0a60d8ad0292343f4d54b04b",
     BANNER_KEY: "da50611c22ea409fabf6255e80467cc4"
 };
 
-// --- 2. TASK LIST (All 8 Channels + Extras) ---
+// --- 2. TASK LIST ---
 const ALL_TASKS = [
+    // --- SMARTLINK TASKS (Disappear after complete, Reappear on refresh) ---
+    { id: 'smart_ad_1', type: 'smart_ad', name: '🌟 Special Offer 1', reward: 1000 },
+    { id: 'smart_ad_2', type: 'smart_ad', name: '⚡ Quick Task: Install', reward: 1000 },
+    { id: 'smart_ad_3', type: 'smart_ad', name: '🎁 Claim Bonus Reward', reward: 1000 },
+    
+    // --- TELEGRAM CHANNELS (is_bot_admin: false = Auto Verify) ---
     { 
         id: 'tg_english', 
         type: 'telegram',
         name: 'The English Room', 
         channel_id: '@The_EnglishRoom5', 
         url: 'https://t.me/The_EnglishRoom5', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false // Set true ONLY if bot is admin
     },
     { 
         id: 'tg_grammar', 
@@ -36,15 +42,21 @@ const ALL_TASKS = [
         name: 'Grammar Shots', 
         channel_id: '@English_Speaking_Grammar_Shots', 
         url: 'https://t.me/English_Speaking_Grammar_Shots', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
+    
+    // --- MORE SMARTLINK TASKS MIXED IN ---
+    { id: 'smart_ad_4', type: 'smart_ad', name: '🔥 Hot Offer: Register', reward: 1000 },
+
     { 
         id: 'tg_upsc_notes', 
         type: 'telegram',
         name: 'UPSC Notes Official', 
         channel_id: '@UPSC_Notes_Official', 
         url: 'https://t.me/UPSC_Notes_Official', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
     { 
         id: 'tg_upsc_quiz', 
@@ -52,15 +64,22 @@ const ALL_TASKS = [
         name: 'UPSC Quiz Vault', 
         channel_id: '@UPSC_Quiz_Vault', 
         url: 'https://t.me/UPSC_Quiz_Vault', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
+    
+    // --- MORE SMARTLINK TASKS ---
+    { id: 'smart_ad_5', type: 'smart_ad', name: '💎 Premium Survey', reward: 1000 },
+    { id: 'smart_ad_6', type: 'smart_ad', name: '🚀 Launch Partner App', reward: 1000 },
+
     { 
         id: 'tg_ias_prep', 
         type: 'telegram',
         name: 'IAS Prep Quiz Zone', 
         channel_id: '@IAS_PrepQuiz_Zone', 
         url: 'https://t.me/IAS_PrepQuiz_Zone', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
     { 
         id: 'tg_tourism', 
@@ -68,7 +87,8 @@ const ALL_TASKS = [
         name: 'Ministry of Tourism', 
         channel_id: '@MinistryOfTourism', 
         url: 'https://t.me/MinistryOfTourism', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false 
     },
     { 
         id: 'tg_finance', 
@@ -76,7 +96,8 @@ const ALL_TASKS = [
         name: 'Personal Finance', 
         channel_id: '@PersonalFinanceWithShiv', 
         url: 'https://t.me/PersonalFinanceWithShiv', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
     { 
         id: 'tg_schemes', 
@@ -84,7 +105,8 @@ const ALL_TASKS = [
         name: 'Govt Schemes India', 
         channel_id: '@GovernmentSchemesIndia', 
         url: 'https://t.me/GovernmentSchemesIndia', 
-        reward: 1000 
+        reward: 1000,
+        is_bot_admin: false
     },
     // --- Additional Promo Tasks ---
     { 
@@ -105,7 +127,7 @@ const ALL_TASKS = [
 
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(renderTasks, 300);
-    injectSocialBar(); // 🔥 Inject Social Bar on Load
+    injectSocialBar(); 
 });
 
 // --- RENDER ENGINE ---
@@ -116,21 +138,39 @@ function renderTasks() {
 
     const completedTasks = JSON.parse(localStorage.getItem(TASKS_CACHE_KEY) || '[]');
 
-    // 1. RENDER WATCH HERO (Smartlink Attached)
+    // 1. RENDER WATCH HERO
     renderWatchHero();
 
-    // 🔥 2. INJECT 320x50 BANNER AT TOP OF LIST
+    // 2. INJECT BANNER
     renderBanner320(listContainer);
 
-    // 3. RENDER NORMAL TASKS
+    // 3. RENDER TASKS LOOP
     ALL_TASKS.forEach((task, index) => {
+        // Special Logic for Smart Ad (Don't check LS, they reappear on reload)
+        if(task.type === 'smart_ad') {
+            const card = document.createElement('div');
+            card.className = 'task-card smart-task';
+            card.style.border = "1px solid #ffd700"; // Gold border for premium feel
+            
+            card.innerHTML = `
+                <div class="task-icon"><i class="fa-solid fa-fire-flame-curved text-gold"></i></div>
+                <div class="task-info">
+                    <h4 style="color:#ffd700">${task.name}</h4>
+                    <div class="reward-badge">+${task.reward}</div>
+                </div>
+                <button class="btn-join" onclick="handleSmartLinkTask('${task.id}', ${task.reward}, this)">START</button>
+            `;
+            listContainer.appendChild(card);
+            return; // Continue to next iteration
+        }
+
+        // Standard Logic for Persistent Tasks
         const isDone = completedTasks.includes(task.id);
         
         let iconClass = "fa-brands fa-telegram tg-blue";
         if(task.type === 'instagram') iconClass = "fa-brands fa-instagram text-pink";
         if(task.type === 'post') iconClass = "fa-solid fa-note-sticky text-gold";
-        if(task.type === 'banner') iconClass = "fa-solid fa-image text-green";
-
+        
         const card = document.createElement('div');
         card.className = `task-card ${isDone ? 'completed-task' : ''}`;
         
@@ -139,7 +179,8 @@ function renderTasks() {
             btnHTML = `<button class="btn-join" disabled><i class="fa-solid fa-check"></i></button>`;
         } else {
             if (task.type === 'telegram') {
-                btnHTML = `<button class="btn-join" onclick="handleTelegramVerify('${task.id}', '${task.channel_id}', '${task.url}', ${task.reward}, this)">JOIN</button>`;
+                // Pass is_bot_admin flag
+                btnHTML = `<button class="btn-join" onclick="handleTelegramVerify('${task.id}', '${task.channel_id}', '${task.url}', ${task.reward}, this, ${task.is_bot_admin})">JOIN</button>`;
             } else {
                 btnHTML = `<button class="btn-join" onclick="handleTimeBasedTask('${task.id}', '${task.url}', ${task.reward}, this)">OPEN</button>`;
             }
@@ -155,8 +196,8 @@ function renderTasks() {
         `;
         listContainer.appendChild(card);
 
-        // 🔥 Inject Native Ad after 4th item
-        if (index === 3) {
+        // Inject Native Ad after 4th item
+        if (index === 4) {
             renderNativeAd(listContainer);
         }
     });
@@ -170,7 +211,6 @@ function renderBanner320(container) {
     bannerBox.style.justifyContent = "center";
     bannerBox.style.marginBottom = "15px";
     
-    // Iframe creation for 320x50
     const iframe = document.createElement('iframe');
     iframe.style.width = "320px";
     iframe.style.height = "50px";
@@ -200,15 +240,15 @@ function renderBanner320(container) {
     doc.close();
 }
 
-// 🔥 NATIVE AD RENDERER (IFRAME SAFE)
+// 🔥 NATIVE AD RENDERER
 function renderNativeAd(container) {
     const adCard = document.createElement('div');
-    adCard.className = 'native-ad-card'; // Keep class for spacing
+    adCard.className = 'native-ad-card';
     adCard.style.padding = "0";
     adCard.style.background = "transparent";
     adCard.style.border = "none";
     adCard.style.height = "auto";
-    adCard.style.minHeight = "250px"; // Ensure visibility
+    adCard.style.minHeight = "250px";
 
     const iframe = document.createElement('iframe');
     iframe.style.width = "100%";
@@ -235,7 +275,6 @@ function renderNativeAd(container) {
     doc.close();
 }
 
-// 🔥 SOCIAL BAR INJECTOR
 function injectSocialBar() {
     const s = document.createElement('script');
     s.src = ADS_CONFIG.SOCIAL_BAR_URL;
@@ -269,9 +308,40 @@ function renderWatchHero() {
     }
 }
 
+// --- LOGIC 1: SMARTLINK TASKS (DISAPPEAR ON COMPLETE) ---
+window.handleSmartLinkTask = function(taskId, reward, btn) {
+    // 1. Rotate Links
+    const links = [PROMO_CONFIG.adsterraDirectLink, PROMO_CONFIG.popunderLink];
+    const targetLink = links[Math.floor(Math.random() * links.length)];
+    
+    window.open(targetLink, '_blank');
 
-// --- LOGIC 1: STRICT TELEGRAM VERIFICATION (API Call) ---
-window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn) {
+    btn.innerText = "VERIFYING...";
+    btn.disabled = true;
+
+    // 2. Wait 10 Seconds then Reward
+    setTimeout(() => {
+        if(window.addCoins) window.addCoins(reward);
+        
+        Swal.fire({
+            icon: 'success', title: `+${reward} Coins`,
+            text: 'Task Completed!',
+            background: '#020617', color: '#fff'
+        });
+
+        // 3. Remove Card from Screen (No LocalStorage save)
+        const card = btn.closest('.task-card');
+        if(card) {
+            card.style.transition = "opacity 0.5s";
+            card.style.opacity = "0";
+            setTimeout(() => card.remove(), 500);
+        }
+    }, 10000); // 10 seconds wait
+};
+
+
+// --- LOGIC 2: FIXED TELEGRAM VERIFICATION ---
+window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn, isBotAdmin) {
     // 1. Open Channel
     window.open(url, '_blank');
 
@@ -279,56 +349,45 @@ window.handleTelegramVerify = async function(taskId, channelId, url, reward, btn
     btn.disabled = true;
     btn.style.background = "#475569";
 
-    // Wait 5 seconds to let user join
+    // 5 Seconds Delay
     setTimeout(async () => {
-        try {
-            // Check Server Login
-            if(!window.currentUser || !window.currentUser.id) {
-                if(location.hostname === "localhost" || location.protocol === "file:") {
-                    completeTask(taskId, reward, btn);
-                    return;
+        // CASE A: Bot IS Admin (Strict Check)
+        if (isBotAdmin) {
+            try {
+                if(!window.currentUser || !window.currentUser.id) {
+                    if(location.hostname === "localhost") { completeTask(taskId, reward, btn); return; }
+                    throw new Error("Login required");
                 }
-                throw new Error("User not logged in");
-            }
 
-            // Call Backend API
-            const response = await fetch('/api/verify-channel', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: window.currentUser.id,
-                    channel_id: channelId
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'joined') {
-                completeTask(taskId, reward, btn);
-            } else {
-                // FAILED
-                btn.innerText = "JOIN";
-                btn.disabled = false;
-                btn.style.background = "#ef4444"; 
-                
-                Swal.fire({
-                    icon: 'error', 
-                    title: 'Not Joined!',
-                    text: 'Our bot checked: You are not a member yet.',
-                    background: '#020617', color: '#fff'
+                const response = await fetch('/api/verify-channel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: window.currentUser.id, channel_id: channelId })
                 });
+                const result = await response.json();
+
+                if (result.status === 'joined') {
+                    completeTask(taskId, reward, btn);
+                } else {
+                    btn.innerText = "JOIN";
+                    btn.disabled = false;
+                    btn.style.background = "#ef4444";
+                    Swal.fire({ icon: 'error', title: 'Not Joined!', text: 'Please join the channel first.', background: '#020617', color: '#fff' });
+                }
+            } catch (e) {
+                // Fallback if API fails
+                completeTask(taskId, reward, btn);
             }
-        } catch (e) {
-            console.error(e);
-            btn.innerText = "RETRY";
-            btn.disabled = false;
-            btn.style.background = "#3b82f6";
+        } 
+        // CASE B: Bot NOT Admin (Auto Verify / Time Based)
+        else {
+            completeTask(taskId, reward, btn);
         }
     }, 5000);
 };
 
 
-// --- LOGIC 2: TIME-BASED VERIFICATION (Insta/Link/Ad) ---
+// --- LOGIC 3: TIME-BASED TASKS (Instagram, Links) ---
 window.handleTimeBasedTask = function(taskId, url, reward, btn) {
     const start = Date.now();
     window.open(url, '_blank');
@@ -336,33 +395,24 @@ window.handleTimeBasedTask = function(taskId, url, reward, btn) {
     btn.innerText = "CHECKING...";
     btn.disabled = true;
 
-    // Detect if user returns
     const checkReturn = () => {
         if (document.visibilityState === 'visible') {
             const elapsed = Date.now() - start;
-            
-            // 8 Seconds strict timer
             if (elapsed > 8000) { 
                 completeTask(taskId, reward, btn);
             } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Too Fast!',
-                    text: 'You must view the content for at least 8 seconds.',
-                    background: '#020617', color: '#fff'
-                });
+                Swal.fire({ icon: 'warning', title: 'Too Fast!', text: 'View for 8 seconds.', background: '#020617', color: '#fff' });
                 btn.innerText = "OPEN";
                 btn.disabled = false;
             }
             document.removeEventListener('visibilitychange', checkReturn);
         }
     };
-
     document.addEventListener('visibilitychange', checkReturn);
 };
 
 
-// --- LOGIC 3: WATCH STREAM (YouTube / Smartlink) ---
+// --- LOGIC 4: WATCH STREAM ---
 window.startWatchTask = function(btn) {
     const isYT = PROMO_CONFIG.youtubeVideoId && PROMO_CONFIG.youtubeVideoId !== "";
     const pContainer = document.getElementById('ad-progress-container');
@@ -370,14 +420,12 @@ window.startWatchTask = function(btn) {
     
     if(!pContainer) return;
 
-    // Open Content (Smartlink Logic)
     if (isYT) {
         window.open(`https://www.youtube.com/watch?v=${PROMO_CONFIG.youtubeVideoId}`, '_blank');
     } else {
         window.open(PROMO_CONFIG.adsterraDirectLink, '_blank');
     }
 
-    // UI Animation
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-eye"></i> CHECKING...';
     pContainer.classList.remove('hidden');
@@ -385,7 +433,7 @@ window.startWatchTask = function(btn) {
 
     let width = 0;
     const interval = setInterval(() => {
-        width += 100 / 30; // 30 Seconds Timer
+        width += 100 / 30;
         pBar.style.width = width + "%";
         if (width >= 100) {
             clearInterval(interval);
@@ -395,23 +443,12 @@ window.startWatchTask = function(btn) {
 };
 
 function finishWatchTask(btn) {
-    // Reward
     if(window.addCoins) window.addCoins(PROMO_CONFIG.reward);
-    
     document.getElementById('ad-progress-container').classList.add('hidden');
     btn.disabled = false;
     btn.innerHTML = 'CLAIMED';
-    
-    Swal.fire({
-        icon: 'success', title: 'Reward Claimed!',
-        background: '#020617', color: '#fff'
-    });
-    
-    // Reset after 10 seconds for re-watch revenue
-    setTimeout(() => { 
-        btn.innerHTML = 'WATCH AGAIN'; 
-        btn.disabled = false;
-    }, 10000); 
+    Swal.fire({ icon: 'success', title: 'Reward Claimed!', background: '#020617', color: '#fff' });
+    setTimeout(() => { btn.innerHTML = 'WATCH AGAIN'; btn.disabled = false; }, 10000); 
 }
 
 // --- HELPER: SAVE COMPLETION ---
@@ -434,4 +471,3 @@ function completeTask(taskId, reward, btn) {
         showConfirmButton: false, background: '#020617', color: '#fff'
     });
 }
-
